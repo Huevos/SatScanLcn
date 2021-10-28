@@ -38,7 +38,7 @@ python="python"
 localgsed="sed"
 findoptions=""
 delete=1
-plugin="vix"
+plugin="satscanlcn"
 
 function this_help () {
 	printf "Possible options are:\n"
@@ -151,7 +151,7 @@ printf "Po files update/creation from script starting.\n"
 languages=($(ls *.po | tr "\n" " " | sed 's/.po//g'))
 
 # If you want to define the language locally in this script uncomment and defined languages
-#languages=("ar" "bg" "ca" "cs" "da" "de" "el" "en" "es" "et" "fa" "fi" "fr" "fy" "he" "hk" "hr" "hu" "id" "is" "it" "ku" "lt" "lv" "nl" "nb" "nn" "pl" "pt" "pt_BR" "ro" "ru" "sk" "sl" "sr" "sv" "th" "tr" "uk" "zh")
+languages=("ar" "bg" "ca" "cs" "da" "de" "el" "en" "en_GB" "es" "et" "fa" "fi" "fr" "fy" "he" "hk" "hr" "hu" "id" "is" "it" "ku" "lt" "lv" "nl" "nb" "nn" "pl" "pt" "pt_BR" "ro" "ru" "sk" "sl" "sr" "sv" "th" "tr" "uk" "zh")
 
 printf "Creating temporary file %s-py.pot\n" $plugin
 find $findoptions .. -name "*.py" -exec xgettext --no-wrap -L Python --from-code=UTF-8 -kpgettext:1c,2 --add-comments="TRANSLATORS:" -d enigma2 -s -o "$plugin"-py.pot {} \+

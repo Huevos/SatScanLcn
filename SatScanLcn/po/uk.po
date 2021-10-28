@@ -1,0 +1,329 @@
+# Ukrainian translations for PACKAGE package.
+# Copyright (C) 2021 THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Automatically generated, 2021.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-10-28 18:01+0200\n"
+"PO-Revision-Date: 2021-10-28 18:01+0200\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: uk\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#: ../src/satscanlcn.py:1494
+msgid "%a %e %b  %-H:%M"
+msgstr ""
+
+#: ../src/satscanlcn.py:1442
+#, python-format
+msgid "%s scheduled update"
+msgstr ""
+
+#: ../src/satscanlcn.py:1440
+#, python-format
+msgid ""
+"%s update is about to start.\n"
+"Do you want to allow this?"
+msgstr ""
+
+#: ../src/about.py:11 ../src/satscanlcn.py:1168
+msgid "About"
+msgstr ""
+
+#: ../src/satscanlcn.py:1299
+msgid "At least one day of the week must be selected"
+msgstr ""
+
+#: ../src/satscanlcn.py:196
+msgid "Bouquets generation..."
+msgstr ""
+
+#: ../src/satscanlcn.py:1195
+msgid "CAUTION: Sometimes the SI tables contain rogue data. Select \"yes\" to sync with transponder data listed in satellites.xml. Select \"no\" if you trust the SI data. Default is \"no\". Only change this if you understand why you are doing it."
+msgstr ""
+
+#: ../src/satscanlcn.py:1197
+msgid "CAUTION: This feature is for development only. Requires debug logs to be enabled or enigma2 to be started in console mode (at debug level 4)."
+msgstr ""
+
+#: ../src/providers.py:22
+msgid "Canal Digitaal HD"
+msgstr ""
+
+#: ../src/satscanlcn.py:1286
+msgid "Cancel"
+msgstr ""
+
+#: ../src/satscanlcn.py:329
+msgid "Cannot allocate the demuxer."
+msgstr ""
+
+#: ../src/satscanlcn.py:299
+msgid "Cannot free NIM because a recording is in progress"
+msgstr ""
+
+#: ../src/satscanlcn.py:323
+msgid "Cannot get frontend"
+msgstr ""
+
+#: ../src/satscanlcn.py:303
+msgid "Cannot get the NIM"
+msgstr ""
+
+#: ../src/satscanlcn.py:406 ../src/satscanlcn.py:452 ../src/satscanlcn.py:588
+#: ../src/satscanlcn.py:658
+msgid "Cannot open the demuxer"
+msgstr ""
+
+#: ../src/satscanlcn.py:232
+msgid "Cannot retrieve Resource Manager instance"
+msgstr ""
+
+#: ../src/about.py:24
+msgid "Close"
+msgstr ""
+
+#: ../src/satscanlcn.py:379
+msgid "Could not acquire the correct tsid/onid on the home transponder."
+msgstr ""
+
+#: ../src/satscanlcn.py:156
+msgid "Current settings read..."
+msgstr ""
+
+#: ../src/satscanlcn.py:1038
+msgid "Done"
+msgstr ""
+
+#: ../src/satscanlcn.py:1167
+msgid "Download"
+msgstr ""
+
+#: ../src/satscanlcn.py:1459
+msgid "Enough Retries, delaying till next schedule."
+msgstr ""
+
+#: ../src/satscanlcn.py:1165
+msgid "Exit"
+msgstr ""
+
+#: ../src/satscanlcn.py:1197
+msgid "Extra debug"
+msgstr ""
+
+#: ../src/satscanlcn.py:1194
+msgid "Force channel name"
+msgstr ""
+
+#: ../src/satscanlcn.py:1282
+msgid "Friday"
+msgstr ""
+
+#: ../src/satscanlcn.py:1189
+msgid "If the receiver is in 'Deep Standby' when the schedule is due wake it up to run SatScanLcn."
+msgstr ""
+
+#: ../src/satscanlcn.py:1191
+msgid "If the receiver was woken from 'Deep Standby' and is currently in 'Standby' and no recordings are in progress return it to 'Deep Standby' once the import has completed."
+msgstr ""
+
+#: ../src/satscanlcn.py:974
+msgid "Last Scanned"
+msgstr ""
+
+#: ../src/satscanlcn.py:1282
+msgid "Monday"
+msgstr ""
+
+#: ../src/satscanlcn.py:1224
+#, python-format
+msgid "Next scheduled fetch is programmed for %s."
+msgstr ""
+
+#: ../src/satscanlcn.py:226
+msgid "No compatible tuner found"
+msgstr ""
+
+#: ../src/satscanlcn.py:281
+#, python-format
+msgid "No valid NIM found for %s"
+msgstr ""
+
+#: ../src/providers.py:7
+msgid "Orange TV"
+msgstr ""
+
+#: ../src/plugin.py:26
+msgid "Press OK"
+msgstr ""
+
+#: ../src/satscanlcn.py:1188
+msgid "Press OK to select which days to run SatScanLcn."
+msgstr ""
+
+#: ../src/satscanlcn.py:1184
+msgid "Provider"
+msgstr ""
+
+#: ../src/satscanlcn.py:353
+#, python-format
+msgid "Read %s %s %s %s..."
+msgstr ""
+
+#: ../src/satscanlcn.py:149
+msgid "Reading current settings..."
+msgstr ""
+
+#: ../src/satscanlcn.py:1212 ../src/satscanlcn.py:1308
+msgid "Really close without saving settings?"
+msgstr ""
+
+#: ../src/satscanlcn.py:43
+msgid "Sat Scan LCN"
+msgstr ""
+
+#: ../src/about.py:11 ../src/plugin.py:42 ../src/plugin.py:59
+#: ../src/plugin.py:62 ../src/satscanlcn.py:1145 ../src/satscanlcn.py:1278
+#: ../src/satscanlcn.py:1300
+msgid "SatScanLcn"
+msgstr ""
+
+#: ../src/satscanlcn.py:1282
+msgid "Saturday"
+msgstr ""
+
+#: ../src/satscanlcn.py:1166 ../src/satscanlcn.py:1287
+msgid "Save"
+msgstr ""
+
+#: ../src/plugin.py:4
+msgid "Scans for services and creates a bouquet"
+msgstr ""
+
+#: ../src/satscanlcn.py:1188
+msgid "Schedule days of the week"
+msgstr ""
+
+#: ../src/satscanlcn.py:1191
+msgid "Schedule return to deep standby"
+msgstr ""
+
+#: ../src/satscanlcn.py:1187
+msgid "Schedule time of day"
+msgstr ""
+
+#: ../src/satscanlcn.py:1189
+msgid "Schedule wake from deep standby"
+msgstr ""
+
+#: ../src/satscanlcn.py:1185
+msgid "Scheduled fetch"
+msgstr ""
+
+#: ../src/satscanlcn.py:173
+msgid "Searching for transponders..."
+msgstr ""
+
+#: ../src/satscanlcn.py:1278 ../src/satscanlcn.py:1300
+msgid "Select days"
+msgstr ""
+
+#: ../src/satscanlcn.py:1184
+msgid "Select the provider you wish to scan."
+msgstr ""
+
+#: ../src/satscanlcn.py:1192
+msgid "Select yes to access advanced setup options."
+msgstr ""
+
+#: ../src/satscanlcn.py:185 ../src/satscanlcn.py:197 ../src/satscanlcn.py:1039
+#, python-format
+msgid "Services: %d video - %d radio"
+msgstr ""
+
+#: ../src/satscanlcn.py:1187
+msgid "Set the time of day to run SatScanLcn."
+msgstr ""
+
+#: ../src/satscanlcn.py:1185
+msgid "Set up a task scheduler to periodically update data."
+msgstr ""
+
+#: ../src/satscanlcn.py:1145
+msgid "Setup"
+msgstr ""
+
+#: ../src/satscanlcn.py:1192
+msgid "Show advanced options"
+msgstr ""
+
+#: ../src/satscanlcn.py:1196
+msgid "Show in extensions menu"
+msgstr ""
+
+#: ../src/satscanlcn.py:390
+msgid "Something went terribly wrong"
+msgstr ""
+
+#: ../src/satscanlcn.py:50
+msgid "Starting scanner"
+msgstr ""
+
+#: ../src/satscanlcn.py:1282
+msgid "Sunday"
+msgstr ""
+
+#: ../src/satscanlcn.py:1194
+msgid "Switch this on only if you have issues with \"N/A\" appearing in your channel list. Switching this on means the channel name will not auto update if the broadcaster changes the channel name."
+msgstr ""
+
+#: ../src/satscanlcn.py:1195
+msgid "Sync with known transponders"
+msgstr ""
+
+#: ../src/satscanlcn.py:1224
+msgid "The current configuration has been saved."
+msgstr ""
+
+#: ../src/satscanlcn.py:1282
+msgid "Thursday"
+msgstr ""
+
+#: ../src/satscanlcn.py:371
+#, python-format
+msgid "Timeout for tuner lock on %s"
+msgstr ""
+
+#: ../src/satscanlcn.py:1282
+msgid "Tuesday"
+msgstr ""
+
+#: ../src/satscanlcn.py:213
+#, python-format
+msgid "Tune %s %s %s %s..."
+msgstr ""
+
+#: ../src/satscanlcn.py:365
+#, python-format
+msgid "Tuning failed on %s"
+msgstr ""
+
+#: ../src/satscanlcn.py:1282
+msgid "Wednesday"
+msgstr ""
+
+#: ../src/satscanlcn.py:1196
+msgid "When enabled, this allows you start a SatScanLcn update from the extensions list."
+msgstr ""
+
+#: ../src/satscanlcn.py:551
+#, python-format
+msgid "transponders found: %d"
+msgstr ""
