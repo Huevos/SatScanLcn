@@ -113,11 +113,13 @@ class SatScanLcn(Screen): # the downloader
 
 		self.sdt_pid_default = 0x11 # DVB default
 		self.sdt_current_table_id_default = 0x42 # DVB default
-		self.sdt_other_table_id_default = 0x46 # DVB default
+		self.sdt_other_table_id_default = 0x00 # Set to 0x00 so the table is not read by default. DVB default is 0x46. Add the table id in the provider if this is to be read. 
+		self.sdt_only_scan_home_default = False
 		
 		self.sdt_pid = PROVIDERS[self.config.provider.value]["sdt"]["sdt_pid"] if "sdt" in PROVIDERS[self.config.provider.value] and "sdt_pid" in PROVIDERS[self.config.provider.value]["sdt"] else self.sdt_pid_default
 		self.sdt_current_table_id = PROVIDERS[self.config.provider.value]["sdt"]["sdt_current_table_id"] if "sdt" in PROVIDERS[self.config.provider.value] and "sdt_current_table_id" in PROVIDERS[self.config.provider.value]["sdt"] else self.sdt_current_table_id_default
 		self.sdt_other_table_id = PROVIDERS[self.config.provider.value]["sdt"]["sdt_other_table_id"] if "sdt" in PROVIDERS[self.config.provider.value] and "sdt_other_table_id" in PROVIDERS[self.config.provider.value]["sdt"] else self.sdt_other_table_id_default
+		self.sdt_only_scan_home = PROVIDERS[self.config.provider.value]["sdt"]["sdt_only_scan_home"] if "sdt" in PROVIDERS[self.config.provider.value] and "sdt_only_scan_home" in PROVIDERS[self.config.provider.value]["sdt"] else self.sdt_only_scan_home_default
 		
 		
 		self.bat_pid_default = 0x11 # DVB default
@@ -662,7 +664,10 @@ class SatScanLcn(Screen): # the downloader
 	def readSDT(self):
 		print("[%s] Reading SDTs..." % self.debugName)
 
-		mask = 0xff # only read SDT actual, not SDT other.
+		if self.sdt_other_table_id == 0x00:
+			mask = 0xff
+		else:
+			mask = self.sdt_current_table_id ^ self.sdt_other_table_id ^ 0xff
 
 		sdt_current_version_number = -1
 		sdt_current_sections_read = []
@@ -688,7 +693,7 @@ class SatScanLcn(Screen): # the downloader
 				print("[%s][readSDT] Timed out" % self.debugName)
 				break
 
-			section = dvbreader.read_sdt(fd, self.sdt_current_table_id, 0x00)
+			section = dvbreader.read_sdt(fd, self.sdt_current_table_id, self.sdt_other_table_id)
 			if section is None:
 				sleep(0.1)	# no data.. so we wait a bit
 				continue
