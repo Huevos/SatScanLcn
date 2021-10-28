@@ -107,15 +107,30 @@ class SatScanLcn(Screen): # the downloader
 		self.nit_current_table_id_default = 0x40 # DVB default
 		self.nit_other_table_id_default = 0x41 # DVB default
 
-		self.nit_pid = PROVIDERS[self.config.provider.value]["nit"]["nit_pid"] if "nit" in PROVIDERS[self.config.provider.value] else self.nit_pid_default
-		self.nit_current_table_id = PROVIDERS[self.config.provider.value]["nit"]["nit_current_table_id"] if "nit" in PROVIDERS[self.config.provider.value] else self.nit_current_table_id_default
-		self.nit_other_table_id = PROVIDERS[self.config.provider.value]["nit"]["nit_other_table_id"] if "nit" in PROVIDERS[self.config.provider.value] else self.nit_other_table_id_default
+		self.nit_pid = PROVIDERS[self.config.provider.value]["nit"]["nit_pid"] if "nit" in PROVIDERS[self.config.provider.value] and "nit_pid" in PROVIDERS[self.config.provider.value]["nit"] else self.nit_pid_default
+		self.nit_current_table_id = PROVIDERS[self.config.provider.value]["nit"]["nit_current_table_id"] if "nit" in PROVIDERS[self.config.provider.value] and "nit_current_table_id" in PROVIDERS[self.config.provider.value]["nit"] else self.nit_current_table_id_default
+		self.nit_other_table_id = PROVIDERS[self.config.provider.value]["nit"]["nit_other_table_id"] if "nit" in PROVIDERS[self.config.provider.value] and "nit_other_table_id" in PROVIDERS[self.config.provider.value]["nit"] else self.nit_other_table_id_default
 
-		self.sdt_pid = 0x11 # DVB default
-		self.sdt_current_table_id = 0x42 # DVB default
-		self.sdt_other_table_id = 0x46 # DVB default
-		self.bat_pid = 0x11 # DVB default
-		self.bat_table_id = 0x4a # DVB default
+		self.sdt_pid_default = 0x11 # DVB default
+		self.sdt_current_table_id_default = 0x42 # DVB default
+		self.sdt_other_table_id_default = 0x46 # DVB default
+		
+		self.sdt_pid = PROVIDERS[self.config.provider.value]["sdt"]["sdt_pid"] if "sdt" in PROVIDERS[self.config.provider.value] and "sdt_pid" in PROVIDERS[self.config.provider.value]["sdt"] else self.sdt_pid_default
+		self.sdt_current_table_id = PROVIDERS[self.config.provider.value]["sdt"]["sdt_current_table_id"] if "sdt" in PROVIDERS[self.config.provider.value] and "sdt_current_table_id" in PROVIDERS[self.config.provider.value]["sdt"] else self.sdt_current_table_id_default
+		self.sdt_other_table_id = PROVIDERS[self.config.provider.value]["sdt"]["sdt_other_table_id"] if "sdt" in PROVIDERS[self.config.provider.value] and "sdt_other_table_id" in PROVIDERS[self.config.provider.value]["sdt"] else self.sdt_other_table_id_default
+		
+		
+		self.bat_pid_default = 0x11 # DVB default
+		self.bat_table_id_default = 0x4a # DVB default
+
+		self.bat_pid = PROVIDERS[self.config.provider.value]["bat"]["bat_pid"] if "bat" in PROVIDERS[self.config.provider.value] and "bat_pid" in PROVIDERS[self.config.provider.value]["bat"] else self.bat_pid_default
+		self.bat_table_id = PROVIDERS[self.config.provider.value]["bat"]["bat_table_id"] if "bat" in PROVIDERS[self.config.provider.value] and "bat_table_id" in PROVIDERS[self.config.provider.value]["bat"] else self.bat_table_id_default
+		self.bat_lcn_descriptor = PROVIDERS[self.config.provider.value]["bat"]["bat_lcn_descriptor"] if "bat" in PROVIDERS[self.config.provider.value] and "bat_lcn_descriptor" in PROVIDERS[self.config.provider.value]["bat"] else None
+		# self.bat_region, for use where the provider has multiple regions grouped under any single BouquetID. Will be a list containing the desired region id and may also contain the region id of the services that are common to all regions.
+		self.bat_region = PROVIDERS[self.config.provider.value]["bat"]["bat_region"] if "bat" in PROVIDERS[self.config.provider.value] and "bat_region" in PROVIDERS[self.config.provider.value]["bat"] else None # input from providers should be a list
+		
+		if self.bat_lcn_descriptor:
+			self.descriptors["lcn"] = self.bat_lcn_descriptor
 
 		self.SDTscanList = [] # list of transponders we are going to scan the SDT of.
 		self.tmp_services_dict = {} # services found in SDTs of the scanned transponders. Keys, TSID:ONID:SID  in hex 
@@ -631,8 +646,15 @@ class SatScanLcn(Screen): # the downloader
 
 		self.BATreadTime += time() - start_time
 
-		self.tmp_bat_content = [x for x in bat_content if "descriptor_tag" in x and x["descriptor_tag"] == self.descriptors["lcn"]]
-
+		#self.tmp_bat_content = [x for x in bat_content if "descriptor_tag" in x and x["descriptor_tag"] == self.descriptors["lcn"]] # used before region code added below.
+		
+		self.tmp_bat_content = []
+		for x in bat_content:
+			if "descriptor_tag" in x and x["descriptor_tag"] == self.descriptors["lcn"]:
+				if self.bat_region and "region_id" in x and x["region_id"] not in self.bat_region:
+					continue # skip regions that don't match
+				self.tmp_bat_content.append(x)
+		
 		print("[%s] Reading BAT completed." % self.debugName)
 
 		self.manager()
