@@ -657,6 +657,9 @@ class SatScanLcn(Screen): # the downloader
 			if "descriptor_tag" in x and x["descriptor_tag"] == self.descriptors["lcn"]:
 				if self.bat_region and "region_id" in x and x["region_id"] not in self.bat_region:
 					continue # skip regions that don't match
+				TSID_ONID_key = "%x:%x" % (x["transport_stream_id"], x["original_network_id"])
+				if TSID_ONID_key not in self.TSID_ONID_list:
+					self.TSID_ONID_list.append(TSID_ONID_key)
 				self.tmp_bat_content.append(x)
 		
 		print("[%s] Reading BAT completed." % self.debugName)
