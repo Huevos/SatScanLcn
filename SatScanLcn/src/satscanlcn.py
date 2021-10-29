@@ -113,7 +113,7 @@ class SatScanLcn(Screen): # the downloader
 
 		self.sdt_pid_default = 0x11 # DVB default
 		self.sdt_current_table_id_default = 0x42 # DVB default
-		self.sdt_other_table_id_default = 0x00 # Set to 0x00 so the table is not read by default. DVB default is 0x46. Add the table id in the provider if this is to be read. 
+		self.sdt_other_table_id_default = 0x46 # DVB default is 0x46. Add the table id in the provider if this is to be read. Only used when self.sdt_only_scan_home_default = True
 		self.sdt_only_scan_home_default = False
 		
 		self.sdt_pid = PROVIDERS[self.config.provider.value]["sdt"]["sdt_pid"] if "sdt" in PROVIDERS[self.config.provider.value] and "sdt_pid" in PROVIDERS[self.config.provider.value]["sdt"] else self.sdt_pid_default
