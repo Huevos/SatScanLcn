@@ -195,6 +195,7 @@ class SatScanLcn(Screen): # the downloader
 			self.timer.start(100, 1)
 
 		elif len(self.actionsList) > self.index and self.actionsList[self.index] == "read BAT":
+			self["status"].setText(_("Reading bouquet allocation table..."))
 			self.readBAT() # we are already tuned so go direct to read BAT
 
 		elif len(self.actionsList) > self.index and self.actionsList[self.index] == "read SDTs":
