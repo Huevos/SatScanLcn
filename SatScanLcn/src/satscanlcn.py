@@ -595,6 +595,7 @@ class SatScanLcn(Screen): # the downloader
 
 	def readBAT(self):
 		print("[%s] Reading BAT..." % self.debugName)
+		self.TSID_ONID_list = [] # as we are searching the bat delete any data that may have been downloaded from the nit
 
 		self.setDemuxer()
 
