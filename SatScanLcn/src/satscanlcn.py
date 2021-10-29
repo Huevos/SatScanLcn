@@ -668,74 +668,142 @@ class SatScanLcn(Screen): # the downloader
 
 	def readSDT(self):
 		print("[%s] Reading SDTs..." % self.debugName)
-
-		if self.sdt_other_table_id == 0x00:
-			mask = 0xff
-		else:
-			mask = self.sdt_current_table_id ^ self.sdt_other_table_id ^ 0xff
-
-		sdt_current_version_number = -1
-		sdt_current_sections_read = []
-		sdt_current_sections_count = 0
-		sdt_current_content = []
-		sdt_current_completed = False
-
-		self.setDemuxer()
-
+		
 		start_time = time()
+		
+		self.setDemuxer()
+		
+		# 2 choices, just search SDT Actual (on all transponders), or search SDT Actual and SDT Other but only on the home transponder
+		if self.sdt_only_scan_home: # include SDT Actual and SDT Other
+			if self.sdt_other_table_id == 0x00:
+				mask = 0xff
+			else:
+				mask = self.sdt_current_table_id ^ self.sdt_other_table_id ^ 0xff
+			
+			fd = dvbreader.open(self.demuxer_device, self.sdt_pid, self.sdt_current_table_id, mask, self.selectedNIM)
+			if fd < 0:
+				print("[%s] Cannot open the demuxer" % self.debugName)
+				return None
+	
+			TSID_ONID_list = self.TSID_ONID_list[:]
+			
+			sdt_secions_status = {}
+			for TSID_ONID in TSID_ONID_list:
+				sdt_secions_status[TSID_ONID] = {}
+				sdt_secions_status[TSID_ONID]["section_version"] = -1
+				sdt_secions_status[TSID_ONID]["sections_read"] = []
+				sdt_secions_status[TSID_ONID]["sections_count"] = 0
+				sdt_secions_status[TSID_ONID]["content"] = []
+	
+			timeout = datetime.datetime.now()
+			timeout += datetime.timedelta(0, self.TIMEOUT_SDT)
+			while True:
+				if datetime.datetime.now() > timeout:
+					print("[%s] Timed out reading SDT" % self.debugName)
+					break
+	
+				section = dvbreader.read_sdt(fd, self.sdt_current_table_id, self.sdt_other_table_id)
+				if section is None:
+					sleep(0.1)	# no data.. so we wait a bit
+					continue
+	
+				if self.extra_debug:
+					print("[%s] SDT raw section header" % self.debugName, section["header"])
+					print("[%s] SDT raw section content" % self.debugName, section["content"])
+	
+				if (section["header"]["table_id"] == self.sdt_current_table_id or section["header"]["table_id"] == self.sdt_other_table_id) and len(section["content"]):
+					TSID_ONID = "%x:%x" % (section["header"]["transport_stream_id"], section["header"]["original_network_id"])
+					if TSID_ONID not in TSID_ONID_list:
+						continue
+	
+					if section["header"]["version_number"] != sdt_secions_status[TSID_ONID]["section_version"]:
+						sdt_secions_status[TSID_ONID]["section_version"] = section["header"]["version_number"]
+						sdt_secions_status[TSID_ONID]["sections_read"] = []
+						sdt_secions_status[TSID_ONID]["content"] = []
+						sdt_secions_status[TSID_ONID]["sections_count"] = section["header"]["last_section_number"] + 1
+	
+					if section["header"]["section_number"] not in sdt_secions_status[TSID_ONID]["sections_read"]:
+						sdt_secions_status[TSID_ONID]["sections_read"].append(section["header"]["section_number"])
+						sdt_secions_status[TSID_ONID]["content"] += section["content"]
+	
+						if len(sdt_secions_status[TSID_ONID]["sections_read"]) == sdt_secions_status[TSID_ONID]["sections_count"]:
+							TSID_ONID_list.remove(TSID_ONID)
+	
+				if len(TSID_ONID_list) == 0:
+					break
+	
+			if len(TSID_ONID_list) > 0:
+				print("[%s] Cannot fetch SDT for the following TSID_ONID list: " % self.debugName, TSID_ONID_list)
+	
+			dvbreader.close(fd)
+			
+			# Now throw the lot in one list so it matches the format handling below which is one single list.
+			sdt_current_content = []
+			for key in sdt_secions_status:
+				sdt_current_content	+= sdt_secions_status[key]["content"]
 
-		fd = dvbreader.open(self.demuxer_device, self.sdt_pid, self.sdt_current_table_id, mask, self.selectedNIM)
-		if fd < 0:
-			print("[%s][readSDT] Cannot open the demuxer" % self.debugName)
-			self.showError(_('Cannot open the demuxer'))
-			return
+		else: # only read SDT Actual (other transponders will be read in the tuning loop)
 
-		timeout = datetime.datetime.now()
-		timeout += datetime.timedelta(0, self.TIMEOUT_SDT)
-
-		while True:
-			if datetime.datetime.now() > timeout:
-				print("[%s][readSDT] Timed out" % self.debugName)
-				break
-
-			section = dvbreader.read_sdt(fd, self.sdt_current_table_id, self.sdt_other_table_id)
-			if section is None:
-				sleep(0.1)	# no data.. so we wait a bit
-				continue
-
-			if self.extra_debug:
-				print("[%s] SDT raw section header" % self.debugName, section["header"])
-				print("[%s] SDT raw section content" % self.debugName, section["content"])
-
-			# Check the ONID is correct... maybe we are receiving the "wrong" satellite or dish is still moving.
-			if self.transpondercurrent["original_network_id"] != section["header"]["original_network_id"]:
-				continue
-
-			# Check for ONID/TSID miss match between the transport stream we have tuned and the one we are supposed to tune.
-			# A miss match happens when the NIT table on the home transponder has broken data.
-			# If there is a miss match correct it now, before the data is "used in anger".
-			if self.transpondercurrent["transport_stream_id"] != section["header"]["transport_stream_id"]:
-				print("[%s] readSDT ONID/TSID mismatch. Supposed to be reading: 0x%x/0x%x, Currently reading: 0x%x/0x%x. Will accept current data as  authoritative." % (self.debugName, self.transpondercurrent["original_network_id"], self.transpondercurrent["transport_stream_id"], section["header"]["original_network_id"], section["header"]["transport_stream_id"]))
-				self.transpondercurrent["real_transport_stream_id"] = section["header"]["transport_stream_id"]
-
-			if section["header"]["table_id"] == self.sdt_current_table_id and not sdt_current_completed:
-				if section["header"]["version_number"] != sdt_current_version_number:
-					sdt_current_version_number = section["header"]["version_number"]
-					sdt_current_sections_read = []
-					sdt_current_sections_count = section["header"]["last_section_number"] + 1
-					sdt_current_content = []
-
-				if section["header"]["section_number"] not in sdt_current_sections_read:
-					sdt_current_sections_read.append(section["header"]["section_number"])
-					sdt_current_content += section["content"]
-
-					if len(sdt_current_sections_read) == sdt_current_sections_count:
-						sdt_current_completed = True
-
-			if sdt_current_completed:
-				break
-
-		dvbreader.close(fd)
+			mask = 0xff
+			sdt_current_version_number = -1
+			sdt_current_sections_read = []
+			sdt_current_sections_count = 0
+			sdt_current_content = []
+			sdt_current_completed = False
+	
+			fd = dvbreader.open(self.demuxer_device, self.sdt_pid, self.sdt_current_table_id, mask, self.selectedNIM)
+			if fd < 0:
+				print("[%s][readSDT] Cannot open the demuxer" % self.debugName)
+				self.showError(_('Cannot open the demuxer'))
+				return
+	
+			timeout = datetime.datetime.now()
+			timeout += datetime.timedelta(0, self.TIMEOUT_SDT)
+	
+			while True:
+				if datetime.datetime.now() > timeout:
+					print("[%s][readSDT] Timed out" % self.debugName)
+					break
+	
+				section = dvbreader.read_sdt(fd, self.sdt_current_table_id, 0x00)
+				if section is None:
+					sleep(0.1)	# no data.. so we wait a bit
+					continue
+	
+				if self.extra_debug:
+					print("[%s] SDT raw section header" % self.debugName, section["header"])
+					print("[%s] SDT raw section content" % self.debugName, section["content"])
+	
+				# Check the ONID is correct... maybe we are receiving the "wrong" satellite or dish is still moving.
+				if self.transpondercurrent["original_network_id"] != section["header"]["original_network_id"]:
+					continue
+	
+				# Check for ONID/TSID miss match between the transport stream we have tuned and the one we are supposed to tune.
+				# A miss match happens when the NIT table on the home transponder has broken data.
+				# If there is a miss match correct it now, before the data is "used in anger".
+	#			if self.transpondercurrent["transport_stream_id"] != section["header"]["transport_stream_id"]:
+	#				print("[%s] readSDT ONID/TSID mismatch. Supposed to be reading: 0x%x/0x%x, Currently reading: 0x%x/0x%x. Will accept current data as  authoritative." % (self.debugName, self.transpondercurrent["original_network_id"], self.transpondercurrent["transport_stream_id"], section["header"]["original_network_id"], section["header"]["transport_stream_id"]))
+	#				self.transpondercurrent["real_transport_stream_id"] = section["header"]["transport_stream_id"]
+	
+				if section["header"]["table_id"] == self.sdt_current_table_id and not sdt_current_completed:
+					if section["header"]["version_number"] != sdt_current_version_number:
+						sdt_current_version_number = section["header"]["version_number"]
+						sdt_current_sections_read = []
+						sdt_current_sections_count = section["header"]["last_section_number"] + 1
+						sdt_current_content = []
+	
+					if section["header"]["section_number"] not in sdt_current_sections_read:
+						sdt_current_sections_read.append(section["header"]["section_number"])
+						sdt_current_content += section["content"]
+	
+						if len(sdt_current_sections_read) == sdt_current_sections_count:
+							sdt_current_completed = True
+	
+				if sdt_current_completed:
+					break
+	
+			dvbreader.close(fd)
+		# End: only read SDT Actual
 
 		self.SDTsReadTime += time() - start_time
 
