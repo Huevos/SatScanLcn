@@ -891,6 +891,7 @@ class SatScanLcn(Screen): # the downloader
 
 	def processTransponders(self, transponderList):
 		transponders_count = 0
+		self.TSID_ONID_list = [] # so we know what to look for in the SDT when we are looking for SDT Other
 		for transponder in transponderList:
 			transponder["dvb_type"] = "dvbs" # so we know how to format it
 			transponder["orbital_position"] = self.getOrbPosFromBCD(transponder)
@@ -898,6 +899,9 @@ class SatScanLcn(Screen): # the downloader
 				if self.extra_debug:
 					print("[%s] Skipping transponder as it is on a not configured satellite:" % self.debugName, transponder)
 				continue
+			TSID_ONID_key = "%x:%x" % (transponder["transport_stream_id"], transponder["original_network_id"])
+			if TSID_ONID_key not in self.TSID_ONID_list:
+				self.TSID_ONID_list.append(TSID_ONID_key)
 			transponder["flags"] = 0
 			transponder["frequency"] = int(round(transponder["frequency"]*10, -3)) # Number will be five digits according to SI output, plus 3 trailing zeros. This is the same format used in satellites.xml.
 			transponder["symbol_rate"] = int(round(transponder["symbol_rate"]*100, -3))
