@@ -353,13 +353,16 @@ PyObject *ss_parse_bat(unsigned char *data, int length) {
 					service_id = (data[offset3] << 8) | data[offset3 + 1];
 					service_type = data[offset3 + 2];
 
-					PyObject *item = Py_BuildValue("{s:i,s:i,s:i,s:i,s:i,s:i,s:i,s:i}",
+					PyObject *item = Py_BuildValue("{s:i,s:i,s:i,s:i,s:i,s:i,s:i,s:i,s:i}",
 							"descriptor_tag", descriptor_tag,
 							"transport_stream_id", transport_stream_id,
 							"original_network_id", original_network_id,
-							"service_id", service_id, "number", sky_id,
-							"service_type", service_type, "region_id", region_id,
-							"channel_id", channel_id);
+							"service_id", service_id,
+							"number", sky_id,
+							"service_type", service_type,
+							"region_id", region_id,
+							"channel_id", channel_id, 
+							"logical_channel_number", sky_id);
 
 					PyList_Append(list, item);
 					Py_DECREF(item);
@@ -525,12 +528,15 @@ PyObject *ss_parse_bat(unsigned char *data, int length) {
 						channel_number = ((data[offset3] << 8) | data[offset3 + 1]) & 0x0fff;
 						region_id = (data[offset3 + 2] << 8) | data[offset3 + 3];
 
-						PyObject *item = Py_BuildValue("{s:i,s:i,s:i,s:i,s:i,s:i,s:i}",
+						PyObject *item = Py_BuildValue("{s:i,s:i,s:i,s:i,s:i,s:i,s:i,s:i}",
 								"descriptor_tag", descriptor_tag,
 								"transport_stream_id", transport_stream_id,
 								"original_network_id", original_network_id,
-								"service_id", service_id, "number", channel_number,
-								"region_id", region_id, "channel_id", channel_id);
+								"service_id", service_id,
+								"number", channel_number,
+								"region_id", region_id, 
+								"channel_id", channel_id,
+								"logical_channel_number", channel_number);
 
 						PyList_Append(list, item);
 						Py_DECREF(item);
