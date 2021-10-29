@@ -920,7 +920,8 @@ class SatScanLcn(Screen): # the downloader
 				print("[%s] transponder" % self.debugName, transponder)
 
 			self.SDTscanList.append(transponder)
-			self.actionsList.append("read SDTs") # Adds new task to actions list to scan SDT of this transponder.
+			if not self.sdt_only_scan_home or "read SDTs" not in self.actionsList: # If we are only scanning home only enter this once... otherwise enter it for all transponders.
+				self.actionsList.append("read SDTs") # Adds new task to actions list to scan SDT of this transponder.
 
 		# Sort the transponder scan list.
 		# step one: put the home transponder at the start of the list so no retune is required.
