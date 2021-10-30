@@ -1275,7 +1275,7 @@ class SatScanLcn_Setup(ConfigListScreen, Screen):
 		self["actions2"] = ActionMap(["SetupActions", "ColorActions"],
 		{
 			"ok": self.keyOk,
-			"menu": self.keyCancel,
+			"menu": self.keymenu,
 			"cancel": self.keyCancel,
 			"save": self.keySave,
 			"red": self.keyCancel,
@@ -1319,10 +1319,7 @@ class SatScanLcn_Setup(ConfigListScreen, Screen):
 		self["config"].l.setList(self.list)
 
 	def keyOk(self):
-		if self["config"].getCurrent() and len(self["config"].getCurrent()) > 1 and self["config"].getCurrent()[1] == self.config.dayscreen:
-			self.session.open(DaysScreen)
-		else:
-			self.keySave()
+		self.keySelect() if getattr(self, "keySelect", None) else self.keySave()
 
 	def keyCancel(self):
 		if self["config"].isChanged():
@@ -1338,11 +1335,15 @@ class SatScanLcn_Setup(ConfigListScreen, Screen):
 
 	def keySave(self):
 		self.saveAll()
-		self["description"].setText(_("The current configuration has been saved.") + (self.scheduleInfo and " " + _("Next scheduled fetch is programmed for %s.") % self.scheduleInfo + " " or " "))
+		self["description"].setText(_("The current config has been saved.")) 
+		
 
 	def keyGo(self):
 		self.saveAll()
 		self.startDownload()
+
+	def keymenu(self):
+		self.keySelect() if getattr(self, "keySelect", None) else self.keyCancel() # self.keySelect() comes from ConfigListScreen but may not be availablein some distros
 
 	def startDownload(self):
 		print("[SatScanLcn] startDownload")
