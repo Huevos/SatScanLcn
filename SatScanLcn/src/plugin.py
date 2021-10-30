@@ -8,7 +8,7 @@ from Components.NimManager import nimmanager
 from Plugins.Plugin import PluginDescriptor
 from Tools.BoundFunction import boundFunction
 
-from .satscanlcn import Scheduleautostart, SatScanLcn, SatScanLcn_Setup
+from .satscanlcn import SatScanLcn, SatScanLcn_Setup
 from .providers import PROVIDERS
 
 config.plugins.satscanlcn = ConfigSubsection()
@@ -18,20 +18,6 @@ config.plugins.satscanlcn.extensions = ConfigYesNo(default = False)
 for x in PROVIDERS.keys(): # if any provider has a regions list write it to a ConfigSelection 
 	if "bat" in PROVIDERS[x] and "bat_regions" in PROVIDERS[x]["bat"]:
 		setattr(config.plugins.satscanlcn, x, ConfigSelection(choices=[(a, a) for a in sorted(PROVIDERS[x]["bat"]["bat_regions"].keys())]))
-
-# start: satscanlcn.schedule
-config.plugins.satscanlcn.schedule = ConfigYesNo(default = False)
-config.plugins.satscanlcn.scheduletime = ConfigClock(default = 0) # 1:00
-config.plugins.satscanlcn.retry = ConfigNumber(default = 30)
-config.plugins.satscanlcn.retrycount = NoSave(ConfigNumber(default = 0))
-config.plugins.satscanlcn.nextscheduletime = ConfigNumber(default = 0)
-config.plugins.satscanlcn.schedulewakefromdeep = ConfigYesNo(default = True)
-config.plugins.satscanlcn.scheduleshutdown = ConfigYesNo(default = True)
-config.plugins.satscanlcn.dayscreen = ConfigSelection(choices = [("1", _("Press OK"))], default = "1")
-config.plugins.satscanlcn.days = ConfigSubDict()
-for i in range(7):
-	config.plugins.satscanlcn.days[i] = ConfigEnableDisable(default = True)
-# end: satscanlcn.schedule
 
 config.plugins.satscanlcn.extra_debug = ConfigYesNo(default = False)
 config.plugins.satscanlcn.sync_with_known_tps = ConfigYesNo(default = False)
@@ -53,15 +39,10 @@ def SatScanLcnCallback(close=None, answer=None): # Called on exiting setup scree
 	if close and answer:
 		close(True)
 
-def SatScanLcnWakeupTime(): # Called on shutdown (going into deep standby) to tell the box when to wake from deep
-	print("[SatScanLcn] next wake up due %d" % (config.plugins.satscanlcn.schedule.value and config.plugins.satscanlcn.schedulewakefromdeep.value and config.plugins.satscanlcn.nextscheduletime.value > 0 and config.plugins.satscanlcn.nextscheduletime.value or -1))
-	return config.plugins.satscanlcn.schedule.value and config.plugins.satscanlcn.schedulewakefromdeep.value and config.plugins.satscanlcn.nextscheduletime.value > 0 and config.plugins.satscanlcn.nextscheduletime.value or -1
-
 def Plugins(**kwargs):
 	plist = []
 	if nimmanager.hasNimType("DVB-S"):
 		plist.append( PluginDescriptor(name=_("SatScanLcn"), description=description, where = PluginDescriptor.WHERE_MENU, needsRestart = False, fnc=SatScanLcnStart) )
-		plist.append(PluginDescriptor(name="SatScanLcnScheduler", where=[ PluginDescriptor.WHERE_AUTOSTART, PluginDescriptor.WHERE_SESSIONSTART ], fnc=Scheduleautostart, wakeupfnc=SatScanLcnWakeupTime, needsRestart=True))
 		if config.plugins.satscanlcn.extensions.getValue():
 			plist.append(PluginDescriptor(name=_("SatScanLcn"), description=description, where = PluginDescriptor.WHERE_EXTENSIONSMENU, fnc=startdownload, needsRestart=True))
 	return plist
