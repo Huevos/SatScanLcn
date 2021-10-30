@@ -839,12 +839,20 @@ class SatScanLcn(Screen): # the downloader
 			sid_list = []
 			tsid_list = []
 
-		for service in self.tmp_bat_content:
+		used_keys = []
+		for service in sorted(self.tmp_bat_content, key=lambda listItem: listItem["logical_channel_number"] if "logical_channel_number" in listItem else 0): # sort by channel number
 			if not self.ignore_visible_service_flag and "visible_service_flag" in service and service["visible_service_flag"] == 0:
+				continue
+				
+			if "logical_channel_number" not in service:
 				continue
 
 			key = "%x:%x:%x" % (service["transport_stream_id"], service["original_network_id"], service["service_id"])
-			self.logical_channel_number_dict[key] = service
+			if key not in used_keys:
+				used_keys.append(key)
+				self.logical_channel_number_dict[key] = service
+			
+			print("service", service)
 
 			if self.extra_debug:
 				print("[%s] LCN entry" % self.debugName, key, service)
