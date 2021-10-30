@@ -12,7 +12,7 @@ from .satscanlcn import Scheduleautostart, SatScanLcn, SatScanLcn_Setup
 from .providers import PROVIDERS
 
 config.plugins.satscanlcn = ConfigSubsection()
-config.plugins.satscanlcn.provider = ConfigSelection(default = "Orange_TV_16E", choices = [(x, PROVIDERS[x]["name"]) for x in sorted(PROVIDERS.keys())])
+config.plugins.satscanlcn.provider = ConfigSelection(choices = [(x, PROVIDERS[x]["name"]) for x in sorted(PROVIDERS.keys())])
 config.plugins.satscanlcn.extensions = ConfigYesNo(default = False)
 
 # start: satscanlcn.schedule
