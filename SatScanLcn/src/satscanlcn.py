@@ -128,9 +128,15 @@ class SatScanLcn(Screen): # the downloader
 		self.bat_pid = PROVIDERS[self.config.provider.value]["bat"]["bat_pid"] if "bat" in PROVIDERS[self.config.provider.value] and "bat_pid" in PROVIDERS[self.config.provider.value]["bat"] else self.bat_pid_default
 		self.bat_table_id = PROVIDERS[self.config.provider.value]["bat"]["bat_table_id"] if "bat" in PROVIDERS[self.config.provider.value] and "bat_table_id" in PROVIDERS[self.config.provider.value]["bat"] else self.bat_table_id_default
 		self.bat_lcn_descriptor = PROVIDERS[self.config.provider.value]["bat"]["bat_lcn_descriptor"] if "bat" in PROVIDERS[self.config.provider.value] and "bat_lcn_descriptor" in PROVIDERS[self.config.provider.value]["bat"] else None
+		self.bat_BouquetID = PROVIDERS[self.config.provider.value]["bat"]["BouquetID"] if "bat" in PROVIDERS[self.config.provider.value] and "BouquetID" in PROVIDERS[self.config.provider.value]["bat"] else None
 		# self.bat_region, for use where the provider has multiple regions grouped under any single BouquetID. Will be a list containing the desired region id and may also contain the region id of the services that are common to all regions.
 		self.bat_region = PROVIDERS[self.config.provider.value]["bat"]["bat_region"] if "bat" in PROVIDERS[self.config.provider.value] and "bat_region" in PROVIDERS[self.config.provider.value]["bat"] else None # input from providers should be a list
 		
+		if getattr(self.config, self.config.provider.value, None): # check if there is a regions ConfigSelection for this provider
+			bat_regions = getattr(self.config, self.config.provider.value)
+			self.bat_BouquetID = bat_regions.value[0]
+			self.bat_region = bat_regions.value[1]
+
 		if self.bat_lcn_descriptor:
 			self.descriptors["lcn"] = self.bat_lcn_descriptor
 
@@ -630,7 +636,7 @@ class SatScanLcn(Screen): # the downloader
 				print("[%s] BAT raw section content" % self.debugName, section["content"])
 
 			if section["header"]["table_id"] == self.bat_table_id:
-				if section["header"]["bouquet_id"] != self.bat["BouquetID"]:
+				if section["header"]["bouquet_id"] != self.bat_BouquetID:
 					continue
 
 				if section["header"]["version_number"] != bat_section_version:
@@ -1295,6 +1301,8 @@ class SatScanLcn_Setup(ConfigListScreen, Screen):
 		self.list = []
 
 		self.list.append(getConfigListEntry(_("Provider"), self.config.provider, _('Select the provider you wish to scan.')))
+		if getattr(self.config, self.config.provider.value, None):
+			self.list.append(getConfigListEntry(indent + _("%s region") % PROVIDERS[self.config.provider.value]["name"], getattr(self.config, self.config.provider.value), _('Select the %s region to scan.') % PROVIDERS[self.config.provider.value]["name"]))
 		self.list.append(getConfigListEntry(_("Scheduled fetch"), self.config.schedule, _("Set up a task scheduler to periodically update data.")))
 		if self.config.schedule.value:
 			self.list.append(getConfigListEntry(indent + _("Schedule time of day"), self.config.scheduletime, _("Set the time of day to run SatScanLcn.")))
@@ -1358,7 +1366,7 @@ class SatScanLcn_Setup(ConfigListScreen, Screen):
 	def changedEntry(self):
 		for x in self.onChangedEntry:
 			x()
-		if self["config"].getCurrent() and len(self["config"].getCurrent()) > 1 and self["config"].getCurrent()[1] in (self.config.schedule, self.config.schedulewakefromdeep, self.showAdvancedOptions):
+		if self["config"].getCurrent() and len(self["config"].getCurrent()) > 1 and self["config"].getCurrent()[1] in (self.config.provider, self.config.schedule, self.config.schedulewakefromdeep, self.showAdvancedOptions):
 			self.createSetup()
 
 	def getCurrentEntry(self):

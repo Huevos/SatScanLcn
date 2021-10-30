@@ -15,6 +15,10 @@ config.plugins.satscanlcn = ConfigSubsection()
 config.plugins.satscanlcn.provider = ConfigSelection(choices = [(x, PROVIDERS[x]["name"]) for x in sorted(PROVIDERS.keys())])
 config.plugins.satscanlcn.extensions = ConfigYesNo(default = False)
 
+for x in PROVIDERS.keys(): # if any provider has a regions list write it to a ConfigSelection 
+	if "bat" in PROVIDERS[x] and "bat_regions" in PROVIDERS[x]["bat"]:
+		setattr(config.plugins.satscanlcn, x, ConfigSelection(choices=[(a, a) for a in sorted(PROVIDERS[x]["bat"]["bat_regions"].keys())]))
+
 # start: satscanlcn.schedule
 config.plugins.satscanlcn.schedule = ConfigYesNo(default = False)
 config.plugins.satscanlcn.scheduletime = ConfigClock(default = 0) # 1:00
