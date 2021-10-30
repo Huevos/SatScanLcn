@@ -8,11 +8,13 @@ from Components.NimManager import nimmanager
 from Plugins.Plugin import PluginDescriptor
 from Tools.BoundFunction import boundFunction
 
-from .satscanlcn import SatScanLcn, SatScanLcn_Setup
+from .satscanlcn import SatScanLcn, SatScanLcn_Setup, getConfiguredSats
 from .providers import PROVIDERS
 
+configured_sats = getConfiguredSats()
+
 config.plugins.satscanlcn = ConfigSubsection()
-config.plugins.satscanlcn.provider = ConfigSelection(choices = [(x, PROVIDERS[x]["name"]) for x in sorted(PROVIDERS.keys())])
+config.plugins.satscanlcn.provider = ConfigSelection(choices = [(x, PROVIDERS[x]["name"]) for x in sorted(PROVIDERS.keys()) if PROVIDERS[x]["transponder"]["orbital_position"] in configured_sats])
 config.plugins.satscanlcn.extensions = ConfigYesNo(default = False)
 
 for x in PROVIDERS.keys(): # if any provider has a regions list write it to a ConfigSelection 

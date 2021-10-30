@@ -33,6 +33,17 @@ from Plugins.SystemPlugins.AutoBouquetsMaker.scanner import dvbreader
 #from . import dvbreader
 
 
+def getConfiguredSats():
+	configured_sats = []
+	for nim in nimmanager.nim_slots:
+		if not nim.isCompatible("DVB-S") or \
+			nim.isFBCLink() or \
+			(hasattr(nim, 'config_mode_dvbs') and nim.config_mode_dvbs or nim.config_mode) in ("loopthrough", "satposdepends", "nothing"):
+			continue
+		configured_sats = [sat[0] for sat in nimmanager.getSatListForNim(nim.slot)]
+	return list(set(configured_sats))
+
+
 class SatScanLcn(Screen): # the downloader
 	skin = downloadBar()
 
@@ -1292,6 +1303,8 @@ class SatScanLcn_Setup(ConfigListScreen, Screen):
 		self["description"] = Label("")
 
 		self.showAdvancedOptions = ConfigYesNo(default = False)
+		
+		self.updateProviders()
 
 		self.createSetup()
 
@@ -1299,6 +1312,14 @@ class SatScanLcn_Setup(ConfigListScreen, Screen):
 			self["config"].onSelectionChanged.append(self.selectionChanged)
 		self.selectionChanged()
 
+	def updateProviders(self): # just in case tuner config has been modified since boot
+		currentValue = self.config.provider.value
+		configured_sats = getConfiguredSats()
+		choices = [(x, PROVIDERS[x]["name"]) for x in sorted(PROVIDERS.keys()) if PROVIDERS[x]["transponder"]["orbital_position"] in configured_sats]
+		default = currentValue if currentValue in configured_sats else choices[0][0] 
+		self.config.provider.setChoices(choices=choices, default=default)
+	
+	
 	def createSetup(self):
 		indent = "- "
 		self.list = []
