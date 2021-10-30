@@ -847,7 +847,7 @@ class SatScanLcn(Screen): # the downloader
 			tsid_list = []
 
 		used_keys = []
-		for service in sorted(self.tmp_bat_content, key=lambda listItem: listItem["logical_channel_number"] if "logical_channel_number" in listItem else 0): # sort by channel number
+		for service in sorted(self.tmp_bat_content, key=lambda listItem: (listItem["logical_channel_number"] if "logical_channel_number" in listItem else 0, listItem["region_id"] if "region_id" in listItem else 0)): # sort by channel number
 			if not self.ignore_visible_service_flag and "visible_service_flag" in service and service["visible_service_flag"] == 0:
 				continue
 				
