@@ -1316,8 +1316,9 @@ class SatScanLcn_Setup(ConfigListScreen, Screen):
 		currentValue = self.config.provider.value
 		configured_sats = getConfiguredSats()
 		choices = [(x, PROVIDERS[x]["name"]) for x in sorted(PROVIDERS.keys()) if PROVIDERS[x]["transponder"]["orbital_position"] in configured_sats]
-		default = currentValue if currentValue in configured_sats else choices[0][0] 
+		default = currentValue if PROVIDERS[currentValue]["transponder"]["orbital_position"] in configured_sats else choices[0][0] 
 		self.config.provider.setChoices(choices=choices, default=default)
+		self.config.provider.value = default
 	
 	
 	def createSetup(self):
