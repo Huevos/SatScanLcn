@@ -211,21 +211,30 @@ class SatScanLcn(Screen): # the downloader
 			self.timer = eTimer()
 			self.timer.callback.append(self.getFrontend)
 			self.timer.start(100, 1)
+			return
 
 		elif len(self.actionsList) > self.index and self.actionsList[self.index] == "read BAT":
-			self["status"].setText(_("Reading bouquet allocation table..."))
-			self.readBAT() # we are already tuned so go direct to read BAT
+			if not inStandby:
+				self["status"].setText(_("Reading bouquet allocation table..."))
+			self.timer = eTimer()
+			self.timer.callback.append(self.readBAT) # we are already tuned so go direct to read BAT
+			self.timer.start(100, 1)
+			return
 
 		elif len(self.actionsList) > self.index and self.actionsList[self.index] == "read SDTs":
 			if not inStandby:
 				self["status"].setText(_("Services: %d video - %d radio") % (self.video_services, self.radio_services))
 			self.transpondercurrent = self.SDTscanList[self.index - self.actionsListOrigLength]
 			if self.index == self.actionsListOrigLength: # this is the home transponder. We know it is the home transponder because that is first in the SDT scan list. And we are still tuned to it so go direct to read.
-				self.readSDT()
+				self.timer = eTimer()
+				self.timer.callback.append(self.readSDT)
+				self.timer.start(100, 1)
+				return
 			else:
 				self.timer = eTimer()
 				self.timer.callback.append(self.getFrontend)
 				self.timer.start(100, 1)
+				return
 
 		else:
 			if not inStandby:
