@@ -1059,7 +1059,7 @@ class SatScanLcn(Screen): # the downloader
 				transponder["modulation"] = knownTransponder[nameToIndex["modulation"]]
 				return transponder
 
-		# nothing found so we make it a bit looser
+		# nothing found so we make it a bit looser (no symbol rate). Step one stops selecting the wrong transponder if there are 2 similar ones.
 		for knownTransponder in tpList:
 			if (knownTransponder[nameToIndex["polarization"]] % 2) == (transponder["polarization"] % 2) and \
 				abs(knownTransponder[nameToIndex["frequency"]] - transponder["frequency"]) < (tolerance*multiplier):
@@ -1092,11 +1092,16 @@ class SatScanLcn(Screen): # the downloader
 				if len(lines) > 1:
 					bouquets_tv_list.append("%s" % lines[1])
 			newBouquetIndexContent = ''.join(bouquets_tv_list)
+		else:
+			if self.extra_debug:
+				print("[%s] Already present in index..." % self.debugName)
 
 		if '"' + self.lastScannnedBouquetFilename + '"' not in bouquetIndexContent: # check if LasScanned bouquet is present in the index
 			newBouquetIndexContent += "#SERVICE 1:7:1:0:0:0:0:0:0:0:FROM BOUQUET \"%s\" ORDER BY bouquet\n" % self.lastScannnedBouquetFilename
 
 		if bouquetIndexContent != newBouquetIndexContent:
+			if self.extra_debug:
+				print("[%s] Writing to the index..." % self.debugName)
 			with open(self.path + "/" + self.bouquetsIndexFilename, "w") as bouquets_tv:
 				bouquets_tv.write(newBouquetIndexContent)
 
@@ -1111,6 +1116,8 @@ class SatScanLcn(Screen): # the downloader
 			else:
 				bouquet_list.append(self.spacer())
 
+		if self.extra_debug:
+			print("[%s] Writing provider bouquet..." % self.debugName)
 		with open(self.path + "/" + self.bouquetFilename, "w") as bouquetFile:
 			bouquetFile.write(''.join(bouquet_list))
 
@@ -1135,7 +1142,8 @@ class SatScanLcn(Screen): # the downloader
 		for key in sort_list:
 			service = self.tmp_services_dict[key]
 			last_scanned_bouquet_list.append(self.bouquetServiceLine(service))
-		print("[%s] Writing Last Scanned bouquet..." % self.debugName)
+		if self.extra_debug:
+			print("[%s] Writing Last Scanned bouquet..." % self.debugName)
 		with open(self.path + "/" + self.lastScannnedBouquetFilename, "w") as bouquet_current:
 			bouquet_current.write(''.join(last_scanned_bouquet_list))
 
