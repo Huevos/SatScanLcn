@@ -972,7 +972,7 @@ class SatScanLcn(Screen): # the downloader
 		if self.extra_debug:
 			for tp in self.SDTscanList:
 				print("[%s] transponder scan list sorted, %s  %d %s" % (self.debugName, self.getOrbPosHuman(tp["orbital_position"]), tp["frequency"], self.polarization_dict.get(tp["polarization"], "UNKNOWN")))
-		self.progresscount += transponders_count
+		self.progresscount += 1 if self.sdt_only_scan_home else transponders_count
 
 		from Screens.Standby import inStandby
 		if not inStandby:
