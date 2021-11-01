@@ -474,7 +474,7 @@ class SatScanLcn(Screen): # the downloader
 
 		return passed_test
 
-	def readNIT(self, read_other_section=True):
+	def readNIT(self):
 		print("[%s] Reading NIT..." % self.debugName)
 		
 		if self.nit_other_table_id == 0x00:
@@ -509,7 +509,7 @@ class SatScanLcn(Screen): # the downloader
 		nit_other_sections_count = {}
 		nit_other_content = {}
 		nit_other_completed = {}
-		all_nit_others_completed = not read_other_section or self.nit_other_table_id == 0x00
+		all_nit_others_completed = self.nit_other_table_id == 0x00
 
 		timeout = datetime.datetime.now()
 		timeout += datetime.timedelta(0, self.TIMEOUT_NIT)
@@ -611,7 +611,7 @@ class SatScanLcn(Screen): # the downloader
 				self.logical_channel_number_dict[LCNkey] = LCN
 		# end: only for providers that store LCN in NIT (not for providers where LCN is stored in the BAT)
 
-		if read_other_section and len(nit_other_completed):
+		if self.nit_other_table_id != 0x00 and len(nit_other_completed):
 			print("[%s] Added/Updated %d transponders with network_id = 0x%x and other network_ids = %s" % (self.debugName, transponders_count, nit_current_section_network_id, ','.join(map(hex, list(nit_other_completed.keys())))))
 		else:
 			print("[%s] Added/Updated %d transponders with network_id = 0x%x" % (self.debugName, transponders_count, nit_current_section_network_id))
