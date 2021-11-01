@@ -146,8 +146,10 @@ class SatScanLcn(Screen): # the downloader
 		if getattr(self.config, self.config.provider.value, None): # check if there is a regions ConfigSelection for this provider
 			bat_regions = getattr(self.config, self.config.provider.value)
 			if "bat" in PROVIDERS[self.config.provider.value] and "bat_regions" in PROVIDERS[self.config.provider.value]["bat"] and bat_regions.value in PROVIDERS[self.config.provider.value]["bat"]["bat_regions"]:
-				self.bat_BouquetID = PROVIDERS[self.config.provider.value]["bat"]["bat_regions"][bat_regions.value][0]
-				self.bat_region = PROVIDERS[self.config.provider.value]["bat"]["bat_regions"][bat_regions.value][1]
+				if len(PROVIDERS[self.config.provider.value]["bat"]["bat_regions"][bat_regions.value]):
+					self.bat_BouquetID = PROVIDERS[self.config.provider.value]["bat"]["bat_regions"][bat_regions.value][0]
+				if len(PROVIDERS[self.config.provider.value]["bat"]["bat_regions"][bat_regions.value]) > 1:
+					self.bat_region = PROVIDERS[self.config.provider.value]["bat"]["bat_regions"][bat_regions.value][1]
 
 		if self.bat_lcn_descriptor:
 			self.descriptors["lcn"] = self.bat_lcn_descriptor
