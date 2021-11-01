@@ -101,7 +101,7 @@ class SatScanLcn(Screen): # the downloader
 		self.ignore_visible_service_flag = False # make this a user override later if found necessary. Visible service flag is currently available in the NIT and BAT on most home transponders
 		self.VIDEO_ALLOWED_TYPES = [1, 4, 5, 17, 22, 24, 25, 27, 31, 135] # 4 and 5 NVOD, 17 MPEG-2 HD digital television service, 22 advanced codec SD digital television service, 24 advanced codec SD NVOD reference service, 27 advanced codec HD NVOD reference service, 31 ???, seems to be used on Astra 1 for some UHD/4K services
 		self.AUDIO_ALLOWED_TYPES = [2, 10] # 10 advanced codec digital radio sound service
-		self.BOUQUET_PREFIX = "userbouquet.%s." % self.config.provider.value # avoids hard coding below
+		self.BOUQUET_PREFIX = "userbouquet.%s." % self.__class__.__name__ # avoids hard coding below
 		self.bouquetsIndexFilename = "bouquets.tv" # avoids hard coding below
 		self.bouquetFilename = self.BOUQUET_PREFIX + self.config.provider.value + ".tv"
 		self.lastScannnedBouquetFilename = "userbouquet.LastScanned.tv"
