@@ -1315,23 +1315,12 @@ class SatScanLcn_Setup(ConfigListScreen, Screen):
 
 		self.showAdvancedOptions = ConfigYesNo(default = False)
 		
-		self.updateProviders()
-
 		self.createSetup()
 
 		if not self.selectionChanged in self["config"].onSelectionChanged:
 			self["config"].onSelectionChanged.append(self.selectionChanged)
 		self.selectionChanged()
 
-	def updateProviders(self): # just in case tuner config has been modified since boot
-		currentValue = self.config.provider.value
-		configured_sats = getConfiguredSats()
-		choices = [(x, PROVIDERS[x]["name"]) for x in sorted(PROVIDERS.keys()) if PROVIDERS[x]["transponder"]["orbital_position"] in configured_sats]
-		default = currentValue if PROVIDERS[currentValue]["transponder"]["orbital_position"] in configured_sats else choices[0][0] 
-		self.config.provider.setChoices(choices=choices, default=default)
-		self.config.provider.value = default
-	
-	
 	def createSetup(self):
 		indent = "- "
 		self.list = []
