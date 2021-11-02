@@ -122,6 +122,13 @@ class SatScanLcn(Screen): # the downloader
 		self.nit_pid = PROVIDERS[self.config.provider.value]["nit"]["nit_pid"] if "nit" in PROVIDERS[self.config.provider.value] and "nit_pid" in PROVIDERS[self.config.provider.value]["nit"] else self.nit_pid_default
 		self.nit_current_table_id = PROVIDERS[self.config.provider.value]["nit"]["nit_current_table_id"] if "nit" in PROVIDERS[self.config.provider.value] and "nit_current_table_id" in PROVIDERS[self.config.provider.value]["nit"] else self.nit_current_table_id_default
 		self.nit_other_table_id = PROVIDERS[self.config.provider.value]["nit"]["nit_other_table_id"] if "nit" in PROVIDERS[self.config.provider.value] and "nit_other_table_id" in PROVIDERS[self.config.provider.value]["nit"] else self.nit_other_table_id_default
+		self.nit_lcn_descriptor = PROVIDERS[self.config.provider.value]["nit"]["nit_lcn_descriptor"] if "nit" in PROVIDERS[self.config.provider.value] and "nit_lcn_descriptor" in PROVIDERS[self.config.provider.value]["nit"] else None
+		self.nit_BouquetID = PROVIDERS[self.config.provider.value]["nit"]["BouquetID"] if "nit" in PROVIDERS[self.config.provider.value] and "BouquetID" in PROVIDERS[self.config.provider.value]["nit"] else None
+		
+		if getattr(self.config, "nit-BouquetIDs-" + self.config.provider.value, None): # check if there is a regions ConfigSelection for this provider
+			nit_BouquetIDs = getattr(self.config, "nit-BouquetIDs-" + self.config.provider.value)
+			if "nit" in PROVIDERS[self.config.provider.value] and "BouquetIDs" in PROVIDERS[self.config.provider.value]["nit"] and nit_BouquetIDs.value in PROVIDERS[self.config.provider.value]["nit"]["BouquetIDs"]:
+				self.nit_BouquetID = PROVIDERS[self.config.provider.value]["nit"]["BouquetIDs"][nit_BouquetIDs.value]
 
 		self.sdt_pid_default = 0x11 # DVB default
 		self.sdt_current_table_id_default = 0x42 # DVB default
@@ -144,8 +151,8 @@ class SatScanLcn(Screen): # the downloader
 		# self.bat_region, for use where the provider has multiple regions grouped under any single BouquetID. Will be a list containing the desired region id and may also contain the region id of the services that are common to all regions.
 		self.bat_region = PROVIDERS[self.config.provider.value]["bat"]["bat_region"] if "bat" in PROVIDERS[self.config.provider.value] and "bat_region" in PROVIDERS[self.config.provider.value]["bat"] else None # input from providers should be a list
 		
-		if getattr(self.config, self.config.provider.value, None): # check if there is a regions ConfigSelection for this provider
-			bat_regions = getattr(self.config, self.config.provider.value)
+		if getattr(self.config, "bat-regions-" + self.config.provider.value, None): # check if there is a regions ConfigSelection for this provider
+			bat_regions = getattr(self.config, "bat-regions-" + self.config.provider.value)
 			if "bat" in PROVIDERS[self.config.provider.value] and "bat_regions" in PROVIDERS[self.config.provider.value]["bat"] and bat_regions.value in PROVIDERS[self.config.provider.value]["bat"]["bat_regions"]:
 				if len(PROVIDERS[self.config.provider.value]["bat"]["bat_regions"][bat_regions.value]):
 					self.bat_BouquetID = PROVIDERS[self.config.provider.value]["bat"]["bat_regions"][bat_regions.value][0]
@@ -154,6 +161,9 @@ class SatScanLcn(Screen): # the downloader
 
 		if self.bat_lcn_descriptor:
 			self.descriptors["lcn"] = self.bat_lcn_descriptor
+
+		if self.nit_lcn_descriptor:
+			self.descriptors["lcn"] = self.nit_lcn_descriptor
 
 		self.SDTscanList = [] # list of transponders we are going to scan the SDT of.
 		self.tmp_services_dict = {} # services found in SDTs of the scanned transponders. Keys, TSID:ONID:SID  in hex 
@@ -601,7 +611,13 @@ class SatScanLcn(Screen): # the downloader
 		self.tmp_service_list = [x for x in nit_content if "descriptor_tag" in x and x["descriptor_tag"] == self.descriptors["serviceList"]]
 		
 		# start: only for providers that store LCN in NIT (not for providers where LCN is stored in the BAT)
-		LCNs = [x for x in nit_content if "descriptor_tag" in x and x["descriptor_tag"] == self.descriptors["lcn"]]
+		LCNs = []
+		for x in nit_content:
+			if "channel_list_id" in x and x["channel_list_id"] != self.nit_BouquetID: # only for Canal Digital Nordic
+				continue
+			if "descriptor_tag" in x and x["descriptor_tag"] == self.descriptors["lcn"]:
+				LCNs.append(x)
+		
 		if self.extra_debug:
 			print("[%s][readNIT] LCNs" % self.debugName, LCNs)
 		if LCNs:
@@ -1342,8 +1358,10 @@ class SatScanLcn_Setup(ConfigListScreen, Screen):
 		self.list = []
 
 		self.list.append(getConfigListEntry(_("Provider"), self.config.provider, _('Select the provider you wish to scan.')))
-		if getattr(self.config, self.config.provider.value, None):
-			self.list.append(getConfigListEntry(indent + _("%s region") % PROVIDERS[self.config.provider.value]["name"], getattr(self.config, self.config.provider.value), _('Select the %s region to scan.') % PROVIDERS[self.config.provider.value]["name"]))
+		if getattr(self.config, "bat-regions-" + self.config.provider.value, None):
+			self.list.append(getConfigListEntry(indent + _("%s region") % PROVIDERS[self.config.provider.value]["name"], getattr(self.config, "bat-regions-" + self.config.provider.value), _('Select the %s region to scan.') % PROVIDERS[self.config.provider.value]["name"]))
+		if getattr(self.config, "nit-BouquetIDs-" + self.config.provider.value, None):
+			self.list.append(getConfigListEntry(indent + _("%s region") % PROVIDERS[self.config.provider.value]["name"], getattr(self.config, "nit-BouquetIDs-" +self.config.provider.value), _('Select the %s region to scan.') % PROVIDERS[self.config.provider.value]["name"]))
 		self.list.append(getConfigListEntry(_("FTA only"), self.config.fta_only, _("Only include free to air channels.")))
 		self.list.append(getConfigListEntry(_("HD only"), self.config.hd_only, _("Only include high definition channels.")))
 

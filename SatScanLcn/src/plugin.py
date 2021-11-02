@@ -21,7 +21,9 @@ config.plugins.satscanlcn.fta_only = ConfigYesNo(default = False)
 
 for x in PROVIDERS.keys(): # if any provider has a regions list write it to a ConfigSelection 
 	if "bat" in PROVIDERS[x] and "bat_regions" in PROVIDERS[x]["bat"]:
-		setattr(config.plugins.satscanlcn, x, ConfigSelection(choices=[(a, a) for a in sorted(PROVIDERS[x]["bat"]["bat_regions"].keys())]))
+		setattr(config.plugins.satscanlcn, "bat-regions-" + x, ConfigSelection(choices=[(a, a) for a in sorted(PROVIDERS[x]["bat"]["bat_regions"].keys())]))
+	if "nit" in PROVIDERS[x] and "BouquetIDs" in PROVIDERS[x]["nit"]:
+		setattr(config.plugins.satscanlcn, "nit-BouquetIDs-" + x, ConfigSelection(choices=[(a, a) for a in sorted(PROVIDERS[x]["nit"]["BouquetIDs"].keys())]))
 
 # advanced options
 config.plugins.satscanlcn.extra_debug = ConfigYesNo(default = False)
