@@ -270,7 +270,7 @@ class SatScanLcn(Screen): # the downloader
 	def getFrontend(self):
 		from Screens.Standby import inStandby
 		if not inStandby:
-			self["action"].setText(_("Tune %s %s %s %s...") % (self.bouquetName, self.getOrbPosHuman(self.transpondercurrent["orbital_position"]), str(self.transpondercurrent["frequency"]/1000), self.polarization_dict.get(self.transpondercurrent["polarization"],"")))
+			self["action"].setText(_("Tune %s %s %s %s...") % (self.bouquetName, self.getOrbPosHuman(self.transpondercurrent["orbital_position"]), str(self.transpondercurrent["frequency"]//1000), self.polarization_dict.get(self.transpondercurrent["polarization"],"")))
 		print("[%s][getFrontend] searching for available tuner" % self.debugName)
 		nimList = []
 		for nim in nimmanager.nim_slots:
@@ -368,10 +368,10 @@ class SatScanLcn(Screen): # the downloader
 		if self.isRotorSat(current_slotid, self.transpondercurrent["orbital_position"]):
 			self.motorised = True
 			self.LOCK_TIMEOUT = self.LOCK_TIMEOUT_ROTOR
-			print("[%s][getFrontend] Motorised dish. Will wait up to %i seconds for tuner lock." % (self.debugName, self.LOCK_TIMEOUT/10))
+			print("[%s][getFrontend] Motorised dish. Will wait up to %i seconds for tuner lock." % (self.debugName, self.LOCK_TIMEOUT//10))
 		else:
 			self.LOCK_TIMEOUT = self.LOCK_TIMEOUT_FIXED
-			print("[%s][getFrontend] Fixed dish. Will wait up to %i seconds for tuner lock." % (self.debugName, self.LOCK_TIMEOUT/10))
+			print("[%s][getFrontend] Fixed dish. Will wait up to %i seconds for tuner lock." % (self.debugName, self.LOCK_TIMEOUT//10))
 
 		self.selectedNIM = current_slotid  # Remember for downloading SI tables
 
@@ -410,7 +410,7 @@ class SatScanLcn(Screen): # the downloader
 				print("[%s][checkTunerLock] TUNING" % self.debugName)
 		elif self.dict["tuner_state"] == "LOCKED":
 			if not inStandby:
-				self["action"].setText(_("Read %s %s %s %s...") % (self.bouquetName, self.getOrbPosHuman(self.transpondercurrent["orbital_position"]), str(self.transpondercurrent["frequency"]/1000), self.polarization_dict.get(self.transpondercurrent["polarization"],"")))
+				self["action"].setText(_("Read %s %s %s %s...") % (self.bouquetName, self.getOrbPosHuman(self.transpondercurrent["orbital_position"]), str(self.transpondercurrent["frequency"]//1000), self.polarization_dict.get(self.transpondercurrent["polarization"],"")))
 
 			self.readTransponderCounter = 0
 			self.readTranspondertimer = eTimer()
@@ -422,13 +422,13 @@ class SatScanLcn(Screen): # the downloader
 			if self.actionsList[self.index] == "read SDTs": # if we can't tune a transponder just skip it (like enigma does)
 				self.manager()
 			else:
-				self.showError(_("Tuning failed on %s") % str(self.transpondercurrent["frequency"]/1000))
+				self.showError(_("Tuning failed on %s") % str(self.transpondercurrent["frequency"]//1000))
 			return
 
 		self.lockcounter += 1
 		if self.lockcounter > self.LOCK_TIMEOUT:
 			print("[%s][checkTunerLock] Timeout for tuner lock" % self.debugName)
-			self.showError(_("Timeout for tuner lock on %s") % str(self.transpondercurrent["frequency"]/1000))
+			self.showError(_("Timeout for tuner lock on %s") % str(self.transpondercurrent["frequency"]//1000))
 			return
 		self.locktimer.start(100, 1)
 
@@ -1056,7 +1056,7 @@ class SatScanLcn(Screen): # the downloader
 	def buildNamespace(self, transponder):
 		namespace = transponder['orbital_position'] << 16
 		if self.namespace_complete or not self.isValidOnidTsid(transponder):
-			namespace |= ((transponder['frequency'] / 1000) & 0xFFFF) | ((transponder['polarization'] & 1) << 15)
+			namespace |= ((transponder['frequency'] // 1000) & 0xFFFF) | ((transponder['polarization'] & 1) << 15)
 		return namespace
 
 	def addTransponders(self):
