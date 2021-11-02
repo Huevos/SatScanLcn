@@ -561,6 +561,33 @@ PROVIDERS = {
 			"sdt_only_scan_home": True,
 		},
 	},
+	"Telekom_Romania_0390": {
+		"name": _("Telekom Romania"),
+		"transponder": {
+			"frequency": 12524000,
+			"symbol_rate": 30000000,
+			"polarization": eDVBFrontendParametersSatellite.Polarisation_Vertical,
+			"fec_inner": eDVBFrontendParametersSatellite.FEC_Auto,
+			"orbital_position": 390,
+			"system": eDVBFrontendParametersSatellite.System_DVB_S,
+			"modulation": eDVBFrontendParametersSatellite.Modulation_QPSK,
+			"roll_off": eDVBFrontendParametersSatellite.RollOff_auto,
+			"original_network_id": 28,
+			"transport_stream_id": 13,
+		},
+		"bat": {
+			"bat_lcn_descriptor": 0xe2,
+			"BouquetID": 0x6080,
+			"bat_regions": { # ( BouquetID,)
+				'Bouquet 1': (0x6080,),
+				'Bouquet 2': (0x6081,),
+				'Bouquet 3 (NewCardOnly)': (0x6157,),
+			}
+		},
+		"sdt": {
+			"sdt_only_scan_home": True,
+		},
+	},
 	"TeleSAT_0192": {
 		"name": _("TeleSAT"), 
 		"transponder": M7_0192_transponder,
