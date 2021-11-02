@@ -16,11 +16,14 @@ configured_sats = getConfiguredSats()
 config.plugins.satscanlcn = ConfigSubsection()
 config.plugins.satscanlcn.provider = ConfigSelection(choices = [(x, PROVIDERS[x]["name"]) for x in sorted(PROVIDERS.keys()) if PROVIDERS[x]["transponder"]["orbital_position"] in configured_sats])
 config.plugins.satscanlcn.extensions = ConfigYesNo(default = False)
+config.plugins.satscanlcn.hd_only = ConfigYesNo(default = False)
+config.plugins.satscanlcn.fta_only = ConfigYesNo(default = False)
 
 for x in PROVIDERS.keys(): # if any provider has a regions list write it to a ConfigSelection 
 	if "bat" in PROVIDERS[x] and "bat_regions" in PROVIDERS[x]["bat"]:
 		setattr(config.plugins.satscanlcn, x, ConfigSelection(choices=[(a, a) for a in sorted(PROVIDERS[x]["bat"]["bat_regions"].keys())]))
 
+# advanced options
 config.plugins.satscanlcn.extra_debug = ConfigYesNo(default = False)
 config.plugins.satscanlcn.sync_with_known_tps = ConfigYesNo(default = False)
 config.plugins.satscanlcn.force_service_name = ConfigYesNo(default = False)

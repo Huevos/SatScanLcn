@@ -100,6 +100,7 @@ class SatScanLcn(Screen): # the downloader
 		self.logical_channel_number_dict = {} # Keys, TSID:ONID:SID in hex
 		self.ignore_visible_service_flag = False # make this a user override later if found necessary. Visible service flag is currently available in the NIT and BAT on most home transponders
 		self.VIDEO_ALLOWED_TYPES = [1, 4, 5, 17, 22, 24, 25, 27, 31, 135] # 4 and 5 NVOD, 17 MPEG-2 HD digital television service, 22 advanced codec SD digital television service, 24 advanced codec SD NVOD reference service, 27 advanced codec HD NVOD reference service, 31 ???, seems to be used on Astra 1 for some UHD/4K services
+		self.HD_ALLOWED_TYPES = [17, 25, 27, 31, 135] # 17 MPEG-2 HD digital television service, 27 advanced codec HD NVOD reference service, 31 ???, seems to be used on Astra 1 for some UHD/4K services
 		self.AUDIO_ALLOWED_TYPES = [2, 10] # 10 advanced codec digital radio sound service
 		self.BOUQUET_PREFIX = "userbouquet.%s." % self.__class__.__name__ # avoids hard coding below
 		self.bouquetsIndexFilename = "bouquets.tv" # avoids hard coding below
@@ -848,6 +849,14 @@ class SatScanLcn(Screen): # the downloader
 			if service["service_type"] not in self.VIDEO_ALLOWED_TYPES and service["service_type"] not in self.AUDIO_ALLOWED_TYPES:
 				continue
 
+			# remove standard definition as required (at the earliest possible stage so these services don't interfere with any subsequent processing).
+			if config.plugins.satscanlcn.fta_only.value and service["free_ca"] != 0:
+				continue
+
+			# remove encrypted as required (at the earliest possible stage so these services don't interfere with any subsequent processing).
+			if config.plugins.satscanlcn.hd_only.value and service["service_type"] not in self.HD_ALLOWED_TYPES:
+				continue
+
 			service["flags"] = 0
 			service["namespace"] = namespace
 
@@ -1303,26 +1312,22 @@ class SatScanLcn_Setup(ConfigListScreen, Screen):
 		ConfigListScreen.__init__(self, [], session = session, on_change = self.changedEntry)
 
 		self["actions2"] = ActionMap(["SetupActions", "ColorActions"],
-		{
-			"ok": self.keyOk,
-			"menu": self.keymenu,
+		{  # self.keySelect() comes from ConfigListScreen but may not be available in some distros
+			"ok": self.keySelect if getattr(self, "keySelect", None) else self.keyGo,
+			"menu": self.keySelect if getattr(self, "keySelect", None) else self.keyCancel,
 			"cancel": self.keyCancel,
-			"save": self.keySave,
-			"red": self.keyCancel,
-			"green": self.keySave,
-			"yellow": self.keyGo,
+			"save": self.keyGo,
+			"yellow": self.keyAdvanced,
 			"blue": self.keyAbout
 		}, -2)
 
 		self["key_red"] = StaticText(_("Exit"))
-		self["key_green"] = StaticText(_("Save"))
-		self["key_yellow"] = StaticText(_("Download"))
+		self["key_green"] = StaticText(_("Scan"))
+		self["key_yellow"] = StaticText(_("Advanced options"))
 		self["key_blue"] = StaticText(_("About"))
 
 		self["description"] = Label("")
 
-		self.showAdvancedOptions = ConfigYesNo(default = False)
-		
 		self.createSetup()
 
 		if not self.selectionChanged in self["config"].onSelectionChanged:
@@ -1336,20 +1341,11 @@ class SatScanLcn_Setup(ConfigListScreen, Screen):
 		self.list.append(getConfigListEntry(_("Provider"), self.config.provider, _('Select the provider you wish to scan.')))
 		if getattr(self.config, self.config.provider.value, None):
 			self.list.append(getConfigListEntry(indent + _("%s region") % PROVIDERS[self.config.provider.value]["name"], getattr(self.config, self.config.provider.value), _('Select the %s region to scan.') % PROVIDERS[self.config.provider.value]["name"]))
-		self.list.append(getConfigListEntry(_("Show advanced options"), self.showAdvancedOptions, _("Select yes to access advanced setup options.")))
-		if self.showAdvancedOptions.value:
-			self.list.append(getConfigListEntry(indent + _("Force channel name"), self.config.force_service_name, _("Switch this on only if you have issues with \"N/A\" appearing in your channel list. Switching this on means the channel name will not auto update if the broadcaster changes the channel name.")))
-			self.list.append(getConfigListEntry(indent + _("Sync with known transponders"), self.config.sync_with_known_tps, _('CAUTION: Sometimes the SI tables contain rogue data. Select "yes" to sync with transponder data listed in satellites.xml. Select "no" if you trust the SI data. Default is "no". Only change this if you understand why you are doing it.')))
-			self.list.append(getConfigListEntry(indent + _("Show in extensions menu"), self.config.extensions, _('When enabled, this allows you start a SatScanLcn update from the extensions list.')))
-			self.list.append(getConfigListEntry(indent + _("Extra debug"), self.config.extra_debug, _("CAUTION: This feature is for development only. Requires debug logs to be enabled or enigma2 to be started in console mode (at debug level 4).")))
-
-
+		self.list.append(getConfigListEntry(_("FTA only"), self.config.fta_only, _("Only include free to air channels.")))
+		self.list.append(getConfigListEntry(_("HD only"), self.config.hd_only, _("Only include high definition channels.")))
 
 		self["config"].list = self.list
 		self["config"].l.setList(self.list)
-
-	def keyOk(self):
-		self.keySelect() if getattr(self, "keySelect", None) else self.keySave()
 
 	def keyCancel(self):
 		if self["config"].isChanged():
@@ -1363,17 +1359,12 @@ class SatScanLcn_Setup(ConfigListScreen, Screen):
 				x[1].cancel()
 			self.close(False)
 
-	def keySave(self):
-		self.saveAll()
-		self["description"].setText(_("The current config has been saved.")) 
-		
-
 	def keyGo(self):
 		self.saveAll()
 		self.startDownload()
 
-	def keymenu(self):
-		self.keySelect() if getattr(self, "keySelect", None) else self.keyCancel() # self.keySelect() comes from ConfigListScreen but may not be availablein some distros
+	def keyAdvanced(self):
+		self.session.open(SatScanLcnAdvancedScreen)
 
 	def startDownload(self):
 		print("[SatScanLcn] startDownload")
@@ -1393,7 +1384,7 @@ class SatScanLcn_Setup(ConfigListScreen, Screen):
 	def changedEntry(self):
 		for x in self.onChangedEntry:
 			x()
-		if self["config"].getCurrent() and len(self["config"].getCurrent()) > 1 and self["config"].getCurrent()[1] in (self.config.provider, self.showAdvancedOptions):
+		if self["config"].getCurrent() and len(self["config"].getCurrent()) > 1 and self["config"].getCurrent()[1] in (self.config.provider,):
 			self.createSetup()
 
 	def getCurrentEntry(self):
@@ -1410,5 +1401,44 @@ class SatScanLcn_Setup(ConfigListScreen, Screen):
 	def saveAll(self):
 		for x in self["config"].list:
 			x[1].save()
-
 		configfile.save()
+
+class  SatScanLcnAdvancedScreen(ConfigListScreen, Screen):
+	def __init__(self, session, args = 0):
+		self.session = session
+		Screen.__init__(self, session)
+		Screen.setTitle(self, _('SatScanLcn') + " - " + _("Advanced options"))
+		self.skinName = ["Setup"]
+		self.config = config.plugins.satscanlcn
+		self.list = []
+		self.list.append(getConfigListEntry(_("Force channel name"), self.config.force_service_name, _("Switch this on only if you have issues with \"N/A\" appearing in your channel list. Switching this on means the channel name will not auto update if the broadcaster changes the channel name.")))
+		self.list.append(getConfigListEntry(_("Sync with known transponders"), self.config.sync_with_known_tps, _('CAUTION: Sometimes the SI tables contain rogue data. Select "yes" to sync with transponder data listed in satellites.xml. Select "no" if you trust the SI data. Default is "no". Only change this if you understand why you are doing it.')))
+		self.list.append(getConfigListEntry(_("Show in extensions menu"), self.config.extensions, _('When enabled, this allows you start a SatScanLcn update from the extensions list.')))
+		self.list.append(getConfigListEntry(_("Extra debug"), self.config.extra_debug, _("CAUTION: This feature is for development only. Requires debug logs to be enabled or enigma2 to be started in console mode (at debug level 4).")))
+		ConfigListScreen.__init__(self, self.list)
+		self["key_red"] = StaticText(_("Cancel"))
+		self["key_green"] = StaticText(_("Save"))
+		self["setupActions"] = ActionMap(["SetupActions"],
+		{
+			"save": self.keySave,
+			"cancel": self.keyCancel,
+			"ok": self.keySave,
+		}, -2)
+
+	def keySave(self):
+		for x in self["config"].list:
+			x[1].save()
+		configfile.save()
+		self.close()
+
+	def keyCancel(self):
+		if self["config"].isChanged():
+			self.session.openWithCallback(self.cancelCallback, MessageBox, _("Really close without saving settings?"))
+		else:
+			self.cancelCallback(True)
+
+	def cancelCallback(self, answer):
+		if answer:
+			for x in self["config"].list:
+				x[1].cancel()
+			self.close(False)
