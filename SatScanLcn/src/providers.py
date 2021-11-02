@@ -2,21 +2,87 @@
 from . import _
 from enigma import eDVBFrontendParametersSatellite
 
+M7_0192_transponder = {
+	"frequency": 12515000,
+	"symbol_rate": 22000000,
+	"polarization": eDVBFrontendParametersSatellite.Polarisation_Horizontal,
+	"fec_inner": eDVBFrontendParametersSatellite.FEC_5_6,
+	"orbital_position": 192,
+	"system": eDVBFrontendParametersSatellite.System_DVB_S,
+	"modulation": eDVBFrontendParametersSatellite.Modulation_QPSK,
+	"roll_off": eDVBFrontendParametersSatellite.RollOff_alpha_0_35,
+	"original_network_id": 0x0035,
+	"transport_stream_id": 0x0451,
+}
+
+M7_3592_transponder = {
+	"frequency": 11727000,
+	"symbol_rate": 28000000,
+	"polarization": eDVBFrontendParametersSatellite.Polarisation_Vertical,
+	"fec_inner": eDVBFrontendParametersSatellite.FEC_Auto,
+	"orbital_position": 3592,
+	"system": eDVBFrontendParametersSatellite.System_DVB_S,
+	"modulation": eDVBFrontendParametersSatellite.Modulation_QPSK,
+	"roll_off": eDVBFrontendParametersSatellite.FEC_Auto,
+	"original_network_id": 1536,
+	"transport_stream_id": 701,
+}
+
 PROVIDERS = {
+	"Austriasat": {
+		"name": _("Austriasat"), 
+		"transponder": M7_0192_transponder,
+		"nit": {
+			"nit_pid": 0x3b6,
+			"nit_current_table_id": 0xbc,
+			"nit_other_table_id": 0x00,
+		},
+	},
+	"BIS_TV_3550": {
+		"name": _("BIS TV (5.0W)"),
+		"transponder": {
+			"frequency": 11512000,
+			"symbol_rate": 29950000,
+			"polarization": eDVBFrontendParametersSatellite.Polarisation_Vertical,
+			"fec_inner": eDVBFrontendParametersSatellite.FEC_2_3,
+			"orbital_position": 3550,
+			"system": eDVBFrontendParametersSatellite.System_DVB_S2,
+			"modulation": eDVBFrontendParametersSatellite.Modulation_8PSK,
+			"roll_off": eDVBFrontendParametersSatellite.RollOff_auto,
+			"original_network_id": 1375,
+			"transport_stream_id": 20200,
+		},
+		"bat": {
+			"BouquetID": 0x0551,
+		},
+		"sdt": {
+			"sdt_only_scan_home": True,
+		},
+	},
+	"BIS_TV_0130": {
+		"name": _("BIS TV (13.0E)"),
+		"transponder": {
+			"frequency": 11681000,
+			"symbol_rate": 27500000,
+			"polarization": eDVBFrontendParametersSatellite.Polarisation_Horizontal,
+			"fec_inner": eDVBFrontendParametersSatellite.FEC_3_4,
+			"orbital_position": 130,
+			"system": eDVBFrontendParametersSatellite.System_DVB_S2,
+			"modulation": eDVBFrontendParametersSatellite.Modulation_8PSK,
+			"roll_off": eDVBFrontendParametersSatellite.RollOff_auto,
+			"original_network_id": 319,
+			"transport_stream_id": 15900,
+		},
+		"bat": {
+			"BouquetID": 0x0132,
+		},
+		"sdt": {
+			"sdt_only_scan_home": True,
+		},
+	},
 	"Canal_Digitaal_HD": {
 		"name": _("Canal Digitaal HD"), 
-		"transponder": {
-			"frequency": 12515000,
-			"symbol_rate": 22000000,
-			"polarization": eDVBFrontendParametersSatellite.Polarisation_Horizontal,
-			"fec_inner": eDVBFrontendParametersSatellite.FEC_5_6,
-			"orbital_position": 192,
-			"system": eDVBFrontendParametersSatellite.System_DVB_S,
-			"modulation": eDVBFrontendParametersSatellite.Modulation_QPSK,
-			"roll_off": eDVBFrontendParametersSatellite.RollOff_alpha_0_35,
-			"original_network_id": 0x0035,
-			"transport_stream_id": 0x0451,
-		},
+		"transponder": M7_0192_transponder,
 		"nit": {
 			"nit_pid": 0x385,
 			"nit_current_table_id": 0xbc,
@@ -47,6 +113,30 @@ PROVIDERS = {
 				"Norway": 0x3,
 				"Sweden": 0x4,
 			}
+		},
+		"sdt": {
+			"sdt_only_scan_home": True,
+		},
+	},
+	"CanalSat_France_0130": {
+		"name": _("CanalSat France"),
+		"transponder": {
+			"frequency": 11856000,
+			"symbol_rate": 29700000,
+			"polarization": eDVBFrontendParametersSatellite.Polarisation_Vertical,
+			"fec_inner": eDVBFrontendParametersSatellite.FEC_2_3,
+			"orbital_position": 192,
+			"system": eDVBFrontendParametersSatellite.System_DVB_S2,
+			"modulation": eDVBFrontendParametersSatellite.Modulation_8PSK,
+			"roll_off": eDVBFrontendParametersSatellite.RollOff_auto,
+			"original_network_id": 1,
+			"transport_stream_id": 1072,
+		},
+		"nit": {
+			"nit_other_table_id": 0x00,
+		},
+		"bat": {
+			"BouquetID": 0xc001,
 		},
 		"sdt": {
 			"sdt_only_scan_home": True,
@@ -91,20 +181,18 @@ PROVIDERS = {
 			"sdt_only_scan_home": True,
 		},
 	},
+	"Diveo_0192": {
+		"name": _("Diveo"), 
+		"transponder": M7_0192_transponder,
+		"nit": {
+			"nit_pid": 0x3c0,
+			"nit_current_table_id": 0xbc,
+			"nit_other_table_id": 0x00,
+		},
+	},
 	"FocusSAT_3920": {
 		"name": _("FocusSat"), 
-		"transponder": {
-			"frequency": 11727000,
-			"symbol_rate": 28000000,
-			"polarization": eDVBFrontendParametersSatellite.Polarisation_Vertical,
-			"fec_inner": eDVBFrontendParametersSatellite.FEC_Auto,
-			"orbital_position": 3592,
-			"system": eDVBFrontendParametersSatellite.System_DVB_S,
-			"modulation": eDVBFrontendParametersSatellite.Modulation_QPSK,
-			"roll_off": eDVBFrontendParametersSatellite.FEC_Auto,
-			"original_network_id": 1536,
-			"transport_stream_id": 701,
-		},
+		"transponder": M7_3592_transponder,
 		"nit": {
 			"nit_pid": 0x54,
 			"nit_current_table_id": 0xbc,
@@ -134,18 +222,7 @@ PROVIDERS = {
 	},
 	"FreeSAT_CZ_3920": {
 		"name": _("FreeSAT CZ"), 
-		"transponder": {
-			"frequency": 11727000,
-			"symbol_rate": 28000000,
-			"polarization": eDVBFrontendParametersSatellite.Polarisation_Vertical,
-			"fec_inner": eDVBFrontendParametersSatellite.FEC_Auto,
-			"orbital_position": 3592,
-			"system": eDVBFrontendParametersSatellite.System_DVB_S,
-			"modulation": eDVBFrontendParametersSatellite.Modulation_QPSK,
-			"roll_off": eDVBFrontendParametersSatellite.FEC_Auto,
-			"original_network_id": 1536,
-			"transport_stream_id": 701,
-		},
+		"transponder": M7_3592_transponder,
 		"nit": {
 			"nit_pid": 0x53,
 			"nit_current_table_id": 0xbc,
@@ -154,18 +231,7 @@ PROVIDERS = {
 	},
 	"FreeSAT_SK_3920": {
 		"name": _("FreeSAT SK"), 
-		"transponder": {
-			"frequency": 11727000,
-			"symbol_rate": 28000000,
-			"polarization": eDVBFrontendParametersSatellite.Polarisation_Vertical,
-			"fec_inner": eDVBFrontendParametersSatellite.FEC_Auto,
-			"orbital_position": 3592,
-			"system": eDVBFrontendParametersSatellite.System_DVB_S,
-			"modulation": eDVBFrontendParametersSatellite.Modulation_QPSK,
-			"roll_off": eDVBFrontendParametersSatellite.FEC_Auto,
-			"original_network_id": 1536,
-			"transport_stream_id": 701,
-		},
+		"transponder": M7_3592_transponder,
 		"nit": {
 			"nit_pid": 0x53,
 			"nit_current_table_id": 0xbc,
@@ -252,6 +318,80 @@ PROVIDERS = {
 			"sdt_only_scan_home": True,
 		},
 	},
+	"Movistar_plus_esp_0192": {
+		"name": _("Movistar+"),
+		"transponder": {
+			"frequency": 10729000,
+			"symbol_rate": 22000000,
+			"polarization": eDVBFrontendParametersSatellite.Polarisation_Vertical,
+			"fec_inner": eDVBFrontendParametersSatellite.FEC_2_3,
+			"orbital_position": 192,
+			"system": eDVBFrontendParametersSatellite.System_DVB_S2,
+			"modulation": eDVBFrontendParametersSatellite.Modulation_8PSK,
+			"roll_off": eDVBFrontendParametersSatellite.RollOff_auto,
+			"original_network_id": 1,
+			"transport_stream_id": 1050,
+		},
+		"nit": {
+			"nit_other_table_id": 0x00,
+		},
+		"bat": {
+			"BouquetID": 0x21,
+		},
+		"sdt": {
+			"sdt_only_scan_home": True,
+		},
+		"flags": {
+			"ignore_visible_service_flag": True,
+		},
+	},
+	"NC_plus_0130": {
+		"name": _("NC+"),
+		"transponder": {
+			"frequency": 10719000,
+			"symbol_rate": 27500000,
+			"polarization": eDVBFrontendParametersSatellite.Polarisation_Vertical,
+			"fec_inner": eDVBFrontendParametersSatellite.FEC_3_4,
+			"orbital_position": 130,
+			"system": eDVBFrontendParametersSatellite.System_DVB_S2,
+			"modulation": eDVBFrontendParametersSatellite.Modulation_8PSK,
+			"roll_off": eDVBFrontendParametersSatellite.RollOff_auto,
+			"original_network_id": 318,
+			"transport_stream_id": 11000,
+		},
+		"bat": {
+			"BouquetID": 0x2020,
+		},
+		"sdt": {
+			"sdt_only_scan_home": True,
+		},
+	},
+	"Nova_0130": {
+		"name": _("Nova"),
+		"transponder": {
+			"frequency": 11823000,
+			"symbol_rate": 27500000,
+			"polarization": eDVBFrontendParametersSatellite.Polarisation_Horizontal,
+			"fec_inner": eDVBFrontendParametersSatellite.FEC_3_4,
+			"orbital_position": 130,
+			"system": eDVBFrontendParametersSatellite.System_DVB_S2,
+			"modulation": eDVBFrontendParametersSatellite.Modulation_8PSK,
+			"roll_off": eDVBFrontendParametersSatellite.RollOff_auto,
+			"original_network_id": 318,
+			"transport_stream_id": 5500,
+		},
+		"bat": {
+			"bat_lcn_descriptor": 0x93,
+			"BouquetID": 0x1,
+			"bat_regions": { # ( BouquetID,)
+				'Greece': (0x1,),
+				'Cyprus': (0x3,),
+			}
+		},
+		"sdt": {
+			"sdt_only_scan_home": True,
+		},
+	},
 	"Orange_TV_16E": {
 		"name": _("Orange TV"),
 		"transponder": {
@@ -265,6 +405,36 @@ PROVIDERS = {
 			"roll_off": eDVBFrontendParametersSatellite.RollOff_alpha_0_20,
 			"original_network_id": 0x016e,
 			"transport_stream_id": 0x9e98,
+		},
+	},
+	"Sky_Italia": {
+		"name": _("Sky Italia"),
+		"transponder": {
+			"frequency": 11976000,
+			"symbol_rate": 29900000,
+			"polarization": eDVBFrontendParametersSatellite.Polarisation_Horizontal,
+			"fec_inner": eDVBFrontendParametersSatellite.FEC_5_6,
+			"orbital_position": 130,
+			"system": eDVBFrontendParametersSatellite.System_DVB_S2,
+			"modulation": eDVBFrontendParametersSatellite.Modulation_QPSK,
+			"roll_off": eDVBFrontendParametersSatellite.RollOff_auto,
+			"original_network_id": 64511,
+			"transport_stream_id": 6300,
+		},
+		"nit": {
+			"nit_other_table_id": 0x00,
+		},
+		"bat": {
+			"bat_lcn_descriptor": 0xb1,
+			"BouquetID": 0x6250,
+			"bat_region": [0x0, 0xff], # area and common channels
+			"bat_regions": {
+				'Sky Italia SD': (0x6250, (0x0, 0xff)),
+				'Sky Italia HD': (0x6250, (0x4, 0xff)),
+			}
+		},
+		"sdt": {
+			"sdt_only_scan_home": True,
 		},
 	},
 	"Sky_UK": {
@@ -391,6 +561,66 @@ PROVIDERS = {
 			"sdt_only_scan_home": True,
 		},
 	},
+	"TeleSAT_0192": {
+		"name": _("TeleSAT"), 
+		"transponder": M7_0192_transponder,
+		"nit": {
+			"nit_pid": 0x399,
+			"nit_current_table_id": 0xbc,
+			"nit_other_table_id": 0x00,
+		},
+	},
+	"Tivusat_0130": {
+		"name": _("Tivusat"),
+		"transponder": {
+			"frequency": 10992000,
+			"symbol_rate": 27500000,
+			"polarization": eDVBFrontendParametersSatellite.Polarisation_Vertical,
+			"fec_inner": eDVBFrontendParametersSatellite.FEC_2_3,
+			"orbital_position": 130,
+			"system": eDVBFrontendParametersSatellite.System_DVB_S,
+			"modulation": eDVBFrontendParametersSatellite.Modulation_QPSK,
+			"roll_off": eDVBFrontendParametersSatellite.RollOff_auto,
+			"original_network_id": 318,
+			"transport_stream_id": 12400,
+		},
+		"sdt": {
+			"sdt_only_scan_home": True,
+		},
+	},
+	"TNT_SAT_0130": {
+		"name": _("TNT SAT"),
+		"transponder": {
+			"frequency": 11856000,
+			"symbol_rate": 29700000,
+			"polarization": eDVBFrontendParametersSatellite.Polarisation_Vertical,
+			"fec_inner": eDVBFrontendParametersSatellite.FEC_2_3,
+			"orbital_position": 192,
+			"system": eDVBFrontendParametersSatellite.System_DVB_S2,
+			"modulation": eDVBFrontendParametersSatellite.Modulation_8PSK,
+			"roll_off": eDVBFrontendParametersSatellite.RollOff_auto,
+			"original_network_id": 1,
+			"transport_stream_id": 1072,
+		},
+		"nit": {
+			"nit_other_table_id": 0x00,
+		},
+		"bat": {
+			"BouquetID": 0xc00f,
+		},
+		"sdt": {
+			"sdt_only_scan_home": True,
+		},
+	},
+	"TV_Vlaanderen_0192": {
+		"name": _("TV Vlaanderen"), 
+		"transponder": M7_0192_transponder,
+		"nit": {
+			"nit_pid": 0x38f,
+			"nit_current_table_id": 0xbc,
+			"nit_other_table_id": 0x00,
+		},
+	},
 	"UPC_3592": {
 		"name": _("UPC"),
 		"transponder": {
@@ -422,18 +652,7 @@ PROVIDERS = {
 	},
 	"UPC_Direct_3920": {
 		"name": _("UPC Direct"), 
-		"transponder": {
-			"frequency": 11727000,
-			"symbol_rate": 28000000,
-			"polarization": eDVBFrontendParametersSatellite.Polarisation_Vertical,
-			"fec_inner": eDVBFrontendParametersSatellite.FEC_Auto,
-			"orbital_position": 3592,
-			"system": eDVBFrontendParametersSatellite.System_DVB_S,
-			"modulation": eDVBFrontendParametersSatellite.Modulation_QPSK,
-			"roll_off": eDVBFrontendParametersSatellite.FEC_Auto,
-			"original_network_id": 1536,
-			"transport_stream_id": 701,
-		},
+		"transponder": M7_3592_transponder,
 		"nit": {
 			"nit_pid": 0x51,
 			"nit_current_table_id": 0xbc,
