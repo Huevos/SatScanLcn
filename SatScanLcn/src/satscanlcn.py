@@ -943,6 +943,9 @@ class SatScanLcn(Screen): # the downloader
 		for transponder in transponderList:
 			transponder["dvb_type"] = "dvbs" # so we know how to format it
 			transponder["orbital_position"] = self.getOrbPosFromBCD(transponder)
+			# horrible hack for Canal Digital Nordic 1.0W, shift to 0.8W
+			if transponder["orbital_position"] == 3590:
+				transponder["orbital_position"] = 3592
 			if not nimmanager.getNimListForSat(transponder["orbital_position"]): # Don't waste effort trying to scan or import from not configured satellites.
 				if self.extra_debug:
 					print("[%s] Skipping transponder as it is on a not configured satellite:" % self.debugName, transponder)
