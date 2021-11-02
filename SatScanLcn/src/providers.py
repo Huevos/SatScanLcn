@@ -30,7 +30,7 @@ M7_3592_transponder = {
 
 PROVIDERS = {
 	"Austriasat": {
-		"name": _("Austriasat"), 
+		"name": _("Austriasat"),
 		"transponder": M7_0192_transponder,
 		"nit": {
 			"nit_pid": 0x3b6,
@@ -81,7 +81,7 @@ PROVIDERS = {
 		},
 	},
 	"Canal_Digitaal_HD": {
-		"name": _("Canal Digitaal HD"), 
+		"name": _("Canal Digitaal HD"),
 		"transponder": M7_0192_transponder,
 		"nit": {
 			"nit_pid": 0x385,
@@ -182,7 +182,7 @@ PROVIDERS = {
 		},
 	},
 	"Diveo_0192": {
-		"name": _("Diveo"), 
+		"name": _("Diveo"),
 		"transponder": M7_0192_transponder,
 		"nit": {
 			"nit_pid": 0x3c0,
@@ -191,7 +191,7 @@ PROVIDERS = {
 		},
 	},
 	"FocusSAT_3920": {
-		"name": _("FocusSat"), 
+		"name": _("FocusSat"),
 		"transponder": M7_3592_transponder,
 		"nit": {
 			"nit_pid": 0x54,
@@ -221,7 +221,7 @@ PROVIDERS = {
 		},
 	},
 	"FreeSAT_CZ_3920": {
-		"name": _("FreeSAT CZ"), 
+		"name": _("FreeSAT CZ"),
 		"transponder": M7_3592_transponder,
 		"nit": {
 			"nit_pid": 0x53,
@@ -230,7 +230,7 @@ PROVIDERS = {
 		},
 	},
 	"FreeSAT_SK_3920": {
-		"name": _("FreeSAT SK"), 
+		"name": _("FreeSAT SK"),
 		"transponder": M7_3592_transponder,
 		"nit": {
 			"nit_pid": 0x53,
@@ -589,7 +589,7 @@ PROVIDERS = {
 		},
 	},
 	"TeleSAT_0192": {
-		"name": _("TeleSAT"), 
+		"name": _("TeleSAT"),
 		"transponder": M7_0192_transponder,
 		"nit": {
 			"nit_pid": 0x399,
@@ -640,7 +640,7 @@ PROVIDERS = {
 		},
 	},
 	"TV_Vlaanderen_0192": {
-		"name": _("TV Vlaanderen"), 
+		"name": _("TV Vlaanderen"),
 		"transponder": M7_0192_transponder,
 		"nit": {
 			"nit_pid": 0x38f,
@@ -678,7 +678,7 @@ PROVIDERS = {
 		},
 	},
 	"UPC_Direct_3920": {
-		"name": _("UPC Direct"), 
+		"name": _("UPC Direct"),
 		"transponder": M7_3592_transponder,
 		"nit": {
 			"nit_pid": 0x51,
