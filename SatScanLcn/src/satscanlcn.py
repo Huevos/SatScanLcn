@@ -98,7 +98,7 @@ class SatScanLcn(Screen): # the downloader
 		self.tmp_service_list = [] # holds the service list from NIT (for cross referencing)
 		self.tmp_bat_content = [] # holds bat data waiting for processing
 		self.logical_channel_number_dict = {} # Keys, TSID:ONID:SID in hex
-		self.ignore_visible_service_flag = False # make this a user override later if found necessary. Visible service flag is currently available in the NIT and BAT on most home transponders
+		self.ignore_visible_service_flag_default = False # make this a user override later if found necessary. Visible service flag is currently available in the NIT and BAT on most home transponders
 		self.VIDEO_ALLOWED_TYPES = [1, 4, 5, 17, 22, 24, 25, 27, 31, 135] # 4 and 5 NVOD, 17 MPEG-2 HD digital television service, 22 advanced codec SD digital television service, 24 advanced codec SD NVOD reference service, 27 advanced codec HD NVOD reference service, 31 ???, seems to be used on Astra 1 for some UHD/4K services
 		self.HD_ALLOWED_TYPES = [17, 25, 27, 31, 135] # 17 MPEG-2 HD digital television service, 27 advanced codec HD NVOD reference service, 31 ???, seems to be used on Astra 1 for some UHD/4K services
 		self.AUDIO_ALLOWED_TYPES = [2, 10] # 10 advanced codec digital radio sound service
@@ -158,6 +158,8 @@ class SatScanLcn(Screen): # the downloader
 					self.bat_BouquetID = PROVIDERS[self.config.provider.value]["bat"]["bat_regions"][bat_regions.value][0]
 				if len(PROVIDERS[self.config.provider.value]["bat"]["bat_regions"][bat_regions.value]) > 1:
 					self.bat_region = PROVIDERS[self.config.provider.value]["bat"]["bat_regions"][bat_regions.value][1]
+					
+		self.ignore_visible_service_flag = PROVIDERS[self.config.provider.value]["flags"]["ignore_visible_service_flag"] if "flags" in PROVIDERS[self.config.provider.value] and "ignore_visible_service_flag" in PROVIDERS[self.config.provider.value]["flags"] else self.ignore_visible_service_flag_default # input from providers should be a list
 
 		if self.bat_lcn_descriptor:
 			self.descriptors["lcn"] = self.bat_lcn_descriptor
