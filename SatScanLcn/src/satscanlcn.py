@@ -28,9 +28,7 @@ from time import localtime, time, strftime, mktime, sleep
 import datetime
 import re
 
-
-from Plugins.SystemPlugins.AutoBouquetsMaker.scanner import dvbreader
-#from . import dvbreader
+from . import dvbreader
 
 
 def getConfiguredSats():
