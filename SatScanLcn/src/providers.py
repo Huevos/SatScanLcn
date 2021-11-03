@@ -118,25 +118,44 @@ PROVIDERS = {
 			"sdt_only_scan_home": True,
 		},
 	},
-	"CanalSat_France_0130": {
-		"name": _("CanalSat France"),
+	"D_Smart_0420": {
+		"name": _("D-Smart"),
 		"transponder": {
-			"frequency": 11856000,
-			"symbol_rate": 29700000,
+			"frequency": 12034000,
+			"symbol_rate": 27500000,
 			"polarization": eDVBFrontendParametersSatellite.Polarisation_Vertical,
-			"fec_inner": eDVBFrontendParametersSatellite.FEC_2_3,
-			"orbital_position": 192,
-			"system": eDVBFrontendParametersSatellite.System_DVB_S2,
-			"modulation": eDVBFrontendParametersSatellite.Modulation_8PSK,
+			"fec_inner": eDVBFrontendParametersSatellite.FEC_5_6,
+			"orbital_position": 420,
+			"system": eDVBFrontendParametersSatellite.System_DVB_S,
+			"modulation": eDVBFrontendParametersSatellite.Modulation_QPSK,
 			"roll_off": eDVBFrontendParametersSatellite.RollOff_auto,
-			"original_network_id": 1,
-			"transport_stream_id": 1072,
-		},
-		"nit": {
-			"nit_other_table_id": 0x00,
+			"original_network_id": 66,
+			"transport_stream_id": 3,
 		},
 		"bat": {
-			"BouquetID": 0xc001,
+			"bat_lcn_descriptor": 0xe2,
+			"BouquetID": 0x6050,
+			"bat_regions": { # ( BouquetID,) # Some of these need removing.
+				'DOGAN TV - TICARI HDS': (0x6050,),
+				'DOGAN TV - TKC': (0x6051,),
+				'DOGAN TV - PDL TEST': (0x6052,),
+				'DOGAN TV - TKC_TV': (0x6053,),
+				'DOGAN TV - HD': (0x6058,),
+				'DOGAN TV - HOTBIRD - HD': (0x6059,),
+				'DOGAN TV - HOTBIRD - HD - FTA': (0x605a,),
+				'DOGAN TV': (0x6090,),
+				'DOGAN TV - HOTBIRD': (0x6091,),
+				'DOGAN TV - TICARI': (0x6095,),
+				'DOGAN TV - HD TESHIR': (0x6096,),
+				'DOGAN TV - AVRUPA HOTBIRD': (0x6098,),
+				'DOGAN TV - SUSPEND': (0x6099,),
+				'DOGAN TV - SUSPEND': (0x609a,),
+				'DOGAN TV - MCR': (0x609b,),
+				'DOGAN TV - MCR HOTBIRD': (0x609c,),
+				'DOGAN TV - MCR - HD': (0x609d,),
+				'DOGAN TV - OTELLER': (0x609e,),
+				'DOGAN TV - OTELLER PLUS': (0x609f,),
+			}
 		},
 		"sdt": {
 			"sdt_only_scan_home": True,
@@ -220,6 +239,34 @@ PROVIDERS = {
 			"sdt_only_scan_home": True,
 		},
 	},
+	"French_TNT_0130": {
+		"name": _("French_TNT"),
+		"transponder": {
+			"frequency": 11856000,
+			"symbol_rate": 29700000,
+			"polarization": eDVBFrontendParametersSatellite.Polarisation_Vertical,
+			"fec_inner": eDVBFrontendParametersSatellite.FEC_2_3,
+			"orbital_position": 192,
+			"system": eDVBFrontendParametersSatellite.System_DVB_S2,
+			"modulation": eDVBFrontendParametersSatellite.Modulation_8PSK,
+			"roll_off": eDVBFrontendParametersSatellite.RollOff_auto,
+			"original_network_id": 1,
+			"transport_stream_id": 1072,
+		},
+		"nit": {
+			"nit_other_table_id": 0x00,
+		},
+		"bat": {
+			"BouquetID": 0xc00f,
+			"bat_regions": { # ( BouquetID,)
+				'CanalSat': (0xc001,),
+				'TNT SAT': (0xc00f,),
+			}
+		},
+		"sdt": {
+			"sdt_only_scan_home": True,
+		},
+	},
 	"FreeSAT_CZ_3920": {
 		"name": _("FreeSAT CZ"),
 		"transponder": M7_3592_transponder,
@@ -238,7 +285,7 @@ PROVIDERS = {
 			"nit_other_table_id": 0x00,
 		},
 	},
-	"Freesat_UK": {
+	"Freesat_UK_0282": {
 		"name": _("Freesat UK"),
 		"transponder": {
 			"frequency": 11426000,
@@ -392,7 +439,7 @@ PROVIDERS = {
 			"sdt_only_scan_home": True,
 		},
 	},
-	"Orange_TV_16E": {
+	"Orange_TV_0160": {
 		"name": _("Orange TV"),
 		"transponder": {
 			"frequency": 11324000,
@@ -407,7 +454,7 @@ PROVIDERS = {
 			"transport_stream_id": 0x9e98,
 		},
 	},
-	"Sky_Italia": {
+	"Sky_Italia_0130": {
 		"name": _("Sky Italia"),
 		"transponder": {
 			"frequency": 11976000,
@@ -437,7 +484,7 @@ PROVIDERS = {
 			"sdt_only_scan_home": True,
 		},
 	},
-	"Sky_UK": {
+	"Sky_UK_0282": {
 		"name": _("Sky UK"),
 		"transponder": {
 			"frequency": 11778000,
@@ -610,30 +657,6 @@ PROVIDERS = {
 			"roll_off": eDVBFrontendParametersSatellite.RollOff_auto,
 			"original_network_id": 318,
 			"transport_stream_id": 12400,
-		},
-		"sdt": {
-			"sdt_only_scan_home": True,
-		},
-	},
-	"TNT_SAT_0130": {
-		"name": _("TNT SAT"),
-		"transponder": {
-			"frequency": 11856000,
-			"symbol_rate": 29700000,
-			"polarization": eDVBFrontendParametersSatellite.Polarisation_Vertical,
-			"fec_inner": eDVBFrontendParametersSatellite.FEC_2_3,
-			"orbital_position": 192,
-			"system": eDVBFrontendParametersSatellite.System_DVB_S2,
-			"modulation": eDVBFrontendParametersSatellite.Modulation_8PSK,
-			"roll_off": eDVBFrontendParametersSatellite.RollOff_auto,
-			"original_network_id": 1,
-			"transport_stream_id": 1072,
-		},
-		"nit": {
-			"nit_other_table_id": 0x00,
-		},
-		"bat": {
-			"BouquetID": 0xc00f,
 		},
 		"sdt": {
 			"sdt_only_scan_home": True,
