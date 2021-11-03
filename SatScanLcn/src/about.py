@@ -1,24 +1,25 @@
+from . import _
 from Components.ActionMap import ActionMap
-from Components.Label import Label
 from Components.Sources.StaticText import StaticText
+from Components.ScrollLabel import ScrollLabel
 
 from Screens.Screen import Screen
 
 class SatScanLcn_About(Screen):
 	def __init__(self, session):
-		self.session = session
 		Screen.__init__(self, session)
-		Screen.setTitle(self, _("SatScanLcn") + " - " + _("About"))
+		self.setTitle(_("Grab LCN bouquets from the DVB stream."))
 
 		self.skinName = ["SatScanLcn_About", "Setup" ]
 
-		self["config"] = Label("")
-
-		self["actions"] = ActionMap(["SetupActions", "ColorActions", "MenuActions"],
+		self["actions"] = ActionMap(["WizardActions", "ColorActions"],
 		{
-			"red": self.quit,
-			"cancel": self.quit,
-			"menu": self.quit,
+			"back": self.close,
+			"red": self.close,
+			"up": self.pageUp,
+			"down": self.pageDown,
+			"left": self.pageUp,
+			"right": self.pageDown,
 		}, -2)
 
 		self["key_red"] = StaticText(_("Close"))
@@ -38,8 +39,18 @@ class SatScanLcn_About(Screen):
 			"- Andrew Blackburn aka AndyBlac (main developer)\n",
 			"- Peter de Jonge aka PeterJ (developer)\n",
 			"- Huevos (developer)\n\n",
+			_("SatScanLCN grabs one simple bouquet of the selected provider and adds it to the top of the channel list. The bouquet can be moved using enigma's built in controls and will stay put on a rescan. To remove any bouquet created by this tool use enigma's built in controls.") + '\n\n',
+			_("SatScanLCN is not meant to deprecate, replace, substitute, supersede or usurp any current bouquet creation tool.") + '\n\n',
+			_("SatScanLCN expands on the JoyneScan plugin and uses the same dvbreader as ABM, but unlike ABM it is able to scan the Service Descriptor Table of multiple transponders based on the content of the Network Identification Table on the home transponder. This means providers such as Joyne ( now defunct) or Orange TV on 16E that don't contain complete SDT data on the home transponder can still be successfully scanned.") + '\n\n',
+			_("The bouquet is ordered exactly according to the Logical Channel Number data carried on the DVB stream. No cleanups, swaps or other manipulations are carried out. And no customisation of the produced bouquets is possible. If that is what is required please use ABM.") + '\n\n',
+			_("Only one instance of each channel appears in the bouquet. If any channel is found to have multiple LCNs the lowest LCN numerically will be selected.") + '\n\n',
+			_("To grab multiple bouquets just run the application multiple times.") + '\n\n',
 		]
-		self["config"].setText(''.join(credits))
+		
+		self["config"] = ScrollLabel(''.join(credits))
 
-	def quit(self):
-		self.close()
+	def pageUp(self):
+		self["config"].pageUp()
+
+	def pageDown(self):
+		self["config"].pageDown()
