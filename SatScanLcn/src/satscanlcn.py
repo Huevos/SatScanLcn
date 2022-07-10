@@ -38,8 +38,8 @@ def getConfiguredSats():
 			nim.isFBCLink() or \
 			(hasattr(nim, 'config_mode_dvbs') and nim.config_mode_dvbs or nim.config_mode) in ("loopthrough", "satposdepends", "nothing"):
 			continue
-		configured_sats = [sat[0] for sat in nimmanager.getSatListForNim(nim.slot)]
-	return list(set(configured_sats))
+		configured_sats += [sat[0] for sat in nimmanager.getSatListForNim(nim.slot)]
+	return sorted(list(set(configured_sats)))
 
 
 class SatScanLcn(Screen): # the downloader
