@@ -413,6 +413,28 @@ PROVIDERS = {
 			"sdt_only_scan_home": True,
 		},
 	},
+	"NOS_3300": {
+		"name": _("NOS"),
+		"transponder": {
+			"frequency": 12360000,
+			"symbol_rate": 27500000,
+			"polarization": eDVBFrontendParametersSatellite.Polarisation_Horizontal,
+			"fec_inner": eDVBFrontendParametersSatellite.FEC_3_4,
+			"orbital_position": 3300,
+			"system": eDVBFrontendParametersSatellite.System_DVB_S2,
+			"modulation": eDVBFrontendParametersSatellite.Modulation_8PSK,
+			"roll_off": eDVBFrontendParametersSatellite.RollOff_auto,
+			"original_network_id": 54,
+			"transport_stream_id": 38,
+		},
+		"nit": {
+			"nit_lcn_descriptor": 0x82,
+			"nit_other_table_id": 0x00,
+		},
+		"sdt": {
+			"sdt_only_scan_home": True,
+		},
+	},
 	"Nova_0130": {
 		"name": _("Nova"),
 		"transponder": {
