@@ -365,6 +365,27 @@ PROVIDERS = {
 			"sdt_only_scan_home": True,
 		},
 	},
+	"Meo_3300": {
+		"name": _("Meo"),
+		"transponder": {
+			"frequency": 12130000,
+			"symbol_rate": 27500000,
+			"polarization": eDVBFrontendParametersSatellite.Polarisation_Horizontal,
+			"fec_inner": eDVBFrontendParametersSatellite.FEC_3_4,
+			"orbital_position": 3300,
+			"system": eDVBFrontendParametersSatellite.System_DVB_S2,
+			"modulation": eDVBFrontendParametersSatellite.Modulation_8PSK,
+			"roll_off": eDVBFrontendParametersSatellite.RollOff_auto,
+			"original_network_id": 83,
+			"transport_stream_id": 101,
+		},
+		"nit": {
+			"nit_other_table_id": 0x00,
+		},
+		"sdt": {
+			"sdt_only_scan_home": True,
+		},
+	},
 	"Movistar_plus_esp_0192": {
 		"name": _("Movistar+"),
 		"transponder": {
