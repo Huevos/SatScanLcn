@@ -425,8 +425,11 @@ class SatScanLcn(Screen): # the downloader
 
 		self.lockcounter += 1
 		if self.lockcounter > self.LOCK_TIMEOUT:
-			print("[%s][checkTunerLock] Timeout for tuner lock" % self.debugName)
-			self.showError(_("Timeout for tuner lock on %s") % str(self.transpondercurrent["frequency"]//1000))
+			if self.actionsList[self.index] == "read SDTs": # if we can't tune a transponder just skip it (like enigma does)
+				self.manager()
+			else:
+				print("[%s][checkTunerLock] Timeout for tuner lock" % self.debugName)
+				self.showError(_("Timeout for tuner lock on %s") % str(self.transpondercurrent["frequency"]//1000))
 			return
 		self.locktimer.start(100, 1)
 
