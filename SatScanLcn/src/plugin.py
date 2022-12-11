@@ -14,7 +14,7 @@ from .providers import PROVIDERS
 configured_sats = getConfiguredSats()
 
 config.plugins.satscanlcn = ConfigSubsection()
-config.plugins.satscanlcn.provider = ConfigSelection(choices = [(x, PROVIDERS[x]["name"]) for x in sorted(PROVIDERS.keys()) if PROVIDERS[x]["transponder"]["orbital_position"] in configured_sats])
+config.plugins.satscanlcn.provider = ConfigSelection(choices = [(x, PROVIDERS[x]["name"]) for x in sorted(PROVIDERS.keys(), key=lambda k: k.lower()) if PROVIDERS[x]["transponder"]["orbital_position"] in configured_sats])
 config.plugins.satscanlcn.extensions = ConfigYesNo(default = False)
 config.plugins.satscanlcn.hd_only = ConfigYesNo(default = False)
 config.plugins.satscanlcn.fta_only = ConfigYesNo(default = False)
