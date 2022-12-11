@@ -497,6 +497,24 @@ PROVIDERS = {
 			"transport_stream_id": 0x9e98,
 		},
 	},
+	"simpliTV_0192": {
+		"name": _("simpliTV"),
+		"transponder": {
+			"frequency": 11273000,
+			"symbol_rate": 22000000,
+			"polarization": eDVBFrontendParametersSatellite.Polarisation_Horizontal,
+			"fec_inner": eDVBFrontendParametersSatellite.FEC_2_3,
+			"orbital_position": 192,
+			"system": eDVBFrontendParametersSatellite.System_DVB_S2,
+			"modulation": eDVBFrontendParametersSatellite.Modulation_8PSK,
+			"roll_off": eDVBFrontendParametersSatellite.RollOff_auto,
+			"original_network_id": 1,
+			"transport_stream_id": 1005,
+		},
+		"bat": {
+			"BouquetID": 0x3700,
+		},
+	},
 	"Sky_Italia_0130": {
 		"name": _("Sky Italia"),
 		"transponder": {
