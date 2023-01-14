@@ -118,6 +118,31 @@ PROVIDERS = {
 			"sdt_only_scan_home": True,
 		},
 	},
+	"Cyfrowy_Polsat_0130": {
+		"name": _("Cyfrowy Polsat"),
+		"transponder": {
+			"frequency": 12188000,
+			"symbol_rate": 27500000,
+			"polarization": eDVBFrontendParametersSatellite.Polarisation_Vertical,
+			"fec_inner": eDVBFrontendParametersSatellite.FEC_3_4,
+			"orbital_position": 130,
+			"system": eDVBFrontendParametersSatellite.System_DVB_S2,
+			"modulation": eDVBFrontendParametersSatellite.Modulation_8PSK,
+			"roll_off": eDVBFrontendParametersSatellite.RollOff_auto,
+			"original_network_id": 113,
+			"transport_stream_id": 7400,
+		},
+		"nit": {
+			"nit_lcn_descriptor": 0x82,
+			"nit_other_table_id": 0x00,
+		},
+		"sdt": {
+			"sdt_only_scan_home": True,
+		},
+		"flags": {
+			"ignore_visible_service_flag": True,
+		},
+	},
 	"D_Smart_0420": {
 		"name": _("D-Smart"),
 		"transponder": {
