@@ -587,7 +587,7 @@ class SatScanLcn(Screen): # the downloader
 							nit_other_completed[network_id] = True
 
 			elif self.extra_debug:
-				print("[%s] raw section above skipped. Either duplicate output or ID mismatch.")
+				print("[%s] raw section above skipped. Either duplicate output or ID mismatch." % self.debugName)
 
 			if nit_current_completed and all_nit_others_completed:
 				break
