@@ -1039,7 +1039,7 @@ class SatScanLcn(Screen): # the downloader
 	def addLCNsToServices(self):
 		servicekeys = list(self.tmp_services_dict.keys())
 		for servicekey in servicekeys:
-			if servicekey in self.logical_channel_number_dict and self.logical_channel_number_dict[servicekey]["logical_channel_number"] not in self.services_dict:
+			if servicekey in self.logical_channel_number_dict and (self.logical_channel_number_dict[servicekey]["logical_channel_number"] not in self.services_dict or self.services_dict[self.logical_channel_number_dict[servicekey]["logical_channel_number"]]['service_type'] in self.AUDIO_ALLOWED_TYPES): # this is for a tv bouquet so don't overwrite tv channels but do overwrite radio channels
 				self.tmp_services_dict[servicekey]["logical_channel_number"] = self.logical_channel_number_dict[servicekey]["logical_channel_number"] # adds LCN to the service
 				self.services_dict[self.logical_channel_number_dict[servicekey]["logical_channel_number"]] = self.tmp_services_dict[servicekey] # queues service for adding to bouquet file
 
