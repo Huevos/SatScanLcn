@@ -29,6 +29,24 @@ M7_3592_transponder = {
 }
 
 PROVIDERS = {
+	"Antiksat_0160": {
+		"name": _("Antiksat"),
+		"transponder": {
+		"frequency": 11055000,
+		"symbol_rate": 27500000,
+		"polarization": eDVBFrontendParametersSatellite.Polarisation_Vertical,
+		"fec_inner": eDVBFrontendParametersSatellite.FEC_4_5,
+		"orbital_position": 160,
+		"system": eDVBFrontendParametersSatellite.System_DVB_S2,
+		"modulation": eDVBFrontendParametersSatellite.Modulation_QPSK,
+		"roll_off": eDVBFrontendParametersSatellite.RollOff_auto,
+		"original_network_id": 366,
+		"transport_stream_id": 30400,
+		},
+		"bat": {
+			"BouquetID": 0x1,
+		},
+	},
 	"Austriasat": {
 		"name": _("Austriasat"),
 		"transponder": M7_0192_transponder,
