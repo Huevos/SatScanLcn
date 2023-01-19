@@ -136,31 +136,6 @@ PROVIDERS = {
 			"sdt_only_scan_home": True,
 		},
 	},
-	"Cyfrowy_Polsat_0130": {
-		"name": _("Cyfrowy Polsat"),
-		"transponder": {
-			"frequency": 12188000,
-			"symbol_rate": 27500000,
-			"polarization": eDVBFrontendParametersSatellite.Polarisation_Vertical,
-			"fec_inner": eDVBFrontendParametersSatellite.FEC_3_4,
-			"orbital_position": 130,
-			"system": eDVBFrontendParametersSatellite.System_DVB_S2,
-			"modulation": eDVBFrontendParametersSatellite.Modulation_8PSK,
-			"roll_off": eDVBFrontendParametersSatellite.RollOff_auto,
-			"original_network_id": 113,
-			"transport_stream_id": 7400,
-		},
-		"nit": {
-			"nit_lcn_descriptor": 0x82,
-			"nit_other_table_id": 0x00,
-		},
-		"sdt": {
-			"sdt_only_scan_home": True,
-		},
-		"flags": {
-			"ignore_visible_service_flag": True,
-		},
-	},
 	"D_Smart_0420": {
 		"name": _("D-Smart"),
 		"transponder": {
@@ -456,27 +431,6 @@ PROVIDERS = {
 			"ignore_visible_service_flag": True,
 		},
 	},
-	"NC_plus_0130": {
-		"name": _("NC+"),
-		"transponder": {
-			"frequency": 10719000,
-			"symbol_rate": 27500000,
-			"polarization": eDVBFrontendParametersSatellite.Polarisation_Vertical,
-			"fec_inner": eDVBFrontendParametersSatellite.FEC_3_4,
-			"orbital_position": 130,
-			"system": eDVBFrontendParametersSatellite.System_DVB_S2,
-			"modulation": eDVBFrontendParametersSatellite.Modulation_8PSK,
-			"roll_off": eDVBFrontendParametersSatellite.RollOff_auto,
-			"original_network_id": 318,
-			"transport_stream_id": 11000,
-		},
-		"bat": {
-			"BouquetID": 0x2020,
-		},
-		"sdt": {
-			"sdt_only_scan_home": True,
-		},
-	},
 	"NOS_3300": {
 		"name": _("NOS"),
 		"transponder": {
@@ -538,6 +492,52 @@ PROVIDERS = {
 			"roll_off": eDVBFrontendParametersSatellite.RollOff_alpha_0_20,
 			"original_network_id": 0x016e,
 			"transport_stream_id": 0x9e98,
+		},
+	},
+	"Platforma_Canal_plus_0130": {
+		"name": _("Platforma Canal+"),
+		"transponder": {
+			"frequency": 10719000,
+			"symbol_rate": 27500000,
+			"polarization": eDVBFrontendParametersSatellite.Polarisation_Vertical,
+			"fec_inner": eDVBFrontendParametersSatellite.FEC_3_4,
+			"orbital_position": 130,
+			"system": eDVBFrontendParametersSatellite.System_DVB_S2,
+			"modulation": eDVBFrontendParametersSatellite.Modulation_8PSK,
+			"roll_off": eDVBFrontendParametersSatellite.RollOff_auto,
+			"original_network_id": 318,
+			"transport_stream_id": 11000,
+		},
+		"bat": {
+			"BouquetID": 0x2020,
+		},
+		"sdt": {
+			"sdt_only_scan_home": True,
+		},
+	},
+	"Polsat_Box_0130": {
+		"name": _("Polsat Box"),
+		"transponder": {
+			"frequency": 12188000,
+			"symbol_rate": 27500000,
+			"polarization": eDVBFrontendParametersSatellite.Polarisation_Vertical,
+			"fec_inner": eDVBFrontendParametersSatellite.FEC_3_4,
+			"orbital_position": 130,
+			"system": eDVBFrontendParametersSatellite.System_DVB_S2,
+			"modulation": eDVBFrontendParametersSatellite.Modulation_8PSK,
+			"roll_off": eDVBFrontendParametersSatellite.RollOff_auto,
+			"original_network_id": 113,
+			"transport_stream_id": 7400,
+		},
+		"nit": {
+			"nit_lcn_descriptor": 0x82,
+			"nit_other_table_id": 0x00,
+		},
+		"sdt": {
+			"sdt_only_scan_home": True,
+		},
+		"flags": {
+			"ignore_visible_service_flag": True,
 		},
 	},
 	"simpliTV_0192": {
