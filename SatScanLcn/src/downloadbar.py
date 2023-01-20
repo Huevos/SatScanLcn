@@ -1,3 +1,16 @@
+#
+# Note for people skinning the scan screen...
+#
+# There are six skinable outputs as follows:
+#
+# 1) self["Frontend"] > FrontendStatus
+# 2) self["action"] > Label,
+# 3) self["status"] > Label,
+# 4) self["tuner_text"] > Label, This is the tuner letter
+# 5) self["progress"] > ProgressBar
+# 6) self["progress_text"] > Progress
+#
+
 from enigma import getDesktop
 
 def insertValues(xml, values):
