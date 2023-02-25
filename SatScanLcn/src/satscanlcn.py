@@ -1329,9 +1329,8 @@ class SatScanLcn_Setup(ConfigListScreen, Screen):
 		Screen.setTitle(self, self.setup_title)
 		self.skinName = ["SatScanLcn_Setup", "Setup"]
 		self.config = config.plugins.satscanlcn
-		self.onChangedEntry = []
 		self.session = session
-		ConfigListScreen.__init__(self, [], session = session, on_change = self.changedEntry)
+		ConfigListScreen.__init__(self, [], session = session, on_change = self.newConfig)
 
 		self["actions2"] = ActionMap(["SetupActions", "ColorActions"],
 		{  # self.keySelect() comes from ConfigListScreen but may not be available in some distros
@@ -1358,18 +1357,17 @@ class SatScanLcn_Setup(ConfigListScreen, Screen):
 
 	def createSetup(self):
 		indent = "- "
-		self.list = []
+		setupList = []
 
-		self.list.append(getConfigListEntry(_("Provider"), self.config.provider, _('Select the provider you wish to scan.')))
+		setupList.append(getConfigListEntry(_("Provider"), self.config.provider, _('Select the provider you wish to scan.')))
 		if getattr(self.config, "bat-regions-" + self.config.provider.value, None):
-			self.list.append(getConfigListEntry(indent + _("%s region") % PROVIDERS[self.config.provider.value]["name"], getattr(self.config, "bat-regions-" + self.config.provider.value), _('Select the %s region to scan.') % PROVIDERS[self.config.provider.value]["name"]))
+			setupList.append(getConfigListEntry(indent + _("%s region") % PROVIDERS[self.config.provider.value]["name"], getattr(self.config, "bat-regions-" + self.config.provider.value), _('Select the %s region to scan.') % PROVIDERS[self.config.provider.value]["name"]))
 		if getattr(self.config, "nit-BouquetIDs-" + self.config.provider.value, None):
-			self.list.append(getConfigListEntry(indent + _("%s region") % PROVIDERS[self.config.provider.value]["name"], getattr(self.config, "nit-BouquetIDs-" +self.config.provider.value), _('Select the %s region to scan.') % PROVIDERS[self.config.provider.value]["name"]))
-		self.list.append(getConfigListEntry(_("FTA only"), self.config.fta_only, _("Only include free to air channels.")))
-		self.list.append(getConfigListEntry(_("HD only"), self.config.hd_only, _("Only include high definition channels.")))
+			setupList.append(getConfigListEntry(indent + _("%s region") % PROVIDERS[self.config.provider.value]["name"], getattr(self.config, "nit-BouquetIDs-" +self.config.provider.value), _('Select the %s region to scan.') % PROVIDERS[self.config.provider.value]["name"]))
+		setupList.append(getConfigListEntry(_("FTA only"), self.config.fta_only, _("Only include free to air channels.")))
+		setupList.append(getConfigListEntry(_("HD only"), self.config.hd_only, _("Only include high definition channels.")))
 
-		self["config"].list = self.list
-		self["config"].l.setList(self.list)
+		self["config"].list = setupList
 
 	def keyCancel(self):
 		if self["config"].isChanged():
@@ -1402,25 +1400,12 @@ class SatScanLcn_Setup(ConfigListScreen, Screen):
 		self.session.open(SatScanLcn_About)
 
 	def selectionChanged(self):
-		self["description"].setText(self.getCurrentDescription()) #self["description"].setText(self["config"].getCurrent()[2])
+		self["description"].setText(self.getCurrentDescription())
 
-	# for summary:
-	def changedEntry(self):
-		for x in self.onChangedEntry:
-			x()
+	def newConfig(self):
 		if self["config"].getCurrent() and len(self["config"].getCurrent()) > 1 and self["config"].getCurrent()[1] in (self.config.provider,):
 			self.createSetup()
-
-	def getCurrentEntry(self):
-		return self["config"].getCurrent()[0]
-
-	def getCurrentValue(self):
-		return str(self["config"].getCurrent()[1].getText())
-
-	def createSummary(self):
-		from Screens.Setup import SetupSummary
-		return SetupSummary
-	# end: for summary
+		self.changedEntry()
 
 	def saveAll(self):
 		for x in self["config"].list:
@@ -1434,12 +1419,12 @@ class  SatScanLcnAdvancedScreen(ConfigListScreen, Screen):
 		Screen.setTitle(self, _('SatScanLcn') + " - " + _("Advanced options"))
 		self.skinName = ["Setup"]
 		self.config = config.plugins.satscanlcn
-		self.list = []
-		self.list.append(getConfigListEntry(_("Force channel name"), self.config.force_service_name, _("Switch this on only if you have issues with \"N/A\" appearing in your channel list. Switching this on means the channel name will not auto update if the broadcaster changes the channel name.")))
-		self.list.append(getConfigListEntry(_("Sync with known transponders"), self.config.sync_with_known_tps, _('CAUTION: Sometimes the SI tables contain rogue data. Select "yes" to sync with transponder data listed in satellites.xml. Select "no" if you trust the SI data. Default is "no". Only change this if you understand why you are doing it.')))
-		self.list.append(getConfigListEntry(_("Show in extensions menu"), self.config.extensions, _('When enabled, this allows you start a SatScanLcn update from the extensions list.')))
-		self.list.append(getConfigListEntry(_("Extra debug"), self.config.extra_debug, _("CAUTION: This feature is for development only. Requires debug logs to be enabled or enigma2 to be started in console mode (at debug level 4).")))
-		ConfigListScreen.__init__(self, self.list)
+		setupList = []
+		setupList.append(getConfigListEntry(_("Force channel name"), self.config.force_service_name, _("Switch this on only if you have issues with \"N/A\" appearing in your channel list. Switching this on means the channel name will not auto update if the broadcaster changes the channel name.")))
+		setupList.append(getConfigListEntry(_("Sync with known transponders"), self.config.sync_with_known_tps, _('CAUTION: Sometimes the SI tables contain rogue data. Select "yes" to sync with transponder data listed in satellites.xml. Select "no" if you trust the SI data. Default is "no". Only change this if you understand why you are doing it.')))
+		setupList.append(getConfigListEntry(_("Show in extensions menu"), self.config.extensions, _('When enabled, this allows you start a SatScanLcn update from the extensions list.')))
+		setupList.append(getConfigListEntry(_("Extra debug"), self.config.extra_debug, _("CAUTION: This feature is for development only. Requires debug logs to be enabled or enigma2 to be started in console mode (at debug level 4).")))
+		ConfigListScreen.__init__(self, setupList)
 		self["key_red"] = StaticText(_("Cancel"))
 		self["key_green"] = StaticText(_("Save"))
 		self["setupActions"] = ActionMap(["SetupActions"],

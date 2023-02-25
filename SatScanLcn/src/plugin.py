@@ -10,25 +10,29 @@ from Tools.BoundFunction import boundFunction
 
 # for satellite
 from .satscanlcn import SatScanLcn, SatScanLcn_Setup, getConfiguredSats
-from .providers import PROVIDERS
+from .satscanlcn_providers import PROVIDERS as SATSCANLCN_PROVIDERS
 
 # for terrestrial
 from .TerrestrialScan_Setup import TerrestrialScan_Setup
+
+# for misplslcnscan
+from .misplslcnscan_providers import PROVIDERS as MISPLSLCNSCAN_PROVIDERS
+from .MisPlsLcnScan_Setup import MisPlsLcnScan_Setup
 
 configured_sats = getConfiguredSats()
 
 # satellite options
 config.plugins.satscanlcn = ConfigSubsection()
-config.plugins.satscanlcn.provider = ConfigSelection(choices = [(x, PROVIDERS[x]["name"]) for x in sorted(PROVIDERS.keys(), key=lambda k: k.lower()) if PROVIDERS[x]["transponder"]["orbital_position"] in configured_sats])
+config.plugins.satscanlcn.provider = ConfigSelection(choices = [(x, SATSCANLCN_PROVIDERS[x]["name"]) for x in sorted(SATSCANLCN_PROVIDERS.keys(), key=lambda k: k.lower()) if SATSCANLCN_PROVIDERS[x]["transponder"]["orbital_position"] in configured_sats])
 config.plugins.satscanlcn.extensions = ConfigYesNo(default = False)
 config.plugins.satscanlcn.hd_only = ConfigYesNo(default = False)
 config.plugins.satscanlcn.fta_only = ConfigYesNo(default = False)
 
-for x in PROVIDERS.keys(): # if any provider has a regions list write it to a ConfigSelection 
-	if "bat" in PROVIDERS[x] and "bat_regions" in PROVIDERS[x]["bat"]:
-		setattr(config.plugins.satscanlcn, "bat-regions-" + x, ConfigSelection(choices=[(a, a) for a in sorted(PROVIDERS[x]["bat"]["bat_regions"].keys())]))
-	if "nit" in PROVIDERS[x] and "BouquetIDs" in PROVIDERS[x]["nit"]:
-		setattr(config.plugins.satscanlcn, "nit-BouquetIDs-" + x, ConfigSelection(choices=[(a, a) for a in sorted(PROVIDERS[x]["nit"]["BouquetIDs"].keys())]))
+for x in SATSCANLCN_PROVIDERS.keys(): # if any provider has a regions list write it to a ConfigSelection 
+	if "bat" in SATSCANLCN_PROVIDERS[x] and "bat_regions" in SATSCANLCN_PROVIDERS[x]["bat"]:
+		setattr(config.plugins.satscanlcn, "bat-regions-" + x, ConfigSelection(choices=[(a, a) for a in sorted(SATSCANLCN_PROVIDERS[x]["bat"]["bat_regions"].keys())]))
+	if "nit" in SATSCANLCN_PROVIDERS[x] and "BouquetIDs" in SATSCANLCN_PROVIDERS[x]["nit"]:
+		setattr(config.plugins.satscanlcn, "nit-BouquetIDs-" + x, ConfigSelection(choices=[(a, a) for a in sorted(SATSCANLCN_PROVIDERS[x]["nit"]["BouquetIDs"].keys())]))
 
 # advanced options
 config.plugins.satscanlcn.extra_debug = ConfigYesNo(default = False)
@@ -59,6 +63,12 @@ config.plugins.TerrestrialScan.lcndescriptor = ConfigSelection(default=0x83, cho
 config.plugins.TerrestrialScan.channel_list_id = ConfigInteger(default=0, limits=(0, 65535))
 config.plugins.TerrestrialScan.stabliseTime = ConfigSelection(default=2, choices=[(i, "%d" % i) for i in range(2, 11)])
 
+# MisPlsLcnScan options
+config.plugins.MisPlsLcnScan = ConfigSubsection()
+config.plugins.MisPlsLcnScan.provider = ConfigSelection(default="fransat_5W", choices=[(x, MISPLSLCNSCAN_PROVIDERS[x]["name"]) for x in sorted(MISPLSLCNSCAN_PROVIDERS.keys())])
+config.plugins.MisPlsLcnScan.clearallservices = ConfigYesNo(default=False)
+config.plugins.MisPlsLcnScan.onlyfree = ConfigYesNo(default=True)
+
 
 def startdownload(session, **kwargs): # Called from extensions menu if this option is active
 	session.open(SatScanLcn)
@@ -69,19 +79,30 @@ def SatScanLcnStart(menuid, **kwargs): # Menu position of plugin setup screen
 	return []
 
 def SatScanLcnMain(session, close=None, **kwargs): # calls setup screen
-	session.openWithCallback(boundFunction(SatScanLcnCallback, close), SatScanLcn_Setup)
+	session.openWithCallback(boundFunction(closeCallback, close), SatScanLcn_Setup)
 
-def SatScanLcnCallback(close=None, answer=None): # Called on exiting setup screen. Should force a recursive close on a succsssful scan.
+def closeCallback(close=None, answer=None): # Called on exiting setup screen. Should force a recursive close on a succsssful scan.
 	if close and answer:
 		close(True)
 
 def TerrestrialScanStart(menuid, **kwargs):
 	if menuid == "scan" and nimmanager.getEnabledNimListOfType("DVB-T"):
-		return [(_("Terrestrial Scan"), TerrestrialScanMain, "TerrestrialScan_Setup", 75, True)]
+		return [(_("Terrestrial Scan"), TerrestrialScanMain, "TerrestrialScan_Setup", 76, True)]
 	return []
 
 def TerrestrialScanMain(session, close=None, **kwargs):
-	session.openWithCallback(boundFunction(SatScanLcnCallback, close), TerrestrialScan_Setup)
+	session.openWithCallback(boundFunction(closeCallback, close), TerrestrialScan_Setup)
+
+def hasMultistream():
+	return [nim for nim in nimmanager.nim_slots if nim.isCompatible("DVB-S") and nim.isMultistream()]
+
+def MisPlsLcnScanStart(menuid, **kwargs):
+	if menuid == "scan":
+		return [(_("MIS/PLS LCN Scan"), MisPlsLcnScanMain, "MisPlsLcnScanScreen", 75, True)]
+	return []
+
+def MisPlsLcnScanMain(session, close=None, **kwargs):
+	session.openWithCallback(boundFunction(closeCallback, close), MisPlsLcnScan_Setup)
 
 def Plugins(**kwargs):
 	plist = []
@@ -91,6 +112,10 @@ def Plugins(**kwargs):
 			plist.append(PluginDescriptor(name=_("SatScanLcn"), description=description, where = PluginDescriptor.WHERE_EXTENSIONSMENU, fnc=startdownload, needsRestart=True))
 	else:
 		print("[SatScanLcn] No DVB-S tuner available so don't load")
+	if hasMultistream():
+		plist.append(PluginDescriptor(name=_("MIS/PLS LCN Scan"), description="For scanning multiple input stream tv", where=PluginDescriptor.WHERE_MENU, needsRestart=False, fnc=MisPlsLcnScanStart))
+	else:
+		print("[MisPlsLcnScan] No MIS/PLS capable tuner available so don't load")
 	if nimmanager.hasNimType("DVB-T"):
 		plist.append(PluginDescriptor(name=_("Terrestrial Scan"), description="For scanning terrestrial tv", where=PluginDescriptor.WHERE_MENU, needsRestart=False, fnc=TerrestrialScanStart))
 	else:
