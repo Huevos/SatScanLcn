@@ -6,6 +6,19 @@ import os, codecs, re
 
 from enigma import eDVBFrontendParametersSatellite
 
+charsets = {
+	0x01: "iso-8859-5",
+	0x02: "iso-8859-6",
+	0x03: "iso-8859-7",
+	0x04: "iso-8859-8",
+	0x05: "iso-8859-9",
+	0x06: "iso-8859-10",
+	0x07: "iso-8859-11",
+	0x09: "iso-8859-13",
+	0x0A: "iso-8859-14",
+	0x0B: "iso-8859-15",
+}
+
 class LamedbWriter():
 
 	def writeLamedb(self, path, transponders, filename="lamedb"):
@@ -128,7 +141,11 @@ class LamedbWriter():
 						provider_name = control_char_re.sub('', service["provider_name"]).decode('latin-1').encode("utf8")
 					else:
 						service_name = control_char_re.sub('', service["service_name"])
+						if "service_name_encoding" in service and service["service_name_encoding"] in charsets:
+							service_name = service_name.encode("iso-8859-1").decode(charsets[service["service_name_encoding"]])
 						provider_name = control_char_re.sub('', service["provider_name"])
+						if "provider_name_encoding" in service and service["provider_name_encoding"] in charsets:
+							provider_name = provider_name.encode("iso-8859-1").decode(charsets[service["provider_name_encoding"]])
 				else:
 					service_name = service["service_name"]
 
@@ -279,7 +296,11 @@ class LamedbWriter():
 						provider_name = control_char_re.sub('', service["provider_name"]).decode('latin-1').encode("utf8")
 					else:
 						service_name = control_char_re.sub('', service["service_name"])
+						if "service_name_encoding" in service and service["service_name_encoding"] in charsets:
+							service_name = service_name.encode("iso-8859-1").decode(charsets[service["service_name_encoding"]])
 						provider_name = control_char_re.sub('', service["provider_name"])
+						if "provider_name_encoding" in service and service["provider_name_encoding"] in charsets:
+							provider_name = provider_name.encode("iso-8859-1").decode(charsets[service["provider_name_encoding"]])
 				else:
 					service_name = service["service_name"]
 
