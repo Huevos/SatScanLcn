@@ -98,6 +98,32 @@ PROVIDERS = {
 			"sdt_only_scan_home": True,
 		},
 	},
+	"Bulsatcom_0390": {
+		"name": _("Bulsatcom"),
+		"transponder": {
+			"frequency": 12271000,
+			"symbol_rate": 30000000,
+			"polarization": eDVBFrontendParametersSatellite.Polarisation_Horizontal,
+			"fec_inner": eDVBFrontendParametersSatellite.FEC_7_8,
+			"orbital_position": 390,
+			"system": eDVBFrontendParametersSatellite.System_DVB_S,
+			"modulation": eDVBFrontendParametersSatellite.Modulation_QPSK,
+			"roll_off": eDVBFrontendParametersSatellite.RollOff_alpha_0_35,
+			"original_network_id": 1,
+			"transport_stream_id": 1,
+		},
+		"bat": {
+			"bat_lcn_descriptor": 0x83,
+			"BouquetID": 0x63,
+			"bat_regions": { # ( BouquetID,) # Some of these need removing.
+				'Bouquet 1': (0x63,),
+				'Bouquet 2': (0x62,),
+			}
+		},
+		"sdt": {
+			"sdt_only_scan_home": True,
+		},
+	},
 	"Canal_Digitaal_HD": {
 		"name": _("Canal Digitaal HD"),
 		"transponder": M7_0192_transponder,
