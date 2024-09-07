@@ -813,4 +813,31 @@ PROVIDERS = {
 			"nit_other_table_id": 0x00,
 		},
 	},
+	"Vivacom_0130": {
+		"name": _("Vivacom"),
+		"transponder": {
+			"frequency": 12713000,
+			"symbol_rate": 30000000,
+			"polarization": eDVBFrontendParametersSatellite.Polarisation_Vertical,
+			"fec_inner": eDVBFrontendParametersSatellite.FEC_5_6,
+			"orbital_position": 130,
+			"system": eDVBFrontendParametersSatellite.System_DVB_S2,
+			"modulation": eDVBFrontendParametersSatellite.Modulation_8PSK,
+			"roll_off": eDVBFrontendParametersSatellite.RollOff_alpha_0_35,
+			"original_network_id": 213,
+			"transport_stream_id": 10000,
+		},
+		"bat": {
+			"bat_lcn_descriptor": 0xe2,
+			"BouquetID": 0x6158,
+			"bat_regions": { # ( BouquetID,) # Some of these need removing.
+				'Bouquet 1': (0x6158,),
+				'Bouquet 2': (0x6159,),
+				'Bouquet 3': (0x615d,),
+			}
+		},
+		"sdt": {
+			"sdt_only_scan_home": True,
+		},
+	},
 }
