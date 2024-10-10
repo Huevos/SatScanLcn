@@ -45,7 +45,7 @@ class SatScanLcn_About(Screen):
 			_("The bouquet is ordered exactly according to the Logical Channel Number data carried on the DVB stream. No cleanups, swaps or other manipulations are carried out. And no customisation of the produced bouquets is possible. If that is what is required please use ABM.") + '\n\n',
 			_("Only one instance of each channel appears in the bouquet. If any channel is found to have multiple LCNs the lowest LCN numerically will be selected.") + '\n\n',
 			_("To grab multiple bouquets just run the application multiple times.") + '\n\n',
-		]
+				]
 		
 		self["config"] = ScrollLabel(''.join(credits))
 
