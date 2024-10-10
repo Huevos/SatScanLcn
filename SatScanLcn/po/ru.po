@@ -240,7 +240,7 @@ msgstr "Автор плагина:\n"
 
 #: ../src/about.py:37
 msgid "Sources credits (dvbreader):\n"
-msgstr "Авторы кода (dvbreader):"
+msgstr "Авторы кода (dvbreader):\n"
 
 #: ../src/about.py:44
 msgid "SatScanLCN expands on the JoyneScan plugin and uses the same dvbreader as ABM, but unlike ABM it is able to scan the Service Descriptor Table of multiple transponders based on the content of the Network Identification Table on the home transponder. This means providers such as Joyne (now defunct) or Orange TV on 16E that don't contain complete SDT data on the home transponder can still be successfully scanned."
