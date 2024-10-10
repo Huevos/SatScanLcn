@@ -34,7 +34,7 @@ class SatScanLcn_About(Screen):
 			"- http://www.world-of-satellite.com\n\n",
 			_("Application credits:\n"),
 			"- Huevos (main developer)\n\n",
-			_("Sources credits (dvbreader):\n)",
+			_("Sources credits (dvbreader):\n"),
 			"- Sandro Cavazzoni aka skaman (main developer)\n",
 			"- Andrew Blackburn aka AndyBlac (main developer)\n",
 			"- Peter de Jonge aka PeterJ (developer)\n",
