@@ -716,6 +716,18 @@ class SatScanLcn(Screen): # the downloader
 		self.manager()
 
 	def readSDT(self):
+		charsets = {
+			0x01: "iso-8859-5",
+			0x02: "iso-8859-6",
+			0x03: "iso-8859-7",
+			0x04: "iso-8859-8",
+			0x05: "iso-8859-9",
+			0x06: "iso-8859-10",
+			0x07: "iso-8859-11",
+			0x09: "iso-8859-13",
+			0x0A: "iso-8859-14",
+			0x0B: "iso-8859-15",
+		}
 		print("[%s] Reading SDTs..." % self.debugName)
 
 		start_time = time()
@@ -885,6 +897,14 @@ class SatScanLcn(Screen): # the downloader
 				self.radio_services += 1
 
 			servicekey = "%x:%x:%x" % (service["transport_stream_id"], service["original_network_id"], service["service_id"])
+
+			# set correct encoding if different encoding found in SI table
+			if six.PY3:
+				if "service_name_encoding" in service and service["service_name_encoding"] in charsets:
+					service["service_name"] = service["service_name"].encode("iso-8859-1").decode(charsets[service["service_name_encoding"]])
+				if "provider_name_encoding" in service and service["provider_name_encoding"] in charsets:
+					service["provider_name"] = service["provider_name"].encode("iso-8859-1").decode(charsets[service["provider_name_encoding"]])
+				
 			self.tmp_services_dict[servicekey] = service
 
 		self.manager()
