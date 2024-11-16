@@ -159,6 +159,8 @@ class SatScanLcn(Screen): # the downloader
 
 		self.ignore_visible_service_flag = PROVIDERS[self.config.provider.value]["flags"]["ignore_visible_service_flag"] if "flags" in PROVIDERS[self.config.provider.value] and "ignore_visible_service_flag" in PROVIDERS[self.config.provider.value]["flags"] else self.ignore_visible_service_flag_default # input from providers should be a list
 
+		self.sections = PROVIDERS[self.config.provider.value].get("sections", {})
+
 		if self.bat_lcn_descriptor:
 			self.descriptors["lcn"] = self.bat_lcn_descriptor
 
@@ -1157,11 +1159,15 @@ class SatScanLcn(Screen): # the downloader
 				bouquets_tv.write(newBouquetIndexContent)
 
 	def writeBouquet(self):
+		active_sections = set(sorted([max((x for x in list(self.sections.keys()) if int(x) <= key)) for key in list(self.services_dict.keys())] if self.sections else []))
+		print("active_sections", active_sections)
 		bouquet_list = []
 		bouquet_list.append("#NAME %s\n" % self.bouquetName)
 
 		numbers = list(range(1, 1001))
 		for number in numbers:
+			if number in active_sections:
+				bouquet_list.append("#SERVICE 1:64:0:0:0:0:0:0:0:0:\n#DESCRIPTION %s\n" % self.sections[number])
 			if number in self.services_dict:
 				bouquet_list.append(self.bouquetServiceLine(self.services_dict[number]))
 			else:
