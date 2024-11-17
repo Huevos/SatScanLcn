@@ -115,7 +115,7 @@ PROVIDERS = {
 		"bat": {
 			"bat_lcn_descriptor": 0x83,
 			"BouquetID": 0x63,
-			"bat_regions": { # ( BouquetID,) # Some of these need removing.
+			"bat_regions": {  # ( BouquetID,) # Some of these need removing.
 				'Bouquet 1': (0x63,),
 				'Bouquet 2': (0x62,),
 			}
@@ -179,7 +179,7 @@ PROVIDERS = {
 		"bat": {
 			"bat_lcn_descriptor": 0xe2,
 			"BouquetID": 0x6050,
-			"bat_regions": { # ( BouquetID,) # Some of these need removing.
+			"bat_regions": {  # ( BouquetID,) # Some of these need removing.
 				'DOGAN TV - TICARI HDS': (0x6050,),
 				'DOGAN TV - TKC': (0x6051,),
 				'DOGAN TV - PDL TEST': (0x6052,),
@@ -192,8 +192,8 @@ PROVIDERS = {
 				'DOGAN TV - TICARI': (0x6095,),
 				'DOGAN TV - HD TESHIR': (0x6096,),
 				'DOGAN TV - AVRUPA HOTBIRD': (0x6098,),
-				'DOGAN TV - SUSPEND': (0x6099,),
-				'DOGAN TV - SUSPEND': (0x609a,),
+				'DOGAN TV - SUSPEND 1': (0x6099,),
+				'DOGAN TV - SUSPEND 2': (0x609a,),
 				'DOGAN TV - MCR': (0x609b,),
 				'DOGAN TV - MCR HOTBIRD': (0x609c,),
 				'DOGAN TV - MCR - HD': (0x609d,),
@@ -222,8 +222,8 @@ PROVIDERS = {
 		"bat": {
 			"bat_lcn_descriptor": 0x86,
 			"BouquetID": 0x110,
-			"bat_region": (0x3f,), # area, this is just the default.
-			"bat_regions": { # ( BouquetID,)
+			"bat_region": (0x3f,),  # area, this is just the default.
+			"bat_regions": {  # ( BouquetID,)
 				'Romania SD': (0x32,),
 				'Hungary SD': (0x33,),
 				'Slovakia SD': (0x34,),
@@ -302,7 +302,7 @@ PROVIDERS = {
 		},
 		"bat": {
 			"BouquetID": 0xc00f,
-			"bat_regions": { # ( BouquetID,)
+			"bat_regions": {  # ( BouquetID,)
 				'CanalSat': (0xc001,),
 				'TNT SAT': (0xc00f,),
 			}
@@ -349,59 +349,59 @@ PROVIDERS = {
 		"bat": {
 			"bat_lcn_descriptor": 0xd3,
 			"BouquetID": 0x110,
-			"bat_region": (0x1, 0xffff), # area and common channels, this is just the default.
+			"bat_region": (0x1, 0xffff),  # area and common channels, this is just the default.
 			"bat_pid": 0xbba,
-			"bat_regions": { # ( BouquetID, (region, common_catchall))
+			"bat_regions": {  # ( BouquetID, (region, common_catchall))
 				'BBC London/ITV London': (0x110, (0x1, 0xffff)),
-				'BBC East (W)/ITV Anglia W': (0x110, (0x2, 0xffff)),
-				'BBC East (W)/ITV Central S': (0x110, (0x3, 0xffff)),
-				'BBC East (W)/ITV Anglia W': (0x110, (0x4, 0xffff)),
-				'BBC W Mids/ITV Central W': (0x110, (0x5, 0xffff)),
-				'BBC W Mids/ITV Central SW': (0x110, (0x6, 0xffff)),
-				'BBC N West/ITV Granada': (0x110, (0x7, 0xffff)),
-				'BBC N West/ITV BorderEng': (0x110, (0x8, 0xffff)),
-				'BBC EYrks&Lin/ITV Yorkshire E': (0x110, (0x9, 0xffff)),
-				'BBC Yorkshire/ITV Yorkshire W': (0x110, (0xa, 0xffff)),
-				'BBC Yorkshire/ITV Yorkshire E': (0x110, (0xb, 0xffff)),
-				'BBC Yorkshire/ITV Tyne Tees S': (0x110, (0xc, 0xffff)),
-				'BBC E Midlands/ITV Central E': (0x110, (0xd, 0xffff)),
-				'BBC E Midlands/ITV Central W': (0x110, (0xe, 0xffff)),
-				'BBC E Midlands/ITV Central E': (0x110, (0xf, 0xffff)),
-				'BBC E Midlands/ITV Yorkshire E': (0x110, (0x10, 0xffff)),
-				'BBC East (E)/ITV Anglia S': (0x110, (0x11, 0xffff)),
-				'BBC East (E)/ITV London': (0x110, (0x12, 0xffff)),
-				'BBC East (E)/ITV Anglia E': (0x110, (0x13, 0xffff)),
-				'BBC West/Westcountry W': (0x110, (0x14, 0xffff)),
-				'BBC West/ITV Westcountry W': (0x110, (0x15, 0xffff)),
-				'BBC West/ITV Meridian Thames Valley': (0x110, (0x16, 0xffff)),
-				'BBC West/ITV Meridian Thames Valley': (0x110, (0x17, 0xffff)),
-				'BBC S East/ITV Meridian S': (0x110, (0x18, 0xffff)),
-				'BBC S East/ITV Meridian SE': (0x110, (0x19, 0xffff)),
-				'BBC S East/ITV Meridian E': (0x110, (0x1a, 0xffff)),
-				'BBC S East/ITV London': (0x110, (0x1b, 0xffff)),
-				'BBC South/ITV Meridian S': (0x110, (0x1c, 0xffff)),
-				'BBC South/ITV Meridian SE': (0x110, (0x1d, 0xffff)),
-				'BBC South/ITV W Country': (0x110, (0x1e, 0xffff)),
-				'BBC South/ITV London': (0x110, (0x1f, 0xffff)),
-				'BBC South/ITV Meridian N': (0x110, (0x20, 0xffff)),
-				'BBC S West/ITV W Country': (0x110, (0x21, 0xffff)),
-				'BBC NE & C/ITV BorderEng': (0x110, (0x22, 0xffff)),
-				'BBC NE & C/ITV Tyne Tees N': (0x110, (0x23, 0xffff)),
-				'BBC NE & C/ITV Tyne Tees S': (0x110, (0x24, 0xffff)),
-				'BBC Oxford/ITV Central S': (0x110, (0x25, 0xffff)),
-				'BBC Oxford/ITV London': (0x110, (0x26, 0xffff)),
-				'BBC N West/ITV Granada': (0x110, (0x27, 0xffff)),
-				'BBC Yorkshire/ITV Yorkshire W': (0x110, (0x28, 0xffff)),
-				'BBC Channel Is/ITV Channel Is': (0x110, (0x29, 0xffff)),
-				'BBC Yorkshire/ITV Yorkshire W': (0x110, (0x2a, 0xffff)),
-				'BBC Isle of Man': (0x110, (0x2b, 0xffff)),
-				'BBC Scotland/STV North': (0x111, (0x3c, 0xffff)),
-				'BBC Scotland/STV Tayside': (0x111, (0x3d, 0xffff)),
-				'BBC Scotland/STV BorderSco': (0x111, (0x3e, 0xffff)),
-				'BBC Scotland/STV Scot (Glasgow)': (0x111, (0x3f, 0xffff)),
-				'BBC Scotland/STV Scot (Edinburgh)': (0x111, (0x40, 0xffff)),
-				'BBC Wales': (0x112, (0x50, 0xffff)),
-				'BBC Northern Ireland': (0x113, (0x5a, 0xffff)),
+				'BBC East (W)/ITV Anglia W (0x2)': (0x110, (0x2, 0xffff)),
+				'BBC East (W)/ITV Central S (0x3': (0x110, (0x3, 0xffff)),
+				'BBC East (W)/ITV Anglia W (0x4)': (0x110, (0x4, 0xffff)),
+				'BBC W Mids/ITV Central W(0x5)': (0x110, (0x5, 0xffff)),
+				'BBC W Mids/ITV Central SW (0x6)': (0x110, (0x6, 0xffff)),
+				'BBC N West/ITV Granada (0x7)': (0x110, (0x7, 0xffff)),
+				'BBC N West/ITV BorderEng (0x8)': (0x110, (0x8, 0xffff)),
+				'BBC EYrks&Lin/ITV Yorkshire E (0x9)': (0x110, (0x9, 0xffff)),
+				'BBC Yorkshire/ITV Yorkshire W (0xa)': (0x110, (0xa, 0xffff)),
+				'BBC Yorkshire/ITV Yorkshire E (0xb)': (0x110, (0xb, 0xffff)),
+				'BBC Yorkshire/ITV Tyne Tees S (0xc)': (0x110, (0xc, 0xffff)),
+				'BBC E Midlands/ITV Central E (0xd)': (0x110, (0xd, 0xffff)),
+				'BBC E Midlands/ITV Central W (0xe)': (0x110, (0xe, 0xffff)),
+				'BBC E Midlands/ITV Central E (0xf)': (0x110, (0xf, 0xffff)),
+				'BBC E Midlands/ITV Yorkshire E (0x10)': (0x110, (0x10, 0xffff)),
+				'BBC East (E)/ITV Anglia S (0x11)': (0x110, (0x11, 0xffff)),
+				'BBC East (E)/ITV London (0x12)': (0x110, (0x12, 0xffff)),
+				'BBC East (E)/ITV Anglia E (0x13)': (0x110, (0x13, 0xffff)),
+				'BBC West/Westcountry W (0x14)': (0x110, (0x14, 0xffff)),
+				'BBC West/ITV Westcountry W (0x15)': (0x110, (0x15, 0xffff)),
+				'BBC West/ITV Meridian Thames Valley (0x16)': (0x110, (0x16, 0xffff)),
+				'BBC West/ITV Meridian Thames Valley (0x17)': (0x110, (0x17, 0xffff)),
+				'BBC S East/ITV Meridian S (0x18)': (0x110, (0x18, 0xffff)),
+				'BBC S East/ITV Meridian SE (0x19)': (0x110, (0x19, 0xffff)),
+				'BBC S East/ITV Meridian E (0x1a)': (0x110, (0x1a, 0xffff)),
+				'BBC S East/ITV London (0x1b)': (0x110, (0x1b, 0xffff)),
+				'BBC South/ITV Meridian S (0x1c)': (0x110, (0x1c, 0xffff)),
+				'BBC South/ITV Meridian SE (0x1d)': (0x110, (0x1d, 0xffff)),
+				'BBC South/ITV W Country (0x1e)': (0x110, (0x1e, 0xffff)),
+				'BBC South/ITV London (0x1f)': (0x110, (0x1f, 0xffff)),
+				'BBC South/ITV Meridian N (0x20)': (0x110, (0x20, 0xffff)),
+				'BBC S West/ITV W Country (0x21)': (0x110, (0x21, 0xffff)),
+				'BBC NE & C/ITV BorderEng (0x22)': (0x110, (0x22, 0xffff)),
+				'BBC NE & C/ITV Tyne Tees N (0x23)': (0x110, (0x23, 0xffff)),
+				'BBC NE & C/ITV Tyne Tees S (0x24)': (0x110, (0x24, 0xffff)),
+				'BBC Oxford/ITV Central S (0x25)': (0x110, (0x25, 0xffff)),
+				'BBC Oxford/ITV London (0x26)': (0x110, (0x26, 0xffff)),
+				'BBC N West/ITV Granada (0x27)': (0x110, (0x27, 0xffff)),
+				'BBC Yorkshire/ITV Yorkshire W (0x28)': (0x110, (0x28, 0xffff)),
+				'BBC Channel Is/ITV Channel Is (0x29)': (0x110, (0x29, 0xffff)),
+				'BBC Yorkshire/ITV Yorkshire W (0x2a)': (0x110, (0x2a, 0xffff)),
+				'BBC Isle of Man (0x2b)': (0x110, (0x2b, 0xffff)),
+				'BBC Scotland/STV North (0x3c)': (0x111, (0x3c, 0xffff)),
+				'BBC Scotland/STV Tayside (0x3d)': (0x111, (0x3d, 0xffff)),
+				'BBC Scotland/STV BorderSco (0x3e)': (0x111, (0x3e, 0xffff)),
+				'BBC Scotland/STV Scot (Glasgow) (0x3f)': (0x111, (0x3f, 0xffff)),
+				'BBC Scotland/STV Scot (Edinburgh) (0x40)': (0x111, (0x40, 0xffff)),
+				'BBC Wales (0x50)': (0x112, (0x50, 0xffff)),
+				'BBC Northern Ireland (0x5a)': (0x113, (0x5a, 0xffff)),
 			}
 		},
 		"sdt": {
@@ -511,7 +511,7 @@ PROVIDERS = {
 		"bat": {
 			"bat_lcn_descriptor": 0x93,
 			"BouquetID": 0x1,
-			"bat_regions": { # ( BouquetID,)
+			"bat_regions": {  # ( BouquetID,)
 				'Greece': (0x1,),
 				'Cyprus': (0x3,),
 			}
@@ -619,7 +619,7 @@ PROVIDERS = {
 		"bat": {
 			"bat_lcn_descriptor": 0xb1,
 			"BouquetID": 0x6250,
-			"bat_region": [0x0, 0xff], # area and common channels
+			"bat_region": [0x0, 0xff],  # area and common channels
 			"bat_regions": {
 				'Sky Italia SD': (0x6250, (0x0, 0xff)),
 				'Sky Italia HD': (0x6250, (0x4, 0xff)),
@@ -649,7 +649,7 @@ PROVIDERS = {
 		"bat": {
 			"bat_lcn_descriptor": 0xb1,
 			"BouquetID": 0x1005,
-			"bat_region": [0x1, 0xff], # area and common channels
+			"bat_region": [0x1, 0xff],  # area and common channels
 			"bat_regions": {
 				'Atherstone': (0x1005, (0x13, 0xff)),
 				'Border England': (0x1005, (0x0c, 0xff)),
@@ -741,7 +741,7 @@ PROVIDERS = {
 		"bat": {
 			"bat_lcn_descriptor": 0xe2,
 			"BouquetID": 0x6080,
-			"bat_regions": { # ( BouquetID,)
+			"bat_regions": {  # ( BouquetID,)
 				'Bouquet 1': (0x6080,),
 				'Bouquet 2': (0x6081,),
 				'Bouquet 3 (NewCardOnly)': (0x6157,),
@@ -842,7 +842,7 @@ PROVIDERS = {
 		"bat": {
 			"bat_lcn_descriptor": 0xe2,
 			"BouquetID": 0x6158,
-			"bat_regions": { # ( BouquetID,) # Some of these need removing.
+			"bat_regions": {  # ( BouquetID,) # Some of these need removing.
 				'Bouquet 1': (0x6158,),
 				'Bouquet 2': (0x6159,),
 				'Bouquet 3': (0x615d,),

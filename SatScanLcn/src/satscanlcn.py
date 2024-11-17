@@ -4,7 +4,7 @@ from . import _
 import six
 
 from Components.ActionMap import ActionMap
-from Components.config import config, getConfigListEntry, configfile, ConfigYesNo
+from Components.config import config, getConfigListEntry, configfile
 from Components.ConfigList import ConfigListScreen
 from Components.Label import Label
 from Components.NimManager import nimmanager
@@ -24,7 +24,7 @@ from .providers import PROVIDERS
 
 from enigma import eTimer, eDVBDB, eDVBFrontendParametersSatellite, eDVBFrontendParameters, eDVBResourceManager
 
-from time import localtime, time, strftime, mktime, sleep
+from time import time, sleep
 import datetime
 import re
 
@@ -42,10 +42,10 @@ def getConfiguredSats():
 	return sorted(list(set(configured_sats)))
 
 
-class SatScanLcn(Screen): # the downloader
+class SatScanLcn(Screen):  # the downloader
 	skin = downloadBar()
 
-	def __init__(self, session, args = None):
+	def __init__(self, session, args=None):
 		self.config = config.plugins.satscanlcn
 		self.debugName = self.__class__.__name__
 		self.extra_debug = self.config.extra_debug.value
@@ -72,17 +72,17 @@ class SatScanLcn(Screen): # the downloader
 		if args:
 			pass
 		self.frontend = None
-		self["Frontend"] = FrontendStatus(frontend_source = lambda : self.frontend, update_interval = 100)
+		self["Frontend"] = FrontendStatus(frontend_source=lambda: self.frontend, update_interval=100)
 		self.rawchannel = None
 		self.postScanService = None # self.session.nav.getCurrentlyPlayingServiceOrGroup()
-		self.LOCK_TIMEOUT_ROTOR = 1200 	# 100ms for tick - 120 sec
-		self.LOCK_TIMEOUT_FIXED = 50 	# 100ms for tick - 5 sec
+		self.LOCK_TIMEOUT_ROTOR = 1200  # 100ms for tick - 120 sec
+		self.LOCK_TIMEOUT_FIXED = 50  # 100ms for tick - 5 sec
 
 		self.LOCK_TIMEOUT = self.LOCK_TIMEOUT_FIXED
 
-		self.TIMEOUT_NIT = 20 # DVB standard says less than 10
-		self.TIMEOUT_BAT = 20 # DVB standard says less than 10
-		self.TIMEOUT_SDT = 5 # DVB standard says less than 2
+		self.TIMEOUT_NIT = 20  # DVB standard says less than 10
+		self.TIMEOUT_BAT = 20  # DVB standard says less than 10
+		self.TIMEOUT_SDT = 5  # DVB standard says less than 2
 
 		self.path = "/etc/enigma2" # path to settings files
 
@@ -91,31 +91,31 @@ class SatScanLcn(Screen): # the downloader
 
 		self.descriptors = {"transponder": 0x43, "serviceList": 0x41, "lcn": 0x83}
 
-		self.transponders_dict = {} # overwritten in firstExec
-		self.services_dict = {} # Services waiting to be written to bouquet file. Keys of this dict are LCNs
-		self.tmp_service_list = [] # holds the service list from NIT (for cross referencing)
-		self.tmp_bat_content = [] # holds bat data waiting for processing
-		self.logical_channel_number_dict = {} # Keys, TSID:ONID:SID in hex
-		self.ignore_visible_service_flag_default = False # make this a user override later if found necessary. Visible service flag is currently available in the NIT and BAT on most home transponders
-		self.VIDEO_ALLOWED_TYPES = [1, 4, 5, 17, 22, 24, 25, 27, 31, 135] # 4 and 5 NVOD, 17 MPEG-2 HD digital television service, 22 advanced codec SD digital television service, 24 advanced codec SD NVOD reference service, 27 advanced codec HD NVOD reference service, 31 ???, seems to be used on Astra 1 for some UHD/4K services
-		self.HD_ALLOWED_TYPES = [17, 25, 27, 31, 135] # 17 MPEG-2 HD digital television service, 27 advanced codec HD NVOD reference service, 31 ???, seems to be used on Astra 1 for some UHD/4K services
-		self.AUDIO_ALLOWED_TYPES = [2, 10] # 10 advanced codec digital radio sound service
+		self.transponders_dict = {}  # overwritten in firstExec
+		self.services_dict = {}  # Services waiting to be written to bouquet file. Keys of this dict are LCNs
+		self.tmp_service_list = []  # holds the service list from NIT (for cross referencing)
+		self.tmp_bat_content = []  # holds bat data waiting for processing
+		self.logical_channel_number_dict = {}  # Keys, TSID:ONID:SID in hex
+		self.ignore_visible_service_flag_default = False  # make this a user override later if found necessary. Visible service flag is currently available in the NIT and BAT on most home transponders
+		self.VIDEO_ALLOWED_TYPES = [1, 4, 5, 17, 22, 24, 25, 27, 31, 135]  # 4 and 5 NVOD, 17 MPEG-2 HD digital television service, 22 advanced codec SD digital television service, 24 advanced codec SD NVOD reference service, 27 advanced codec HD NVOD reference service, 31 ???, seems to be used on Astra 1 for some UHD/4K services
+		self.HD_ALLOWED_TYPES = [17, 25, 27, 31, 135]  # 17 MPEG-2 HD digital television service, 27 advanced codec HD NVOD reference service, 31 ???, seems to be used on Astra 1 for some UHD/4K services
+		self.AUDIO_ALLOWED_TYPES = [2, 10]  # 10 advanced codec digital radio sound service
 		self.BOUQUET_PREFIX = "userbouquet.%s." % self.__class__.__name__ # avoids hard coding below
-		self.bouquetsIndexFilename = "bouquets.tv" # avoids hard coding below
+		self.bouquetsIndexFilename = "bouquets.tv"  # avoids hard coding below
 		self.bouquetFilename = self.BOUQUET_PREFIX + self.config.provider.value + ".tv"
 		self.lastScannnedBouquetFilename = "userbouquet.LastScanned.tv"
-		self.bouquetName = PROVIDERS[self.config.provider.value]["name"] # already translated
+		self.bouquetName = PROVIDERS[self.config.provider.value]["name"]  # already translated
 		self.index = -1
-		self.actionsList = ["read NIT",] # "read BAT", "read SDTs"]
+		self.actionsList = ["read NIT",]  # "read BAT", "read SDTs"]
 		if self.bat is not None:
-			 self.actionsList.append("read BAT")
+			self.actionsList.append("read BAT")
 		self.actionsListOrigLength = len(self.actionsList)
 
 		self.adapter = 0 # fix me
 
-		self.nit_pid_default = 0x10 # DVB default
-		self.nit_current_table_id_default = 0x40 # DVB default
-		self.nit_other_table_id_default = 0x41 # DVB default
+		self.nit_pid_default = 0x10  # DVB default
+		self.nit_current_table_id_default = 0x40  # DVB default
+		self.nit_other_table_id_default = 0x41  # DVB default
 
 		self.nit_pid = PROVIDERS[self.config.provider.value]["nit"]["nit_pid"] if "nit" in PROVIDERS[self.config.provider.value] and "nit_pid" in PROVIDERS[self.config.provider.value]["nit"] else self.nit_pid_default
 		self.nit_current_table_id = PROVIDERS[self.config.provider.value]["nit"]["nit_current_table_id"] if "nit" in PROVIDERS[self.config.provider.value] and "nit_current_table_id" in PROVIDERS[self.config.provider.value]["nit"] else self.nit_current_table_id_default
@@ -123,14 +123,14 @@ class SatScanLcn(Screen): # the downloader
 		self.nit_lcn_descriptor = PROVIDERS[self.config.provider.value]["nit"]["nit_lcn_descriptor"] if "nit" in PROVIDERS[self.config.provider.value] and "nit_lcn_descriptor" in PROVIDERS[self.config.provider.value]["nit"] else None
 		self.nit_BouquetID = PROVIDERS[self.config.provider.value]["nit"]["BouquetID"] if "nit" in PROVIDERS[self.config.provider.value] and "BouquetID" in PROVIDERS[self.config.provider.value]["nit"] else None
 
-		if getattr(self.config, "nit-BouquetIDs-" + self.config.provider.value, None): # check if there is a regions ConfigSelection for this provider
+		if getattr(self.config, "nit-BouquetIDs-" + self.config.provider.value, None):  # check if there is a regions ConfigSelection for this provider
 			nit_BouquetIDs = getattr(self.config, "nit-BouquetIDs-" + self.config.provider.value)
 			if "nit" in PROVIDERS[self.config.provider.value] and "BouquetIDs" in PROVIDERS[self.config.provider.value]["nit"] and nit_BouquetIDs.value in PROVIDERS[self.config.provider.value]["nit"]["BouquetIDs"]:
 				self.nit_BouquetID = PROVIDERS[self.config.provider.value]["nit"]["BouquetIDs"][nit_BouquetIDs.value]
 
-		self.sdt_pid_default = 0x11 # DVB default
-		self.sdt_current_table_id_default = 0x42 # DVB default
-		self.sdt_other_table_id_default = 0x46 # DVB default is 0x46. Add the table id in the provider if this is to be read. Only used when self.sdt_only_scan_home_default = True
+		self.sdt_pid_default = 0x11  # DVB default
+		self.sdt_current_table_id_default = 0x42  # DVB default
+		self.sdt_other_table_id_default = 0x46  # DVB default is 0x46. Add the table id in the provider if this is to be read. Only used when self.sdt_only_scan_home_default = True
 		self.sdt_only_scan_home_default = False
 
 		self.sdt_pid = PROVIDERS[self.config.provider.value]["sdt"]["sdt_pid"] if "sdt" in PROVIDERS[self.config.provider.value] and "sdt_pid" in PROVIDERS[self.config.provider.value]["sdt"] else self.sdt_pid_default
@@ -138,9 +138,8 @@ class SatScanLcn(Screen): # the downloader
 		self.sdt_other_table_id = PROVIDERS[self.config.provider.value]["sdt"]["sdt_other_table_id"] if "sdt" in PROVIDERS[self.config.provider.value] and "sdt_other_table_id" in PROVIDERS[self.config.provider.value]["sdt"] else self.sdt_other_table_id_default
 		self.sdt_only_scan_home = PROVIDERS[self.config.provider.value]["sdt"]["sdt_only_scan_home"] if "sdt" in PROVIDERS[self.config.provider.value] and "sdt_only_scan_home" in PROVIDERS[self.config.provider.value]["sdt"] else self.sdt_only_scan_home_default
 
-
-		self.bat_pid_default = 0x11 # DVB default
-		self.bat_table_id_default = 0x4a # DVB default
+		self.bat_pid_default = 0x11  # DVB default
+		self.bat_table_id_default = 0x4a  # DVB default
 
 		self.bat_pid = PROVIDERS[self.config.provider.value]["bat"]["bat_pid"] if "bat" in PROVIDERS[self.config.provider.value] and "bat_pid" in PROVIDERS[self.config.provider.value]["bat"] else self.bat_pid_default
 		self.bat_table_id = PROVIDERS[self.config.provider.value]["bat"]["bat_table_id"] if "bat" in PROVIDERS[self.config.provider.value] and "bat_table_id" in PROVIDERS[self.config.provider.value]["bat"] else self.bat_table_id_default
@@ -149,7 +148,7 @@ class SatScanLcn(Screen): # the downloader
 		# self.bat_region, for use where the provider has multiple regions grouped under any single BouquetID. Will be a list containing the desired region id and may also contain the region id of the services that are common to all regions.
 		self.bat_region = PROVIDERS[self.config.provider.value]["bat"]["bat_region"] if "bat" in PROVIDERS[self.config.provider.value] and "bat_region" in PROVIDERS[self.config.provider.value]["bat"] else None # input from providers should be a list
 
-		if getattr(self.config, "bat-regions-" + self.config.provider.value, None): # check if there is a regions ConfigSelection for this provider
+		if getattr(self.config, "bat-regions-" + self.config.provider.value, None):  # check if there is a regions ConfigSelection for this provider
 			bat_regions = getattr(self.config, "bat-regions-" + self.config.provider.value)
 			if "bat" in PROVIDERS[self.config.provider.value] and "bat_regions" in PROVIDERS[self.config.provider.value]["bat"] and bat_regions.value in PROVIDERS[self.config.provider.value]["bat"]["bat_regions"]:
 				if len(PROVIDERS[self.config.provider.value]["bat"]["bat_regions"][bat_regions.value]):
@@ -167,8 +166,8 @@ class SatScanLcn(Screen): # the downloader
 		if self.nit_lcn_descriptor:
 			self.descriptors["lcn"] = self.nit_lcn_descriptor
 
-		self.SDTscanList = [] # list of transponders we are going to scan the SDT of.
-		self.tmp_services_dict = {} # services found in SDTs of the scanned transponders. Keys, TSID:ONID:SID  in hex
+		self.SDTscanList = []  # list of transponders we are going to scan the SDT of.
+		self.tmp_services_dict = {}  # services found in SDTs of the scanned transponders. Keys, TSID:ONID:SID  in hex
 
 		self.polarization_dict = {
 			eDVBFrontendParametersSatellite.Polarisation_Horizontal: "H",
@@ -192,7 +191,7 @@ class SatScanLcn(Screen): # the downloader
 	def firstExec(self):
 		from Screens.Standby import inStandby
 
-		self.progresscount = 5 # plus number of transponder to scan once we know this
+		self.progresscount = 5  # plus number of transponder to scan once we know this
 		self.progresscurrent = 1
 
 		if not inStandby:
@@ -232,7 +231,7 @@ class SatScanLcn(Screen): # the downloader
 			if not inStandby:
 				self["status"].setText(_("Reading bouquet allocation table..."))
 			self.timer = eTimer()
-			self.timer.callback.append(self.readBAT) # we are already tuned so go direct to read BAT
+			self.timer.callback.append(self.readBAT)  # we are already tuned so go direct to read BAT
 			self.timer.start(100, 1)
 			return
 
@@ -240,7 +239,7 @@ class SatScanLcn(Screen): # the downloader
 			if not inStandby:
 				self["status"].setText(_("Services: %d video - %d radio") % (self.video_services, self.radio_services))
 			self.transpondercurrent = self.SDTscanList[self.index - self.actionsListOrigLength]
-			if self.index == self.actionsListOrigLength: # this is the home transponder. We know it is the home transponder because that is first in the SDT scan list. And we are still tuned to it so go direct to read.
+			if self.index == self.actionsListOrigLength:  # this is the home transponder. We know it is the home transponder because that is first in the SDT scan list. And we are still tuned to it so go direct to read.
 				self.timer = eTimer()
 				self.timer.callback.append(self.readSDT)
 				self.timer.start(100, 1)
@@ -255,14 +254,14 @@ class SatScanLcn(Screen): # the downloader
 			if not inStandby:
 				self["action"].setText(_('Bouquets generation...'))
 				self["status"].setText(_("Services: %d video - %d radio") % (self.video_services, self.radio_services))
-			self.correctTsidErrors() # correct errors due to "broken" NIT on home transponder
+			self.correctTsidErrors()  # correct errors due to "broken" NIT on home transponder
 			if self.bat is not None:
 				self.processBAT()
 			self.addTransponders()
 			self.fixServiceNames()
 			self.addLCNsToServices()
 			self.addServicesToTransponders()
-			self["actions"].setEnabled(False) # disable action map here so we can't abort half way through writing result to settings files
+			self["actions"].setEnabled(False)  # disable action map here so we can't abort half way through writing result to settings files
 			self.saveLamedb()
 			self.createBouquet()
 			self.reloadSettingsAndClose()
@@ -270,7 +269,7 @@ class SatScanLcn(Screen): # the downloader
 	def getFrontend(self):
 		from Screens.Standby import inStandby
 		if not inStandby:
-			self["action"].setText(_("Tune %s %s %s %s...") % (self.bouquetName, self.getOrbPosHuman(self.transpondercurrent["orbital_position"]), str(self.transpondercurrent["frequency"]//1000), self.polarization_dict.get(self.transpondercurrent["polarization"],"")))
+			self["action"].setText(_("Tune %s %s %s %s...") % (self.bouquetName, self.getOrbPosHuman(self.transpondercurrent["orbital_position"]), str(self.transpondercurrent["frequency"] // 1000), self.polarization_dict.get(self.transpondercurrent["polarization"], "")))
 		print("[%s][getFrontend] searching for available tuner" % self.debugName)
 		nimList = []
 		for nim in nimmanager.nim_slots:
@@ -281,7 +280,7 @@ class SatScanLcn(Screen): # the downloader
 				continue
 			nimList.append(nim.slot)
 
-		if len(nimList) == 0: # No nims found for this satellite
+		if len(nimList) == 0:  # No nims found for this satellite
 			print("[%s][getFrontend] No compatible tuner found" % self.debugName)
 			self.showError(_("No compatible tuner found"))
 			return
@@ -324,7 +323,7 @@ class SatScanLcn(Screen): # the downloader
 
 		nimList = [slot for slot in nimList if not self.isRotorSat(slot, self.transpondercurrent["orbital_position"])] + [slot for slot in nimList if self.isRotorSat(slot, self.transpondercurrent["orbital_position"])] #If we have a choice of dishes, try "fixed" before "motorised".
 		for slotid in nimList:
-			if current_slotid == -1:	# mark the first valid slotid in case of no other one is free
+			if current_slotid == -1:  # mark the first valid slotid in case of no other one is free
 				current_slotid = slotid
 
 			self.rawchannel = resmanager.allocateRawChannel(slotid)
@@ -368,10 +367,10 @@ class SatScanLcn(Screen): # the downloader
 		if self.isRotorSat(current_slotid, self.transpondercurrent["orbital_position"]):
 			self.motorised = True
 			self.LOCK_TIMEOUT = self.LOCK_TIMEOUT_ROTOR
-			print("[%s][getFrontend] Motorised dish. Will wait up to %i seconds for tuner lock." % (self.debugName, self.LOCK_TIMEOUT//10))
+			print("[%s][getFrontend] Motorised dish. Will wait up to %i seconds for tuner lock." % (self.debugName, self.LOCK_TIMEOUT // 10))
 		else:
 			self.LOCK_TIMEOUT = self.LOCK_TIMEOUT_FIXED
-			print("[%s][getFrontend] Fixed dish. Will wait up to %i seconds for tuner lock." % (self.debugName, self.LOCK_TIMEOUT//10))
+			print("[%s][getFrontend] Fixed dish. Will wait up to %i seconds for tuner lock." % (self.debugName, self.LOCK_TIMEOUT // 10))
 
 		self.selectedNIM = current_slotid  # Remember for downloading SI tables
 
@@ -406,11 +405,11 @@ class SatScanLcn(Screen): # the downloader
 		self.dict = {}
 		self.frontend.getFrontendStatus(self.dict)
 		if self.dict["tuner_state"] == "TUNING":
-			if self.lockcounter < 1: # only show this once in the log per retune event
+			if self.lockcounter < 1:  # only show this once in the log per retune event
 				print("[%s][checkTunerLock] TUNING" % self.debugName)
 		elif self.dict["tuner_state"] == "LOCKED":
 			if not inStandby:
-				self["action"].setText(_("Read %s %s %s %s...") % (self.bouquetName, self.getOrbPosHuman(self.transpondercurrent["orbital_position"]), str(self.transpondercurrent["frequency"]//1000), self.polarization_dict.get(self.transpondercurrent["polarization"],"")))
+				self["action"].setText(_("Read %s %s %s %s...") % (self.bouquetName, self.getOrbPosHuman(self.transpondercurrent["orbital_position"]), str(self.transpondercurrent["frequency"] // 1000), self.polarization_dict.get(self.transpondercurrent["polarization"],"")))
 
 			self.readTransponderCounter = 0
 			self.readTranspondertimer = eTimer()
@@ -419,19 +418,19 @@ class SatScanLcn(Screen): # the downloader
 			return
 		elif self.dict["tuner_state"] in ("LOSTLOCK", "FAILED"):
 			print("[%s][checkTunerLock] TUNING FAILED" % self.debugName)
-			if self.actionsList[self.index] == "read SDTs": # if we can't tune a transponder just skip it (like enigma does)
+			if self.actionsList[self.index] == "read SDTs":  # if we can't tune a transponder just skip it (like enigma does)
 				self.manager()
 			else:
-				self.showError(_("Tuning failed on %s") % str(self.transpondercurrent["frequency"]//1000))
+				self.showError(_("Tuning failed on %s") % str(self.transpondercurrent["frequency"] // 1000))
 			return
 
 		self.lockcounter += 1
 		if self.lockcounter > self.LOCK_TIMEOUT:
-			if self.actionsList[self.index] == "read SDTs": # if we can't tune a transponder just skip it (like enigma does)
+			if self.actionsList[self.index] == "read SDTs":  # if we can't tune a transponder just skip it (like enigma does)
 				self.manager()
 			else:
 				print("[%s][checkTunerLock] Timeout for tuner lock" % self.debugName)
-				self.showError(_("Timeout for tuner lock on %s") % str(self.transpondercurrent["frequency"]//1000))
+				self.showError(_("Timeout for tuner lock on %s") % str(self.transpondercurrent["frequency"] // 1000))
 			return
 		self.locktimer.start(100, 1)
 
@@ -448,7 +447,7 @@ class SatScanLcn(Screen): # the downloader
 			self.readNIT()
 		elif self.actionsList[self.index] in ("read SDTs",):
 			self.readSDT()
-		else: # readBAT does not follow this code path
+		else:  # readBAT does not follow this code path
 			print("[%s][readTransponder] Something went terribly wrong" % self.debugName)
 			self.showError(_("Something went terribly wrong"))
 
@@ -465,7 +464,7 @@ class SatScanLcn(Screen): # the downloader
 
 		fd = dvbreader.open(self.demuxer_device, self.sdt_pid, self.sdt_current_table_id, mask, self.selectedNIM)
 		if fd < 0:
-			print("[%s][tsidOnidTest] Cannot open the demuxer_device '%s'" % (self.debugName, demuxer_device))
+			print("[%s][tsidOnidTest] Cannot open the demuxer_device '%s'" % (self.debugName, self.demuxer_device))
 			self.showError(_('Cannot open the demuxer'))
 			return
 
@@ -479,7 +478,7 @@ class SatScanLcn(Screen): # the downloader
 
 			section = dvbreader.read_sdt(fd, self.sdt_current_table_id, 0x00)
 			if section is None:
-				sleep(0.1)	# no data.. so we wait a bit
+				sleep(0.1)  # no data.. so we wait a bit
 				continue
 
 			if section["header"]["table_id"] == self.sdt_current_table_id:
@@ -540,7 +539,7 @@ class SatScanLcn(Screen): # the downloader
 
 			section = dvbreader.read_nit(fd, self.nit_current_table_id, self.nit_other_table_id)
 			if section is None:
-				sleep(0.1)	# no data.. so we wait a bit
+				sleep(0.1)  # no data.. so we wait a bit
 				continue
 
 			if self.extra_debug:
@@ -606,7 +605,7 @@ class SatScanLcn(Screen): # the downloader
 			for x in nit_content:
 				print("[%s] NIT item:" % self.debugName, x)
 
-		#transponders_tmp = [x for x in nit_content if "descriptor_tag" in x and x["descriptor_tag"] == self.descriptors["transponder"]]
+		# transponders_tmp = [x for x in nit_content if "descriptor_tag" in x and x["descriptor_tag"] == self.descriptors["transponder"]]
 		transponders_count = self.processTransponders([x for x in nit_content if "descriptor_tag" in x and x["descriptor_tag"] == self.descriptors["transponder"]])
 
 		from Screens.Standby import inStandby
@@ -618,7 +617,7 @@ class SatScanLcn(Screen): # the downloader
 		# start: only for providers that store LCN in NIT (not for providers where LCN is stored in the BAT)
 		LCNs = []
 		for x in nit_content:
-			if "channel_list_id" in x and x["channel_list_id"] != self.nit_BouquetID: # only for Canal Digital Nordic
+			if "channel_list_id" in x and x["channel_list_id"] != self.nit_BouquetID:  # only for Canal Digital Nordic
 				continue
 			if "descriptor_tag" in x and x["descriptor_tag"] == self.descriptors["lcn"]:
 				LCNs.append(x)
@@ -646,7 +645,7 @@ class SatScanLcn(Screen): # the downloader
 
 	def readBAT(self):
 		print("[%s] Reading BAT..." % self.debugName)
-		self.TSID_ONID_list = [] # as we are searching the bat delete any data that may have been downloaded from the nit
+		self.TSID_ONID_list = []  # as we are searching the bat delete any data that may have been downloaded from the nit
 
 		self.setDemuxer()
 
@@ -673,7 +672,7 @@ class SatScanLcn(Screen): # the downloader
 
 			section = dvbreader.read_bat(fd, self.bat_table_id)
 			if section is None:
-				sleep(0.1)	# no data.. so we wait a bit
+				sleep(0.1)  # no data.. so we wait a bit
 				continue
 
 			if self.extra_debug:
@@ -701,13 +700,13 @@ class SatScanLcn(Screen): # the downloader
 
 		self.BATreadTime += time() - start_time
 
-		#self.tmp_bat_content = [x for x in bat_content if "descriptor_tag" in x and x["descriptor_tag"] == self.descriptors["lcn"]] # used before region code added below.
+		# self.tmp_bat_content = [x for x in bat_content if "descriptor_tag" in x and x["descriptor_tag"] == self.descriptors["lcn"]] # used before region code added below.
 
 		self.tmp_bat_content = []
 		for x in bat_content:
 			if "descriptor_tag" in x and x["descriptor_tag"] == self.descriptors["lcn"]:
 				if self.bat_region and "region_id" in x and x["region_id"] not in self.bat_region:
-					continue # skip regions that don't match
+					continue  # skip regions that don't match
 				TSID_ONID_key = "%x:%x" % (x["transport_stream_id"], x["original_network_id"])
 				if TSID_ONID_key not in self.TSID_ONID_list:
 					self.TSID_ONID_list.append(TSID_ONID_key)
@@ -737,7 +736,7 @@ class SatScanLcn(Screen): # the downloader
 		self.setDemuxer()
 
 		# 2 choices, just search SDT Actual (on all transponders), or search SDT Actual and SDT Other but only on the home transponder
-		if self.sdt_only_scan_home: # include SDT Actual and SDT Other
+		if self.sdt_only_scan_home:  # include SDT Actual and SDT Other
 			if self.sdt_other_table_id == 0x00:
 				mask = 0xff
 			else:
@@ -767,7 +766,7 @@ class SatScanLcn(Screen): # the downloader
 
 				section = dvbreader.read_sdt(fd, self.sdt_current_table_id, self.sdt_other_table_id)
 				if section is None:
-					sleep(0.1)	# no data.. so we wait a bit
+					sleep(0.1)  # no data.. so we wait a bit
 					continue
 
 				if self.extra_debug:
@@ -803,9 +802,9 @@ class SatScanLcn(Screen): # the downloader
 			# Now throw the lot in one list so it matches the format handling below which is one single list.
 			sdt_current_content = []
 			for key in sdt_secions_status:
-				sdt_current_content	+= sdt_secions_status[key]["content"]
+				sdt_current_content += sdt_secions_status[key]["content"]
 
-		else: # only read SDT Actual (other transponders will be read in the tuning loop)
+		else:  # only read SDT Actual (other transponders will be read in the tuning loop)
 
 			mask = 0xff
 			sdt_current_version_number = -1
@@ -830,7 +829,7 @@ class SatScanLcn(Screen): # the downloader
 
 				section = dvbreader.read_sdt(fd, self.sdt_current_table_id, 0x00)
 				if section is None:
-					sleep(0.1)	# no data.. so we wait a bit
+					sleep(0.1)  # no data.. so we wait a bit
 					continue
 
 				if self.extra_debug:
@@ -844,9 +843,9 @@ class SatScanLcn(Screen): # the downloader
 				# Check for ONID/TSID miss match between the transport stream we have tuned and the one we are supposed to tune.
 				# A miss match happens when the NIT table on the home transponder has broken data.
 				# If there is a miss match correct it now, before the data is "used in anger".
-	#			if self.transpondercurrent["transport_stream_id"] != section["header"]["transport_stream_id"]:
-	#				print("[%s] readSDT ONID/TSID mismatch. Supposed to be reading: 0x%x/0x%x, Currently reading: 0x%x/0x%x. Will accept current data as  authoritative." % (self.debugName, self.transpondercurrent["original_network_id"], self.transpondercurrent["transport_stream_id"], section["header"]["original_network_id"], section["header"]["transport_stream_id"]))
-	#				self.transpondercurrent["real_transport_stream_id"] = section["header"]["transport_stream_id"]
+				# if self.transpondercurrent["transport_stream_id"] != section["header"]["transport_stream_id"]:
+				# 	print("[%s] readSDT ONID/TSID mismatch. Supposed to be reading: 0x%x/0x%x, Currently reading: 0x%x/0x%x. Will accept current data as  authoritative." % (self.debugName, self.transpondercurrent["original_network_id"], self.transpondercurrent["transport_stream_id"], section["header"]["original_network_id"], section["header"]["transport_stream_id"]))
+				# 	self.transpondercurrent["real_transport_stream_id"] = section["header"]["transport_stream_id"]
 
 				if section["header"]["table_id"] == self.sdt_current_table_id and not sdt_current_completed:
 					if section["header"]["version_number"] != sdt_current_version_number:
@@ -870,12 +869,12 @@ class SatScanLcn(Screen): # the downloader
 
 		self.SDTsReadTime += time() - start_time
 
-		if not sdt_current_content: # if no channels in SDT just skip the transponder read. No need to abort the complete scan.
+		if not sdt_current_content:  # if no channels in SDT just skip the transponder read. No need to abort the complete scan.
 			print("[%s][readSDT] no services found on transponder" % self.debugName)
 			self.manager()
 			return
 
-		namespace = self.SDTscanList[self.index - self.actionsListOrigLength]["namespace"] # this is corrected namespace after any resync from satellites.xml, (with subnet applied if so coonfigured or applicable)
+		namespace = self.SDTscanList[self.index - self.actionsListOrigLength]["namespace"]  # this is corrected namespace after any resync from satellites.xml, (with subnet applied if so coonfigured or applicable)
 		for i in range(len(sdt_current_content)):
 			service = sdt_current_content[i]
 
@@ -906,13 +905,13 @@ class SatScanLcn(Screen): # the downloader
 					service["service_name"] = service["service_name"].encode("iso-8859-1").decode(charsets[service["service_name_encoding"]])
 				if "provider_name_encoding" in service and service["provider_name_encoding"] in charsets:
 					service["provider_name"] = service["provider_name"].encode("iso-8859-1").decode(charsets[service["provider_name_encoding"]])
-				
+
 			self.tmp_services_dict[servicekey] = service
 
 		self.manager()
 
 	def processBAT(self):
-		self.logical_channel_number_dict = {} # start clean (in theory should be empty but who knows what was in the NIT)
+		self.logical_channel_number_dict = {}  # start clean (in theory should be empty but who knows what was in the NIT)
 		if self.extra_debug:
 			lcn_list = []
 			sid_list = []
@@ -920,7 +919,7 @@ class SatScanLcn(Screen): # the downloader
 
 		used_keys = []
 		used_lcns = []
-		for service in sorted(self.tmp_bat_content, key=lambda listItem: (listItem["logical_channel_number"] if "logical_channel_number" in listItem else 0, listItem["region_id"] if "region_id" in listItem else 0)): # sort by channel number
+		for service in sorted(self.tmp_bat_content, key=lambda listItem: (listItem["logical_channel_number"] if "logical_channel_number" in listItem else 0, listItem["region_id"] if "region_id" in listItem else 0)):  # sort by channel number
 			if not self.ignore_visible_service_flag and "visible_service_flag" in service and service["visible_service_flag"] == 0:
 				continue
 
@@ -980,14 +979,14 @@ class SatScanLcn(Screen): # the downloader
 
 	def processTransponders(self, transponderList):
 		transponders_count = 0
-		self.TSID_ONID_list = [] # so we know what to look for in the SDT when we are looking for SDT Other
+		self.TSID_ONID_list = []  # so we know what to look for in the SDT when we are looking for SDT Other
 		for transponder in transponderList:
-			transponder["dvb_type"] = "dvbs" # so we know how to format it
+			transponder["dvb_type"] = "dvbs"  # so we know how to format it
 			transponder["orbital_position"] = self.getOrbPosFromBCD(transponder)
 			# horrible hack for Canal Digital Nordic 1.0W, shift to 0.8W
 			if transponder["orbital_position"] == 3590:
 				transponder["orbital_position"] = 3592
-			if not nimmanager.getNimListForSat(transponder["orbital_position"]): # Don't waste effort trying to scan or import from not configured satellites.
+			if not nimmanager.getNimListForSat(transponder["orbital_position"]):  # Don't waste effort trying to scan or import from not configured satellites.
 				if self.extra_debug:
 					print("[%s] Skipping transponder as it is on a not configured satellite:" % self.debugName, transponder)
 				continue
@@ -995,8 +994,8 @@ class SatScanLcn(Screen): # the downloader
 			if TSID_ONID_key not in self.TSID_ONID_list:
 				self.TSID_ONID_list.append(TSID_ONID_key)
 			transponder["flags"] = 0
-			transponder["frequency"] = int(round(transponder["frequency"]*10, -3)) # Number will be five digits according to SI output, plus 3 trailing zeros. This is the same format used in satellites.xml.
-			transponder["symbol_rate"] = int(round(transponder["symbol_rate"]*100, -3))
+			transponder["frequency"] = int(round(transponder["frequency"] * 10, -3))  # Number will be five digits according to SI output, plus 3 trailing zeros. This is the same format used in satellites.xml.
+			transponder["symbol_rate"] = int(round(transponder["symbol_rate"] * 100, -3))
 			if transponder["fec_inner"] != eDVBFrontendParametersSatellite.FEC_None and transponder["fec_inner"] > eDVBFrontendParametersSatellite.FEC_9_10:
 				transponder["fec_inner"] = eDVBFrontendParametersSatellite.FEC_Auto
 			transponder["inversion"] = eDVBFrontendParametersSatellite.Inversion_Unknown
@@ -1012,8 +1011,8 @@ class SatScanLcn(Screen): # the downloader
 				print("[%s] transponder" % self.debugName, transponder)
 
 			self.SDTscanList.append(transponder)
-			if not self.sdt_only_scan_home or "read SDTs" not in self.actionsList: # If we are only scanning home only enter this once... otherwise enter it for all transponders.
-				self.actionsList.append("read SDTs") # Adds new task to actions list to scan SDT of this transponder.
+			if not self.sdt_only_scan_home or "read SDTs" not in self.actionsList:  # If we are only scanning home only enter this once... otherwise enter it for all transponders.
+				self.actionsList.append("read SDTs")  # Adds new task to actions list to scan SDT of this transponder.
 
 		# Sort the transponder scan list.
 		# step one: put the home transponder at the start of the list so no retune is required.
@@ -1046,11 +1045,11 @@ class SatScanLcn(Screen): # the downloader
 		servicekeys = list(self.tmp_services_dict.keys())
 		for servicekey in servicekeys:
 			tpkey = "%x:%x:%x" % (self.tmp_services_dict[servicekey]["namespace"], self.tmp_services_dict[servicekey]["transport_stream_id"], self.tmp_services_dict[servicekey]["original_network_id"])
-			if tpkey not in self.transponders_dict: # Can this really happen?
+			if tpkey not in self.transponders_dict:  # Can this really happen?
 				print("[%s] tpkey not in self.transponders_dict" % self.debugName, self.tmp_services_dict[servicekey])
 				del self.tmp_services_dict[servicekey]
 				continue
-			if "services" not in self.transponders_dict[tpkey]: # create a services dict on the transponder if one does not currently exist
+			if "services" not in self.transponders_dict[tpkey]:  # create a services dict on the transponder if one does not currently exist
 				self.transponders_dict[tpkey]["services"] = {}
 			# The original (correct) code
 			# self.transponders_dict[tpkey]["services"][self.tmp_services_dict[servicekey]["service_id"]] = self.tmp_services_dict[servicekey]
@@ -1061,15 +1060,15 @@ class SatScanLcn(Screen): # the downloader
 	def addLCNsToServices(self):
 		servicekeys = list(self.tmp_services_dict.keys())
 		for servicekey in servicekeys:
-			if servicekey in self.logical_channel_number_dict and (self.logical_channel_number_dict[servicekey]["logical_channel_number"] not in self.services_dict or self.services_dict[self.logical_channel_number_dict[servicekey]["logical_channel_number"]]['service_type'] in self.AUDIO_ALLOWED_TYPES): # this is for a tv bouquet so don't overwrite tv channels but do overwrite radio channels
-				self.tmp_services_dict[servicekey]["logical_channel_number"] = self.logical_channel_number_dict[servicekey]["logical_channel_number"] # adds LCN to the service
-				self.services_dict[self.logical_channel_number_dict[servicekey]["logical_channel_number"]] = self.tmp_services_dict[servicekey] # queues service for adding to bouquet file
+			if servicekey in self.logical_channel_number_dict and (self.logical_channel_number_dict[servicekey]["logical_channel_number"] not in self.services_dict or self.services_dict[self.logical_channel_number_dict[servicekey]["logical_channel_number"]]['service_type'] in self.AUDIO_ALLOWED_TYPES):  # this is for a tv bouquet so don't overwrite tv channels but do overwrite radio channels
+				self.tmp_services_dict[servicekey]["logical_channel_number"] = self.logical_channel_number_dict[servicekey]["logical_channel_number"]  # adds LCN to the service
+				self.services_dict[self.logical_channel_number_dict[servicekey]["logical_channel_number"]] = self.tmp_services_dict[servicekey]  # queues service for adding to bouquet file
 
 		if self.extra_debug:
-			for key in self.dict_sorter(self.tmp_services_dict, "service_name"): # prints service list in alphabetical order
+			for key in self.dict_sorter(self.tmp_services_dict, "service_name"):  # prints service list in alphabetical order
 				print("[%s] service-alpha-order" % self.debugName, key, self.tmp_services_dict[key])
 
-			for key in self.dict_sorter(self.tmp_services_dict, "logical_channel_number"): # prints service list in LCN order
+			for key in self.dict_sorter(self.tmp_services_dict, "logical_channel_number"):  # prints service list in LCN order
 				print("[%s] service-LCN-order" % self.debugName, key, self.tmp_services_dict[key])
 
 	def dict_sorter(self, in_dict, sort_by):
@@ -1089,7 +1088,7 @@ class SatScanLcn(Screen): # the downloader
 				transponder["original_network_id"])
 
 			if key in self.transponders_dict:
-				if "services" not in self.transponders_dict[key]: # sanity
+				if "services" not in self.transponders_dict[key]:  # sanity
 					self.transponders_dict[key]["services"] = {}
 				transponder["services"] = self.transponders_dict[key]["services"]
 			self.transponders_dict[key] = transponder
@@ -1099,11 +1098,11 @@ class SatScanLcn(Screen): # the downloader
 		tolerance = 5
 		multiplier = 1000
 		nameToIndex = {"frequency": 1, "symbol_rate": 2, "polarization": 3, "fec_inner": 4, "system": 5, "modulation": 6}
-		tpList = nimmanager.getTransponders(transponder["orbital_position"]) # this data comes from satellites.xml
+		tpList = nimmanager.getTransponders(transponder["orbital_position"])  # this data comes from satellites.xml
 		for knownTransponder in tpList:
 			if (knownTransponder[nameToIndex["polarization"]] % 2) == (transponder["polarization"] % 2) and \
-				abs(knownTransponder[nameToIndex["frequency"]] - transponder["frequency"]) < (tolerance*multiplier) and \
-				abs(knownTransponder[nameToIndex["symbol_rate"]] - transponder["symbol_rate"]) < (tolerance*multiplier):
+				abs(knownTransponder[nameToIndex["frequency"]] - transponder["frequency"]) < (tolerance * multiplier) and \
+				abs(knownTransponder[nameToIndex["symbol_rate"]] - transponder["symbol_rate"]) < (tolerance * multiplier):
 				transponder["frequency"] = knownTransponder[nameToIndex["frequency"]]
 				transponder["polarization"] = knownTransponder[nameToIndex["polarization"]]
 				transponder["symbol_rate"] = knownTransponder[nameToIndex["symbol_rate"]]
@@ -1115,7 +1114,7 @@ class SatScanLcn(Screen): # the downloader
 		# nothing found so we make it a bit looser (no symbol rate). Step one stops selecting the wrong transponder if there are 2 similar ones.
 		for knownTransponder in tpList:
 			if (knownTransponder[nameToIndex["polarization"]] % 2) == (transponder["polarization"] % 2) and \
-				abs(knownTransponder[nameToIndex["frequency"]] - transponder["frequency"]) < (tolerance*multiplier):
+				abs(knownTransponder[nameToIndex["frequency"]] - transponder["frequency"]) < (tolerance * multiplier):
 				transponder["frequency"] = knownTransponder[nameToIndex["frequency"]]
 				transponder["polarization"] = knownTransponder[nameToIndex["polarization"]]
 				transponder["symbol_rate"] = knownTransponder[nameToIndex["symbol_rate"]]
@@ -1129,16 +1128,16 @@ class SatScanLcn(Screen): # the downloader
 	def readBouquetIndex(self):
 		try:
 			return open(self.path + "/" + self.bouquetsIndexFilename, "r").read()
-		except Exception as e:
+		except Exception:
 			return ""
 
 	def handleBouquetIndex(self):
 		newBouquetIndexContent = bouquetIndexContent = self.readBouquetIndex()
-		if '"' + self.bouquetFilename + '"' not in bouquetIndexContent: # only edit the index if bouquet file is not present
+		if '"' + self.bouquetFilename + '"' not in bouquetIndexContent:  # only edit the index if bouquet file is not present
 			bouquets_tv_list = []
 			bouquets_tv_list.append("#NAME Bouquets (TV)\n")
 			bouquets_tv_list.append("#SERVICE 1:7:1:0:0:0:0:0:0:0:FROM BOUQUET \"%s\" ORDER BY bouquet\n" % self.bouquetFilename)
-			if bouquetIndexContent: # if bouquet index not empty
+			if bouquetIndexContent:  # if bouquet index not empty
 				lines = bouquetIndexContent.split("\n", 1)
 				if lines[0][:6] != "#NAME ":
 					bouquets_tv_list.append("%s\n" % lines[0])
@@ -1149,7 +1148,7 @@ class SatScanLcn(Screen): # the downloader
 			if self.extra_debug:
 				print("[%s] Already present in index..." % self.debugName)
 
-		if '"' + self.lastScannnedBouquetFilename + '"' not in bouquetIndexContent: # check if LasScanned bouquet is present in the index
+		if '"' + self.lastScannnedBouquetFilename + '"' not in bouquetIndexContent:  # check if LasScanned bouquet is present in the index
 			newBouquetIndexContent += "#SERVICE 1:7:1:0:0:0:0:0:0:0:FROM BOUQUET \"%s\" ORDER BY bouquet\n" % self.lastScannnedBouquetFilename
 
 		if bouquetIndexContent != newBouquetIndexContent:
@@ -1190,7 +1189,7 @@ class SatScanLcn(Screen): # the downloader
 				service["transport_stream_id"],
 				service["original_network_id"],
 				service["namespace"]
-				)
+			)
 			if ref in avoid_duplicates:
 				continue
 			avoid_duplicates.append(ref)
@@ -1217,7 +1216,7 @@ class SatScanLcn(Screen): # the downloader
 		return "#SERVICE 1:320:0:0:0:0:0:0:0:0:\n#DESCRIPTION  \n"
 
 	def cleanServiceName(self, text):
-		control_chars = ''.join(map(chr, list(range(0,32)) + list(range(127,160))))
+		control_chars = ''.join(map(chr, list(range(0, 32)) + list(range(127, 160))))
 		control_char_re = re.compile('[%s]' % re.escape(control_chars))
 		if six.PY2:
 			return control_char_re.sub('', text).decode('latin-1').encode("utf8")
@@ -1267,7 +1266,6 @@ class SatScanLcn(Screen): # the downloader
 		print("[%s] time processing %.2f" % (self.debugName, total_time - (self.tuningTime + self.NITreadTime + self.BATreadTime + self.SDTsReadTime)))
 		print("[%s] total run time %.2f" % (self.debugName, total_time))
 
-
 	def isValidOnidTsid(self, transponder):
 		return transponder["original_network_id"] != 0x0 and transponder["original_network_id"] < 0xff00
 
@@ -1278,11 +1276,11 @@ class SatScanLcn(Screen): # the downloader
 		bits = 4
 		bcd = transponder["orbital_position"]
 		for i in range(bits):
-			op += ((bcd >> 4*i) & 0x0F) * 10**i
+			op += ((bcd >> 4 * i) & 0x0F) * 10 ** i
 		return op and not transponder["west_east_flag"] and 3600 - op or op
 
 	def getOrbPosHuman(self, op):
-		return "%0.1f%s" % (((3600 - op)/10.0, "W") if op > 1800 else (op/10.0, "E"))
+		return "%0.1f%s" % (((3600 - op) / 10.0, "W") if op > 1800 else (op / 10.0, "E"))
 
 	def setDemuxer(self):
 		self.demuxer_device = "/dev/dvb/adapter%d/demux%d" % (self.adapter, self.demuxer_id)
@@ -1349,7 +1347,7 @@ class SatScanLcn(Screen): # the downloader
 
 
 class SatScanLcn_Setup(ConfigListScreen, Screen):
-	def __init__(self, session, args = None):
+	def __init__(self, session, args=None):
 		Screen.__init__(self, session)
 		self.setup_title = _('SatScanLcn') + " - " + _('Setup')
 		Screen.setTitle(self, self.setup_title)
@@ -1357,7 +1355,7 @@ class SatScanLcn_Setup(ConfigListScreen, Screen):
 		self.config = config.plugins.satscanlcn
 		self.onChangedEntry = []
 		self.session = session
-		ConfigListScreen.__init__(self, [], session = session, on_change = self.changedEntry)
+		ConfigListScreen.__init__(self, [], session=session, on_change=self.changedEntry)
 
 		self["actions2"] = ActionMap(["SetupActions", "ColorActions"],
 		{  # self.keySelect() comes from ConfigListScreen but may not be available in some distros
@@ -1378,7 +1376,7 @@ class SatScanLcn_Setup(ConfigListScreen, Screen):
 
 		self.createSetup()
 
-		if not self.selectionChanged in self["config"].onSelectionChanged:
+		if self.selectionChanged not in self["config"].onSelectionChanged:
 			self["config"].onSelectionChanged.append(self.selectionChanged)
 		self.selectionChanged()
 
@@ -1428,7 +1426,7 @@ class SatScanLcn_Setup(ConfigListScreen, Screen):
 		self.session.open(SatScanLcn_About)
 
 	def selectionChanged(self):
-		self["description"].setText(self.getCurrentDescription()) #self["description"].setText(self["config"].getCurrent()[2])
+		self["description"].setText(self.getCurrentDescription())  #self["description"].setText(self["config"].getCurrent()[2])
 
 	# for summary:
 	def changedEntry(self):
@@ -1453,8 +1451,9 @@ class SatScanLcn_Setup(ConfigListScreen, Screen):
 			x[1].save()
 		configfile.save()
 
+
 class  SatScanLcnAdvancedScreen(ConfigListScreen, Screen):
-	def __init__(self, session, args = 0):
+	def __init__(self, session, args=0):
 		self.session = session
 		Screen.__init__(self, session)
 		Screen.setTitle(self, _('SatScanLcn') + " - " + _("Advanced options"))

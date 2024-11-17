@@ -31,25 +31,28 @@ config.plugins.satscanlcn.sync_with_known_tps = ConfigYesNo(default = False)
 config.plugins.satscanlcn.force_service_name = ConfigYesNo(default = False)
 
 
-def startdownload(session, **kwargs): # Called from extensions menu if this option is active
+def startdownload(session, **kwargs):  # Called from extensions menu if this option is active
 	session.open(SatScanLcn)
 
-def SatScanLcnStart(menuid, **kwargs): # Menu position of plugin setup screen
+def SatScanLcnStart(menuid, **kwargs):  # Menu position of plugin setup screen
 	if menuid == "scan":
 		return [(_("SatScanLcn"), SatScanLcnMain, "SatScanLcn_Setup", 11, True)]
 	return []
 
+
 def SatScanLcnMain(session, close=None, **kwargs): # calls setup screen
 	session.openWithCallback(boundFunction(SatScanLcnCallback, close), SatScanLcn_Setup)
 
-def SatScanLcnCallback(close=None, answer=None): # Called on exiting setup screen. Should force a recursive close on a succsssful scan.
+
+def SatScanLcnCallback(close=None, answer=None):  # Called on exiting setup screen. Should force a recursive close on a succsssful scan.
 	if close and answer:
 		close(True)
+
 
 def Plugins(**kwargs):
 	plist = []
 	if nimmanager.hasNimType("DVB-S"):
-		plist.append( PluginDescriptor(name=_("SatScanLcn"), description=description, where = PluginDescriptor.WHERE_MENU, needsRestart = False, fnc=SatScanLcnStart) )
+		plist.append(PluginDescriptor(name=_("SatScanLcn"), description=description, where=PluginDescriptor.WHERE_MENU, needsRestart=False, fnc=SatScanLcnStart))
 		if config.plugins.satscanlcn.extensions.getValue():
-			plist.append(PluginDescriptor(name=_("SatScanLcn"), description=description, where = PluginDescriptor.WHERE_EXTENSIONSMENU, fnc=startdownload, needsRestart=True))
+			plist.append(PluginDescriptor(name=_("SatScanLcn"), description=description, where=PluginDescriptor.WHERE_EXTENSIONSMENU, fnc=startdownload, needsRestart=True))
 	return plist
