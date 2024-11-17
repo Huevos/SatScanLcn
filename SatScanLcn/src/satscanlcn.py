@@ -74,7 +74,7 @@ class SatScanLcn(Screen):  # the downloader
 		self.frontend = None
 		self["Frontend"] = FrontendStatus(frontend_source=lambda: self.frontend, update_interval=100)
 		self.rawchannel = None
-		self.postScanService = None # self.session.nav.getCurrentlyPlayingServiceOrGroup()
+		self.postScanService = None  # self.session.nav.getCurrentlyPlayingServiceOrGroup()
 		self.LOCK_TIMEOUT_ROTOR = 1200  # 100ms for tick - 120 sec
 		self.LOCK_TIMEOUT_FIXED = 50  # 100ms for tick - 5 sec
 
@@ -84,7 +84,7 @@ class SatScanLcn(Screen):  # the downloader
 		self.TIMEOUT_BAT = 20  # DVB standard says less than 10
 		self.TIMEOUT_SDT = 5  # DVB standard says less than 2
 
-		self.path = "/etc/enigma2" # path to settings files
+		self.path = "/etc/enigma2"  # path to settings files
 
 		self.homeTransponder = PROVIDERS[self.config.provider.value]["transponder"]
 		self.bat = PROVIDERS[self.config.provider.value]["bat"] if "bat" in PROVIDERS[self.config.provider.value] else None
@@ -100,7 +100,7 @@ class SatScanLcn(Screen):  # the downloader
 		self.VIDEO_ALLOWED_TYPES = [1, 4, 5, 17, 22, 24, 25, 27, 31, 135]  # 4 and 5 NVOD, 17 MPEG-2 HD digital television service, 22 advanced codec SD digital television service, 24 advanced codec SD NVOD reference service, 27 advanced codec HD NVOD reference service, 31 ???, seems to be used on Astra 1 for some UHD/4K services
 		self.HD_ALLOWED_TYPES = [17, 25, 27, 31, 135]  # 17 MPEG-2 HD digital television service, 27 advanced codec HD NVOD reference service, 31 ???, seems to be used on Astra 1 for some UHD/4K services
 		self.AUDIO_ALLOWED_TYPES = [2, 10]  # 10 advanced codec digital radio sound service
-		self.BOUQUET_PREFIX = "userbouquet.%s." % self.__class__.__name__ # avoids hard coding below
+		self.BOUQUET_PREFIX = "userbouquet.%s." % self.__class__.__name__  # avoids hard coding below
 		self.bouquetsIndexFilename = "bouquets.tv"  # avoids hard coding below
 		self.bouquetFilename = self.BOUQUET_PREFIX + self.config.provider.value + ".tv"
 		self.lastScannnedBouquetFilename = "userbouquet.LastScanned.tv"
@@ -111,7 +111,7 @@ class SatScanLcn(Screen):  # the downloader
 			self.actionsList.append("read BAT")
 		self.actionsListOrigLength = len(self.actionsList)
 
-		self.adapter = 0 # fix me
+		self.adapter = 0  # fix me
 
 		self.nit_pid_default = 0x10  # DVB default
 		self.nit_current_table_id_default = 0x40  # DVB default
@@ -146,7 +146,7 @@ class SatScanLcn(Screen):  # the downloader
 		self.bat_lcn_descriptor = PROVIDERS[self.config.provider.value]["bat"]["bat_lcn_descriptor"] if "bat" in PROVIDERS[self.config.provider.value] and "bat_lcn_descriptor" in PROVIDERS[self.config.provider.value]["bat"] else None
 		self.bat_BouquetID = PROVIDERS[self.config.provider.value]["bat"]["BouquetID"] if "bat" in PROVIDERS[self.config.provider.value] and "BouquetID" in PROVIDERS[self.config.provider.value]["bat"] else None
 		# self.bat_region, for use where the provider has multiple regions grouped under any single BouquetID. Will be a list containing the desired region id and may also contain the region id of the services that are common to all regions.
-		self.bat_region = PROVIDERS[self.config.provider.value]["bat"]["bat_region"] if "bat" in PROVIDERS[self.config.provider.value] and "bat_region" in PROVIDERS[self.config.provider.value]["bat"] else None # input from providers should be a list
+		self.bat_region = PROVIDERS[self.config.provider.value]["bat"]["bat_region"] if "bat" in PROVIDERS[self.config.provider.value] and "bat_region" in PROVIDERS[self.config.provider.value]["bat"] else None  # input from providers should be a list
 
 		if getattr(self.config, "bat-regions-" + self.config.provider.value, None):  # check if there is a regions ConfigSelection for this provider
 			bat_regions = getattr(self.config, "bat-regions-" + self.config.provider.value)
@@ -156,7 +156,7 @@ class SatScanLcn(Screen):  # the downloader
 				if len(PROVIDERS[self.config.provider.value]["bat"]["bat_regions"][bat_regions.value]) > 1:
 					self.bat_region = PROVIDERS[self.config.provider.value]["bat"]["bat_regions"][bat_regions.value][1]
 
-		self.ignore_visible_service_flag = PROVIDERS[self.config.provider.value]["flags"]["ignore_visible_service_flag"] if "flags" in PROVIDERS[self.config.provider.value] and "ignore_visible_service_flag" in PROVIDERS[self.config.provider.value]["flags"] else self.ignore_visible_service_flag_default # input from providers should be a list
+		self.ignore_visible_service_flag = PROVIDERS[self.config.provider.value]["flags"]["ignore_visible_service_flag"] if "flags" in PROVIDERS[self.config.provider.value] and "ignore_visible_service_flag" in PROVIDERS[self.config.provider.value]["flags"] else self.ignore_visible_service_flag_default  # input from providers should be a list
 
 		self.sections = PROVIDERS[self.config.provider.value].get("sections", {})
 
@@ -185,7 +185,7 @@ class SatScanLcn(Screen):  # the downloader
 		self.tuningTime = 0
 		self.run_start_time = time()
 
-		self.namespace_complete = not (config.usage.subnetwork.value if hasattr(config.usage, "subnetwork") else True) # config.usage.subnetwork not available in all distros/images
+		self.namespace_complete = not (config.usage.subnetwork.value if hasattr(config.usage, "subnetwork") else True)  # config.usage.subnetwork not available in all distros/images
 		self.onFirstExecBegin.append(self.firstExec)
 
 	def firstExec(self):
@@ -316,12 +316,12 @@ class SatScanLcn(Screen):  # the downloader
 
 		current_slotid = -1
 		if self.rawchannel:
-			del(self.rawchannel)
+			del self.rawchannel
 
 		self.frontend = None
 		self.rawchannel = None
 
-		nimList = [slot for slot in nimList if not self.isRotorSat(slot, self.transpondercurrent["orbital_position"])] + [slot for slot in nimList if self.isRotorSat(slot, self.transpondercurrent["orbital_position"])] #If we have a choice of dishes, try "fixed" before "motorised".
+		nimList = [slot for slot in nimList if not self.isRotorSat(slot, self.transpondercurrent["orbital_position"])] + [slot for slot in nimList if self.isRotorSat(slot, self.transpondercurrent["orbital_position"])]  #If we have a choice of dishes, try "fixed" before "motorised".
 		for slotid in nimList:
 			if current_slotid == -1:  # mark the first valid slotid in case of no other one is free
 				current_slotid = slotid
@@ -409,7 +409,7 @@ class SatScanLcn(Screen):  # the downloader
 				print("[%s][checkTunerLock] TUNING" % self.debugName)
 		elif self.dict["tuner_state"] == "LOCKED":
 			if not inStandby:
-				self["action"].setText(_("Read %s %s %s %s...") % (self.bouquetName, self.getOrbPosHuman(self.transpondercurrent["orbital_position"]), str(self.transpondercurrent["frequency"] // 1000), self.polarization_dict.get(self.transpondercurrent["polarization"],"")))
+				self["action"].setText(_("Read %s %s %s %s...") % (self.bouquetName, self.getOrbPosHuman(self.transpondercurrent["orbital_position"]), str(self.transpondercurrent["frequency"] // 1000), self.polarization_dict.get(self.transpondercurrent["polarization"], "")))
 
 			self.readTransponderCounter = 0
 			self.readTranspondertimer = eTimer()
@@ -569,7 +569,7 @@ class SatScanLcn(Screen):  # the downloader
 					print("[%s] raw section above is from NIT other table." % self.debugName)
 				network_id = section["header"]["network_id"]
 
-				if network_id in nit_other_section_version and nit_other_section_version[network_id] == section["header"]["version_number"] and all(completed == True for completed in nit_other_completed.values()):
+				if network_id in nit_other_section_version and nit_other_section_version[network_id] == section["header"]["version_number"] and all(completed is True for completed in nit_other_completed.values()):
 					all_nit_others_completed = True
 				else:
 
@@ -1194,7 +1194,7 @@ class SatScanLcn(Screen):  # the downloader
 				continue
 			avoid_duplicates.append(ref)
 			sort_list.append((key, re.sub('^(?![a-z])', 'zzzzz', self.cleanServiceName(service["service_name"]).lower()), service["service_type"] not in self.VIDEO_ALLOWED_TYPES))
-		sort_list = [x[0] for x in sorted(sort_list, key=lambda listItem: (listItem[2], listItem[1]))] # listItem[2] puts radio channels second.
+		sort_list = [x[0] for x in sorted(sort_list, key=lambda listItem: (listItem[2], listItem[1]))]  # listItem[2] puts radio channels second.
 		for key in sort_list:
 			service = self.tmp_services_dict[key]
 			last_scanned_bouquet_list.append(self.bouquetServiceLine(service))
@@ -1388,7 +1388,7 @@ class SatScanLcn_Setup(ConfigListScreen, Screen):
 		if getattr(self.config, "bat-regions-" + self.config.provider.value, None):
 			self.list.append(getConfigListEntry(indent + _("%s region") % PROVIDERS[self.config.provider.value]["name"], getattr(self.config, "bat-regions-" + self.config.provider.value), _('Select the %s region to scan.') % PROVIDERS[self.config.provider.value]["name"]))
 		if getattr(self.config, "nit-BouquetIDs-" + self.config.provider.value, None):
-			self.list.append(getConfigListEntry(indent + _("%s region") % PROVIDERS[self.config.provider.value]["name"], getattr(self.config, "nit-BouquetIDs-" +self.config.provider.value), _('Select the %s region to scan.') % PROVIDERS[self.config.provider.value]["name"]))
+			self.list.append(getConfigListEntry(indent + _("%s region") % PROVIDERS[self.config.provider.value]["name"], getattr(self.config, "nit-BouquetIDs-" + self.config.provider.value), _('Select the %s region to scan.') % PROVIDERS[self.config.provider.value]["name"]))
 		self.list.append(getConfigListEntry(_("FTA only"), self.config.fta_only, _("Only include free to air channels.")))
 		self.list.append(getConfigListEntry(_("HD only"), self.config.hd_only, _("Only include high definition channels.")))
 
@@ -1452,7 +1452,7 @@ class SatScanLcn_Setup(ConfigListScreen, Screen):
 		configfile.save()
 
 
-class  SatScanLcnAdvancedScreen(ConfigListScreen, Screen):
+class SatScanLcnAdvancedScreen(ConfigListScreen, Screen):
 	def __init__(self, session, args=0):
 		self.session = session
 		Screen.__init__(self, session)

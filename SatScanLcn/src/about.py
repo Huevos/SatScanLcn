@@ -5,12 +5,13 @@ from Components.ScrollLabel import ScrollLabel
 
 from Screens.Screen import Screen
 
+
 class SatScanLcn_About(Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
 		self.setTitle(_("Grab LCN bouquets from the DVB stream."))
 
-		self.skinName = ["SatScanLcn_About", "Setup" ]
+		self.skinName = ["SatScanLcn_About", "Setup"]
 
 		self["actions"] = ActionMap(["WizardActions", "ColorActions"],
 		{
@@ -46,7 +47,7 @@ class SatScanLcn_About(Screen):
 			_("Only one instance of each channel appears in the bouquet. If any channel is found to have multiple LCNs the lowest LCN numerically will be selected.") + '\n\n',
 			_("To grab multiple bouquets just run the application multiple times.") + '\n\n',
 		]
-		
+
 		self["config"] = ScrollLabel(''.join(credits))
 
 	def pageUp(self):

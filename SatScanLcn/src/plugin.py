@@ -1,9 +1,7 @@
 # for localized messages
 from . import _
 
-description = _("Scans for services and creates a bouquet")
-
-from Components.config import config, ConfigSubsection, ConfigYesNo, ConfigSelection, ConfigNumber, NoSave, ConfigClock, ConfigEnableDisable, ConfigSubDict
+from Components.config import config, ConfigSubsection, ConfigYesNo, ConfigSelection
 from Components.NimManager import nimmanager
 from Plugins.Plugin import PluginDescriptor
 from Tools.BoundFunction import boundFunction
@@ -11,15 +9,17 @@ from Tools.BoundFunction import boundFunction
 from .satscanlcn import SatScanLcn, SatScanLcn_Setup, getConfiguredSats
 from .providers import PROVIDERS
 
+description = _("Scans for services and creates a bouquet")
+
 configured_sats = getConfiguredSats()
 
 config.plugins.satscanlcn = ConfigSubsection()
-config.plugins.satscanlcn.provider = ConfigSelection(choices = [(x, PROVIDERS[x]["name"]) for x in sorted(PROVIDERS.keys(), key=lambda k: k.lower()) if PROVIDERS[x]["transponder"]["orbital_position"] in configured_sats])
-config.plugins.satscanlcn.extensions = ConfigYesNo(default = False)
-config.plugins.satscanlcn.hd_only = ConfigYesNo(default = False)
-config.plugins.satscanlcn.fta_only = ConfigYesNo(default = False)
+config.plugins.satscanlcn.provider = ConfigSelection(choices=[(x, PROVIDERS[x]["name"]) for x in sorted(PROVIDERS.keys(), key=lambda k: k.lower()) if PROVIDERS[x]["transponder"]["orbital_position"] in configured_sats])
+config.plugins.satscanlcn.extensions = ConfigYesNo(default=False)
+config.plugins.satscanlcn.hd_only = ConfigYesNo(default=False)
+config.plugins.satscanlcn.fta_only = ConfigYesNo(default=False)
 
-for x in PROVIDERS.keys(): # if any provider has a regions list write it to a ConfigSelection 
+for x in PROVIDERS.keys():  # if any provider has a regions list write it to a ConfigSelection
 	if "bat" in PROVIDERS[x] and "bat_regions" in PROVIDERS[x]["bat"]:
 		setattr(config.plugins.satscanlcn, "bat-regions-" + x, ConfigSelection(choices=[(a, a) for a in sorted(PROVIDERS[x]["bat"]["bat_regions"].keys())]))
 	if "nit" in PROVIDERS[x] and "BouquetIDs" in PROVIDERS[x]["nit"]:

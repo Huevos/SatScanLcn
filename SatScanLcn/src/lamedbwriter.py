@@ -2,9 +2,11 @@
 from __future__ import print_function
 import six
 
-import os, codecs, re
+import codecs
+import re
 
 from enigma import eDVBFrontendParametersSatellite
+
 
 class LamedbWriter():
 
@@ -33,7 +35,7 @@ class LamedbWriter():
 				else:
 					orbital_position = transponder["orbital_position"]
 
-				if transponder["system"] == 0: # DVB-S
+				if transponder["system"] == 0:  # DVB-S
 					lamedblist.append("\ts %d:%d:%d:%d:%d:%d:%d\n" %
 						(transponder["frequency"],
 						transponder["symbol_rate"],
@@ -42,7 +44,7 @@ class LamedbWriter():
 						orbital_position,
 						transponder["inversion"],
 						transponder["flags"]))
-				else: # DVB-S2
+				else:  # DVB-S2
 					multistream = ''
 					t2mi = ''
 					if "t2mi_plp_id" in transponder and "t2mi_pid" in transponder:
@@ -54,14 +56,14 @@ class LamedbWriter():
 							transponder["is_id"],
 							transponder["pls_code"],
 							transponder["pls_mode"])
-					if t2mi and not multistream: # this is to pad t2mi values if necessary.
-						try: # some images are still not multistream aware after all this time
+					if t2mi and not multistream:  # this is to pad t2mi values if necessary.
+						try:  # some images are still not multistream aware after all this time
 							multistream = ':%d:%d:%d' % (
 								eDVBFrontendParametersSatellite.No_Stream_Id_Filter,
 								eDVBFrontendParametersSatellite.PLS_Gold,
 								eDVBFrontendParametersSatellite.PLS_Default_Gold_Code)
 						except AttributeError as err:
-							print("[ABM-BouquetsWriter] some images are still not multistream aware after all this time",  err)
+							print("[ABM-BouquetsWriter] some images are still not multistream aware after all this time", err)
 					lamedblist.append("\ts %d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d%s%s\n" %
 						(transponder["frequency"],
 						transponder["symbol_rate"],
@@ -120,7 +122,7 @@ class LamedbWriter():
 					service["flags"],
 					":%x" % service["ATSC_source_id"] if "ATSC_source_id" in service else ""))
 
-				control_chars = ''.join(map(chr, list(range(0,32)) + list(range(127,160))))
+				control_chars = ''.join(map(chr, list(range(0, 32)) + list(range(127, 160))))
 				control_char_re = re.compile('[%s]' % re.escape(control_chars))
 				if 'provider_name' in list(service.keys()):
 					if six.PY2:
@@ -189,7 +191,7 @@ class LamedbWriter():
 				else:
 					orbital_position = transponder["orbital_position"]
 
-				if transponder["system"] == 0: # DVB-S
+				if transponder["system"] == 0:  # DVB-S
 					lamedblist.append("s:%d:%d:%d:%d:%d:%d:%d\n" %
 						(transponder["frequency"],
 						transponder["symbol_rate"],
@@ -198,11 +200,11 @@ class LamedbWriter():
 						orbital_position,
 						transponder["inversion"],
 						transponder["flags"]))
-				else: # DVB-S2
+				else:  # DVB-S2
 					multistream = ''
 					t2mi = ''
 					if "is_id" in transponder and "pls_code" in transponder and "pls_mode" in transponder:
-						try: # some images are still not multistream aware after all this time
+						try:  # some images are still not multistream aware after all this time
 							# don't write default values
 							if not (transponder["is_id"] == eDVBFrontendParametersSatellite.No_Stream_Id_Filter and transponder["pls_code"] == eDVBFrontendParametersSatellite.PLS_Gold and transponder["pls_mode"] == eDVBFrontendParametersSatellite.PLS_Default_Gold_Code):
 								multistream = ',MIS/PLS:%d:%d:%d' % (
@@ -213,8 +215,8 @@ class LamedbWriter():
 							print("[-BouquetsWriter] some images are still not multistream aware after all this time", err)
 					if "t2mi_plp_id" in transponder and "t2mi_pid" in transponder:
 						t2mi = ',T2MI:%d:%d' % (
-						transponder["t2mi_plp_id"],
-						transponder["t2mi_pid"])
+							transponder["t2mi_plp_id"],
+							transponder["t2mi_pid"])
 					lamedblist.append("s:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d%s%s\n" %
 						(transponder["frequency"],
 						transponder["symbol_rate"],
@@ -271,7 +273,7 @@ class LamedbWriter():
 					service["flags"],
 					":%x" % service["ATSC_source_id"] if "ATSC_source_id" in service else ":0"))
 
-				control_chars = ''.join(map(chr, list(range(0,32)) + list(range(127,160))))
+				control_chars = ''.join(map(chr, list(range(0, 32)) + list(range(127, 160))))
 				control_char_re = re.compile('[%s]' % re.escape(control_chars))
 				if 'provider_name' in list(service.keys()):
 					if six.PY2:
@@ -293,7 +295,7 @@ class LamedbWriter():
 				if "service_flags" in list(service.keys()) and service["service_flags"] > 0:
 					service_flags = ",f:%x" % service["service_flags"]
 
-				if 'service_line' in list(service.keys()): # from lamedb
+				if 'service_line' in list(service.keys()):  # from lamedb
 					if len(service["service_line"]):
 						if six.PY2:
 							lamedblist.append(",%s\n" % self.utf8_convert(service["service_line"]))
@@ -301,7 +303,7 @@ class LamedbWriter():
 							lamedblist.append(",%s\n" % (service["service_line"]))
 					else:
 						lamedblist.append("\n")
-				else: # from scanner
+				else:  # from scanner
 					lamedblist.append(",p:%s%s%s\n" % (provider_name, service_ca, service_flags))
 				services_count += 1
 

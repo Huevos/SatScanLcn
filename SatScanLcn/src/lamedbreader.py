@@ -2,6 +2,7 @@ from __future__ import print_function
 from __future__ import division
 import re
 
+
 class LamedbReader():
 	def readLamedb(self, path):
 		print("[SatScanLcn-LamedbReader] Reading lamedb...")
@@ -10,7 +11,7 @@ class LamedbReader():
 
 		try:
 			lamedb = open(path + "/lamedb", "r")
-		except Exception as e:
+		except Exception:
 			return transponders
 
 		content = lamedb.read()
@@ -23,7 +24,7 @@ class LamedbReader():
 			print("[SatScanLcn-LamedbReader] lamedb ver", lamedb_ver)
 		if lamedb_ver == 4:
 			transponders = self.parseLamedbV4Content(content)
-		elif  lamedb_ver == 5:
+		elif lamedb_ver == 5:
 			transponders = self.parseLamedbV5Content(content)
 		return transponders
 
@@ -36,7 +37,7 @@ class LamedbReader():
 		tp_stop = content.find("end\n")
 
 		tp_blocks = content[tp_start + 13:tp_stop].strip().split("/")
-		content = content[tp_stop+4:]
+		content = content[tp_stop + 4:]
 
 		for block in tp_blocks:
 			rows = block.strip().split("\n")
@@ -53,9 +54,9 @@ class LamedbReader():
 			transponder["transport_stream_id"] = int(first_row[1], 16)
 			transponder["original_network_id"] = int(first_row[2], 16)
 
-			#print. "%x:%x:%x" % (namespace, transport_stream_id, original_network_id)
+			# print. "%x:%x:%x" % (namespace, transport_stream_id, original_network_id)
 			second_row = rows[1].strip()
-			transponder["dvb_type"] = 'dvb'+second_row[0]
+			transponder["dvb_type"] = 'dvb' + second_row[0]
 			if transponder["dvb_type"] not in ["dvbs", "dvbt", "dvbc"]:
 				continue
 
@@ -81,18 +82,18 @@ class LamedbReader():
 
 				transponder["inversion"] = int(second_row[5])
 				transponder["flags"] = int(second_row[6])
-				if len(second_row) == 7: # DVB-S
+				if len(second_row) == 7:  # DVB-S
 					transponder["system"] = 0
-				else: # DVB-S2
+				else:  # DVB-S2
 					transponder["system"] = int(second_row[7])
 					transponder["modulation"] = int(second_row[8])
 					transponder["roll_off"] = int(second_row[9])
 					transponder["pilot"] = int(second_row[10])
-					if len(second_row) > 13: # Multistream
+					if len(second_row) > 13:  # Multistream
 						transponder["is_id"] = int(second_row[11])
 						transponder["pls_code"] = int(second_row[12])
 						transponder["pls_mode"] = int(second_row[13])
-						if len(second_row) > 15: # T2MI
+						if len(second_row) > 15:  # T2MI
 							transponder["t2mi_plp_id"] = int(second_row[14])
 							transponder["t2mi_pid"] = int(second_row[15])
 			elif transponder["dvb_type"] == "dvbt":
@@ -121,16 +122,15 @@ class LamedbReader():
 			transponders[key] = transponder
 			transponders_count += 1
 
-
 		srv_start = content.find("services\n")
 		srv_stop = content.rfind("end\n")
 
 		srv_blocks = content[srv_start + 9:srv_stop].strip().split("\n")
 
-		for i in range(0, len(srv_blocks)//3):
-			service_reference = srv_blocks[i*3].strip()
-			service_name = srv_blocks[(i*3)+1].strip()
-			service_provider = srv_blocks[(i*3)+2].strip()
+		for i in range(0, len(srv_blocks) // 3):
+			service_reference = srv_blocks[i * 3].strip()
+			service_name = srv_blocks[(i * 3) + 1].strip()
+			service_provider = srv_blocks[(i * 3) + 2].strip()
 			service_reference = service_reference.split(":")
 
 			if len(service_reference) not in (6, 7):
@@ -154,7 +154,7 @@ class LamedbReader():
 
 			# The original (correct) code
 			# transponders[key]["services"][service["service_id"]] = service
-			
+
 			# Dirty hack to work around the (well known) service type bug in lamedb/enigma2
 			transponders[key]["services"]["%x:%x" % (service["service_type"], service["service_id"])] = service
 
@@ -182,7 +182,7 @@ class LamedbReader():
 				transponder["original_network_id"] = int(first_part[2], 16)
 
 				second_part = line.strip().split(",")[1]
-				transponder["dvb_type"] = 'dvb'+second_part[0]
+				transponder["dvb_type"] = 'dvb' + second_part[0]
 				if transponder["dvb_type"] not in ["dvbs", "dvbt", "dvbc"]:
 					continue
 
@@ -208,14 +208,14 @@ class LamedbReader():
 
 					transponder["inversion"] = int(second_part[5])
 					transponder["flags"] = int(second_part[6])
-					if len(second_part) == 7: # DVB-S
+					if len(second_part) == 7:  # DVB-S
 						transponder["system"] = 0
-					else: # DVB-S2
+					else:  # DVB-S2
 						transponder["system"] = int(second_part[7])
 						transponder["modulation"] = int(second_part[8])
 						transponder["roll_off"] = int(second_part[9])
 						transponder["pilot"] = int(second_part[10])
-						for part in line.strip().split(",")[2:]: # Multistream/T2MI
+						for part in line.strip().split(",")[2:]:  # Multistream/T2MI
 							if part.startswith("MIS/PLS:") and len(part[8:].split(":")) == 3:
 								transponder["is_id"] = int(part[8:].split(":")[0])
 								transponder["pls_code"] = int(part[8:].split(":")[1])
@@ -277,10 +277,10 @@ class LamedbReader():
 
 				# The original (correct) code
 				# transponders[key]["services"][service["service_id"]] = service
-				
+
 				# Dirty hack to work around the (well known) service type bug in lamedb/enigma2
 				transponders[key]["services"]["%x:%x" % (service["service_type"], service["service_id"])] = service
-	
+
 				services_count += 1
 
 		print("[SatScanLcn-LamedbReader] Read %d transponders and %d services" % (transponders_count, services_count))
