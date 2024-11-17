@@ -17,7 +17,7 @@ from enigma import getDesktop
 def insertValues(xml, values):
 	# The skin template is designed for a HD screen so the scaling factor is 720.
 	# double negative to round up not round down
-	return xml % tuple([-(x*getDesktop(0).size().height() / (-720)) for x in values])
+	return xml % tuple([-(x * getDesktop(0).size().height() / (-720)) for x in values])
 
 
 def downloadBar():

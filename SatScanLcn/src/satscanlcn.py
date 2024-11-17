@@ -321,7 +321,7 @@ class SatScanLcn(Screen):  # the downloader
 		self.frontend = None
 		self.rawchannel = None
 
-		nimList = [slot for slot in nimList if not self.isRotorSat(slot, self.transpondercurrent["orbital_position"])] + [slot for slot in nimList if self.isRotorSat(slot, self.transpondercurrent["orbital_position"])]  #If we have a choice of dishes, try "fixed" before "motorised".
+		nimList = [slot for slot in nimList if not self.isRotorSat(slot, self.transpondercurrent["orbital_position"])] + [slot for slot in nimList if self.isRotorSat(slot, self.transpondercurrent["orbital_position"])]  # If we have a choice of dishes, try "fixed" before "motorised".
 		for slotid in nimList:
 			if current_slotid == -1:  # mark the first valid slotid in case of no other one is free
 				current_slotid = slotid
@@ -1426,7 +1426,7 @@ class SatScanLcn_Setup(ConfigListScreen, Screen):
 		self.session.open(SatScanLcn_About)
 
 	def selectionChanged(self):
-		self["description"].setText(self.getCurrentDescription())  #self["description"].setText(self["config"].getCurrent()[2])
+		self["description"].setText(self.getCurrentDescription())  # self["description"].setText(self["config"].getCurrent()[2])
 
 	# for summary:
 	def changedEntry(self):

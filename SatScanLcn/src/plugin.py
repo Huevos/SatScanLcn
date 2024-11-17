@@ -26,13 +26,14 @@ for x in PROVIDERS.keys():  # if any provider has a regions list write it to a C
 		setattr(config.plugins.satscanlcn, "nit-BouquetIDs-" + x, ConfigSelection(choices=[(a, a) for a in sorted(PROVIDERS[x]["nit"]["BouquetIDs"].keys())]))
 
 # advanced options
-config.plugins.satscanlcn.extra_debug = ConfigYesNo(default = False)
-config.plugins.satscanlcn.sync_with_known_tps = ConfigYesNo(default = False)
-config.plugins.satscanlcn.force_service_name = ConfigYesNo(default = False)
+config.plugins.satscanlcn.extra_debug = ConfigYesNo(default=False)
+config.plugins.satscanlcn.sync_with_known_tps = ConfigYesNo(default=False)
+config.plugins.satscanlcn.force_service_name = ConfigYesNo(default=False)
 
 
 def startdownload(session, **kwargs):  # Called from extensions menu if this option is active
 	session.open(SatScanLcn)
+
 
 def SatScanLcnStart(menuid, **kwargs):  # Menu position of plugin setup screen
 	if menuid == "scan":
@@ -40,7 +41,7 @@ def SatScanLcnStart(menuid, **kwargs):  # Menu position of plugin setup screen
 	return []
 
 
-def SatScanLcnMain(session, close=None, **kwargs): # calls setup screen
+def SatScanLcnMain(session, close=None, **kwargs):  # calls setup screen
 	session.openWithCallback(boundFunction(SatScanLcnCallback, close), SatScanLcn_Setup)
 
 
