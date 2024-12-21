@@ -5,10 +5,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-03 17:08+0100\n"
-"PO-Revision-Date: 2021-10-28 18:01+0200\n"
+"PO-Revision-Date: 2024-12-21 13:29+0100\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
 "Language: es\n"
@@ -16,354 +16,355 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.5\n"
 
 #: ../src/satscanlcn.py:1362 ../src/satscanlcn.py:1364
 #, python-format
 msgid "%s region"
-msgstr ""
+msgstr "%s región"
 
 #: ../src/satscanlcn.py:1346
 msgid "About"
-msgstr ""
+msgstr "Sobre"
 
 #: ../src/satscanlcn.py:1345 ../src/satscanlcn.py:1431
 msgid "Advanced options"
-msgstr ""
+msgstr "Opciones avanzadas"
 
 #: ../src/providers.py:33
 msgid "Austriasat"
-msgstr ""
+msgstr "Austriasat"
 
 #: ../src/providers.py:63
 msgid "BIS TV (13.0E)"
-msgstr ""
+msgstr "BIS TV (13.0E)"
 
 #: ../src/providers.py:42
 msgid "BIS TV (5.0W)"
-msgstr ""
+msgstr "BIS TV (5.0W)"
 
 #: ../src/satscanlcn.py:254
 msgid "Bouquets generation..."
-msgstr ""
+msgstr "Generación de grupos..."
 
 #: ../src/satscanlcn.py:1436
 msgid "CAUTION: Sometimes the SI tables contain rogue data. Select \"yes\" to sync with transponder data listed in satellites.xml. Select \"no\" if you trust the SI data. Default is \"no\". Only change this if you understand why you are doing it."
-msgstr ""
+msgstr "PRECAUCIÓN: A veces las tablas SI contienen datos falsos. Seleccione \"sí\" para sincronizar con los datos del transpondedor que aparecen en satellites.xml. Seleccione \"no\" si confía en los datos SI. Por defecto es \"no\". Cambie esta opción sólo si entiende por qué lo está haciendo."
 
 #: ../src/satscanlcn.py:1438
 msgid "CAUTION: This feature is for development only. Requires debug logs to be enabled or enigma2 to be started in console mode (at debug level 4)."
-msgstr ""
+msgstr "ATENCIÓN: Esta función es sólo para desarrollo. Requiere que los registros de depuración estén habilitados o que enigma2 se inicie en modo consola (en el nivel de depuración 4)."
 
 #: ../src/providers.py:84
 msgid "Canal Digitaal HD"
-msgstr ""
+msgstr "Canal Digitaal HD"
 
 #: ../src/providers.py:93
 msgid "Canal Digital Nordic"
-msgstr ""
+msgstr "Canal Digital Nórdico"
 
 #: ../src/satscanlcn.py:1440
 msgid "Cancel"
-msgstr ""
+msgstr "Cancelar"
 
 #: ../src/satscanlcn.py:387
 msgid "Cannot allocate the demuxer."
-msgstr ""
+msgstr "No se puede asignar el demuxer"
 
 #: ../src/satscanlcn.py:357
 msgid "Cannot free NIM because a recording is in progress"
-msgstr ""
+msgstr "No se puede liberar NIM porque hay una grabación en curso"
 
 #: ../src/satscanlcn.py:381
 msgid "Cannot get frontend"
-msgstr ""
+msgstr "No se puede obtener el frontend"
 
 #: ../src/satscanlcn.py:361
 msgid "Cannot get the NIM"
-msgstr ""
+msgstr "No se puede obtener el NIM"
 
 #: ../src/satscanlcn.py:464 ../src/satscanlcn.py:510 ../src/satscanlcn.py:653
 #: ../src/satscanlcn.py:803
 msgid "Cannot open the demuxer"
-msgstr ""
+msgstr "No se puede abrir el demuxer"
 
 #: ../src/satscanlcn.py:290
 msgid "Cannot retrieve Resource Manager instance"
-msgstr ""
+msgstr "Cannot get Resource Manager instance"
 
 #: ../src/about.py:25
 msgid "Close"
-msgstr ""
+msgstr "Cerrar"
 
 #: ../src/satscanlcn.py:437
 msgid "Could not acquire the correct tsid/onid on the home transponder."
-msgstr ""
+msgstr "No se pudo adquirir el tsid/onid correcto en el transpondedor local."
 
 #: ../src/satscanlcn.py:204
 msgid "Current settings read..."
-msgstr ""
+msgstr "Configuración se ha leído..."
 
 #: ../src/providers.py:122
 msgid "D-Smart"
-msgstr ""
+msgstr "D-Smart"
 
 #: ../src/providers.py:165
 msgid "Digi TV"
-msgstr ""
+msgstr "Digi TV"
 
 #: ../src/providers.py:204
 msgid "Diveo"
-msgstr ""
+msgstr "Diveo"
 
 #: ../src/satscanlcn.py:1218
 msgid "Done"
-msgstr ""
+msgstr "Hecho"
 
 #: ../src/satscanlcn.py:1343
 msgid "Exit"
-msgstr ""
+msgstr "Salir"
 
 #: ../src/satscanlcn.py:1438
 msgid "Extra debug"
-msgstr ""
+msgstr "Depuración adicional"
 
 #: ../src/satscanlcn.py:1365
 msgid "FTA only"
-msgstr ""
+msgstr "Sólo canales abiertos"
 
 #: ../src/providers.py:213
 msgid "FocusSat"
-msgstr ""
+msgstr "FocusSat"
 
 #: ../src/satscanlcn.py:1435
 msgid "Force channel name"
-msgstr ""
+msgstr "Forzar el nombre del canal"
 
 #: ../src/providers.py:222
 msgid "Fransat"
-msgstr ""
+msgstr "Fransat"
 
 #: ../src/providers.py:271
 msgid "FreeSAT CZ"
-msgstr ""
+msgstr "FreeSAT CZ"
 
 #: ../src/providers.py:280
 msgid "FreeSAT SK"
-msgstr ""
+msgstr "FreeSAT SK"
 
 #: ../src/providers.py:289
 msgid "Freesat UK"
-msgstr ""
+msgstr "Freesat UK"
 
 #: ../src/providers.py:243
 msgid "French_TNT"
-msgstr ""
+msgstr "French_TNT"
 
 #: ../src/about.py:11
 msgid "Grab LCN bouquets from the DVB stream."
-msgstr ""
+msgstr "Obtenga grupos LCN de la transmisión DVB."
 
 #: ../src/satscanlcn.py:1366
 msgid "HD only"
-msgstr ""
+msgstr "Sólo HD"
 
 #: ../src/satscanlcn.py:1153
 msgid "Last Scanned"
-msgstr ""
+msgstr "Último escaneo"
 
 #: ../src/providers.py:369
 msgid "Movistar+"
-msgstr ""
+msgstr "Movistar+"
 
 #: ../src/providers.py:396
 msgid "NC+"
-msgstr ""
+msgstr "NC+"
 
 #: ../src/satscanlcn.py:284
 msgid "No compatible tuner found"
-msgstr ""
+msgstr "No se encontró ningún sintonizador compatible"
 
 #: ../src/satscanlcn.py:339
 #, python-format
 msgid "No valid NIM found for %s"
-msgstr ""
+msgstr "No se encontró NIM válido para %s"
 
 #: ../src/providers.py:417
 msgid "Nova"
-msgstr ""
+msgstr "Nova"
 
 #: ../src/satscanlcn.py:1365
 msgid "Only include free to air channels."
-msgstr ""
+msgstr "Incluir únicamente canales de emisión gratuita."
 
 #: ../src/satscanlcn.py:1366
 msgid "Only include high definition channels."
-msgstr ""
+msgstr "Incluir únicamente canales de alta definición."
 
 #: ../src/about.py:46
 msgid "Only one instance of each channel appears in the bouquet. If any channel is found to have multiple LCNs the lowest LCN numerically will be selected."
-msgstr ""
+msgstr "Solo aparece una instancia de cada canal en el grupo. Si se descubre que algún canal tiene varios LCN, se seleccionará el LCN numéricamente más bajo."
 
 #: ../src/providers.py:443
 msgid "Orange TV"
-msgstr ""
+msgstr "Orange TV"
 
 #: ../src/satscanlcn.py:1360
 msgid "Provider"
-msgstr ""
+msgstr "Proveedor"
 
 #: ../src/satscanlcn.py:411
 #, python-format
 msgid "Read %s %s %s %s..."
-msgstr ""
+msgstr "Leyendo %s %s %s %s..."
 
 #: ../src/satscanlcn.py:231
 msgid "Reading bouquet allocation table..."
-msgstr ""
+msgstr "Leyendo BAT..."
 
 #: ../src/satscanlcn.py:197
 msgid "Reading current settings..."
-msgstr ""
+msgstr "Leyendo la configuración actual..."
 
 #: ../src/satscanlcn.py:1373 ../src/satscanlcn.py:1457
 msgid "Really close without saving settings?"
-msgstr ""
+msgstr "¿Realmente cerrar sin guardar la configuración?"
 
 #: ../src/satscanlcn.py:52
 msgid "Sat Scan LCN"
-msgstr ""
+msgstr "Sat Scan LCN"
 
 #: ../src/about.py:44
 msgid "SatScanLCN expands on the JoyneScan plugin and uses the same dvbreader as ABM, but unlike ABM it is able to scan the Service Descriptor Table of multiple transponders based on the content of the Network Identification Table on the home transponder. This means providers such as Joyne ( now defunct) or Orange TV on 16E that don't contain complete SDT data on the home transponder can still be successfully scanned."
-msgstr ""
+msgstr "SatScanLCN amplía el complemento JoyneScan y utiliza el mismo dvbreader que ABM, pero a diferencia de ABM, puede escanear la tabla de descriptores de servicio de varios transpondedores en función del contenido de la tabla de identificación de red del transpondedor doméstico. Esto significa que los proveedores como Joyne (ahora inactivo) u Orange TV en 16E que no contienen datos SDT completos en el transpondedor doméstico aún se pueden escanear correctamente."
 
 #: ../src/about.py:42
 msgid "SatScanLCN grabs one simple bouquet of the selected provider and adds it to the top of the channel list. The bouquet can be moved using enigma's built in controls and will stay put on a rescan. To remove any bouquet created by this tool use enigma's built in controls."
-msgstr ""
+msgstr "SatScanLCN crea un grupo simple del proveedor seleccionado y lo agrega a la parte superior de la lista de canales. El grupo se puede mover utilizando los controles integrados de Enigma y permanecerá en su lugar al volver a escanearlo. Para eliminar cualquier grupo creado por esta herramienta, utilice los controles integrados de Enigma."
 
 #: ../src/about.py:43
 msgid "SatScanLCN is not meant to deprecate, replace, substitute, supersede or usurp any current bouquet creation tool."
-msgstr ""
+msgstr "SatScanLCN no pretende desaprobar, reemplazar, sustituir, supersede o usurpar ninguna herramienta actual de creación de grupos."
 
 #: ../src/plugin.py:39 ../src/plugin.py:52 ../src/plugin.py:54
 #: ../src/satscanlcn.py:1325 ../src/satscanlcn.py:1431
 msgid "SatScanLcn"
-msgstr ""
+msgstr "SatScanLcn"
 
 #: ../src/satscanlcn.py:1441
 msgid "Save"
-msgstr ""
+msgstr "Guardar"
 
 #: ../src/satscanlcn.py:1344
 msgid "Scan"
-msgstr ""
+msgstr "Escanear"
 
 #: ../src/plugin.py:4
 msgid "Scans for services and creates a bouquet"
-msgstr ""
+msgstr "Escanea buscando canales y crea un grupo."
 
 #: ../src/satscanlcn.py:221
 msgid "Searching for transponders..."
-msgstr ""
+msgstr "Buscando transpondedores..."
 
 #: ../src/satscanlcn.py:1362 ../src/satscanlcn.py:1364
 #, python-format
 msgid "Select the %s region to scan."
-msgstr ""
+msgstr "Seleccione la región de %s a escanear."
 
 #: ../src/satscanlcn.py:1360
 msgid "Select the provider you wish to scan."
-msgstr ""
+msgstr "Seleccione el proveedor que desea escanear."
 
 #: ../src/satscanlcn.py:239 ../src/satscanlcn.py:255 ../src/satscanlcn.py:1219
 #, python-format
 msgid "Services: %d video - %d radio"
-msgstr ""
+msgstr "Services: %d video - %d radio"
 
 #: ../src/satscanlcn.py:1325
 msgid "Setup"
-msgstr ""
+msgstr "Configuración"
 
 #: ../src/satscanlcn.py:1437
 msgid "Show in extensions menu"
-msgstr ""
+msgstr "Mostrar en el menú de extensiones"
 
 #: ../src/providers.py:458
 msgid "Sky Italia"
-msgstr ""
+msgstr "Sky Italia"
 
 #: ../src/providers.py:488
 msgid "Sky UK"
-msgstr ""
+msgstr "Sky UK"
 
 #: ../src/satscanlcn.py:448
 msgid "Something went terribly wrong"
-msgstr ""
+msgstr "Algo salió terriblemente mal"
 
 #: ../src/satscanlcn.py:59
 msgid "Starting scanner"
-msgstr ""
+msgstr "Iniciando el escáner"
 
 #: ../src/satscanlcn.py:1435
 msgid "Switch this on only if you have issues with \"N/A\" appearing in your channel list. Switching this on means the channel name will not auto update if the broadcaster changes the channel name."
-msgstr ""
+msgstr "Activa esta opción solo si tienes problemas con la aparición de \"N/A\" en tu lista de canales. Activar esta opción significa que el nombre del canal no se actualizará automáticamente si el emisor cambia el nombre del canal."
 
 #: ../src/satscanlcn.py:1436
 msgid "Sync with known transponders"
-msgstr ""
+msgstr "Sincronización con transpondedores conocidos"
 
 #: ../src/providers.py:666
 msgid "TV Vlaanderen"
-msgstr ""
+msgstr "TV Vlaanderen"
 
 #: ../src/providers.py:639
 msgid "TeleSAT"
-msgstr ""
+msgstr "TeleSAT"
 
 #: ../src/providers.py:612
 msgid "Telekom Romania"
-msgstr ""
+msgstr "Telekom Romania"
 
 #: ../src/about.py:45
 msgid "The bouquet is ordered exactly according to the Logical Channel Number data carried on the DVB stream. No cleanups, swaps or other manipulations are carried out. And no customisation of the produced bouquets is possible. If that is what is required please use ABM."
-msgstr ""
+msgstr "El grupo se ordena exactamente de acuerdo con los datos del número de canal lógico que se incluyen en la transmisión DVB. No se realizan limpiezas, cambios ni otras manipulaciones. Tampoco es posible personalizar los grupos producidos. Si es eso lo que se requiere, utilice ABM."
 
 #: ../src/satscanlcn.py:429
 #, python-format
 msgid "Timeout for tuner lock on %s"
-msgstr ""
+msgstr "Tiempo de espera para el bloqueo del sintonizador en %s"
 
 #: ../src/providers.py:648
 msgid "Tivusat"
-msgstr ""
+msgstr "Tivusat"
 
 #: ../src/about.py:47
 msgid "To grab multiple bouquets just run the application multiple times."
-msgstr ""
+msgstr "Para crear varios grupos, simplemente ejecute la aplicación varias veces."
 
 #: ../src/satscanlcn.py:271
 #, python-format
 msgid "Tune %s %s %s %s..."
-msgstr ""
+msgstr "Sintoniza %s %s %s %s..."
 
 #: ../src/satscanlcn.py:423
 #, python-format
 msgid "Tuning failed on %s"
-msgstr ""
+msgstr "Falló la sintonización en %s"
 
 #: ../src/providers.py:675
 msgid "UPC"
-msgstr ""
+msgstr "UPC"
 
 #: ../src/providers.py:704
 msgid "UPC Direct"
-msgstr ""
+msgstr "UPC Direct"
 
 #: ../src/satscanlcn.py:1437
 msgid "When enabled, this allows you start a SatScanLcn update from the extensions list."
-msgstr ""
+msgstr "Cuando está habilitado, esto le permite iniciar una actualización de SatScanLcn desde la lista de extensiones."
 
 #: ../src/satscanlcn.py:609
 #, python-format
 msgid "transponders found: %d"
-msgstr ""
+msgstr "transpondedores encontrados: %d"
