@@ -162,7 +162,7 @@ msgstr "French_TNT"
 
 #: ../src/about.py:11
 msgid "Grab LCN bouquets from the DVB stream."
-msgstr "Obtenga grupos LCN de la transmisión DVB."
+msgstr "Crea grupos LCN de la transmisión DVB."
 
 #: ../src/satscanlcn.py:1366
 msgid "HD only"
@@ -235,12 +235,12 @@ msgid "Sat Scan LCN"
 msgstr "Sat Scan LCN"
 
 #: ../src/about.py:44
-msgid "SatScanLCN expands on the JoyneScan plugin and uses the same dvbreader as ABM, but unlike ABM it is able to scan the Service Descriptor Table of multiple transponders based on the content of the Network Identification Table on the home transponder. This means providers such as Joyne ( now defunct) or Orange TV on 16E that don't contain complete SDT data on the home transponder can still be successfully scanned."
+msgid "SatScanLCN expands on the JoyneScan plugin and uses the same dvbreader as ABM, but unlike ABM it is able to scan the Service Descriptor Table of multiple transponders based on the content of the Network Identification Table on the home transponder. This means providers such as Joyne (now defunct) or Orange TV on 16E that don't contain complete SDT data on the home transponder can still be successfully scanned."
 msgstr "SatScanLCN amplía el complemento JoyneScan y utiliza el mismo dvbreader que ABM, pero a diferencia de ABM, puede escanear la tabla de descriptores de servicio de varios transpondedores en función del contenido de la tabla de identificación de red del transpondedor doméstico. Esto significa que los proveedores como Joyne (ahora inactivo) u Orange TV en 16E que no contienen datos SDT completos en el transpondedor doméstico aún se pueden escanear correctamente."
 
 #: ../src/about.py:42
 msgid "SatScanLCN grabs one simple bouquet of the selected provider and adds it to the top of the channel list. The bouquet can be moved using enigma's built in controls and will stay put on a rescan. To remove any bouquet created by this tool use enigma's built in controls."
-msgstr "SatScanLCN crea un grupo simple del proveedor seleccionado y lo agrega a la parte superior de la lista de canales. El grupo se puede mover utilizando los controles integrados de Enigma y permanecerá en su lugar al volver a escanearlo. Para eliminar cualquier grupo creado por esta herramienta, utilice los controles integrados de Enigma."
+msgstr "SatScanLCN crea un grupo simple del proveedor seleccionado y lo añade a la parte superior de la lista de canales. El grupo se puede mover utilizando los controles integrados de Enigma y permanecerá en su lugar al volver a escanearlo. Para eliminar cualquier grupo creado por esta herramienta, utilice los controles integrados de Enigma."
 
 #: ../src/about.py:43
 msgid "SatScanLCN is not meant to deprecate, replace, substitute, supersede or usurp any current bouquet creation tool."
