@@ -602,13 +602,13 @@ PROVIDERS = {
 	"Sky_Italia_0130": {
 		"name": _("Sky Italia"),
 		"transponder": {
-			"frequency": 11976000,
+			"frequency": 11977000,
 			"symbol_rate": 29900000,
 			"polarization": eDVBFrontendParametersSatellite.Polarisation_Horizontal,
-			"fec_inner": eDVBFrontendParametersSatellite.FEC_5_6,
+			"fec_inner": eDVBFrontendParametersSatellite.FEC_3_4,
 			"orbital_position": 130,
 			"system": eDVBFrontendParametersSatellite.System_DVB_S2,
-			"modulation": eDVBFrontendParametersSatellite.Modulation_QPSK,
+			"modulation": eDVBFrontendParametersSatellite.Modulation_8PSK,
 			"roll_off": eDVBFrontendParametersSatellite.RollOff_auto,
 			"original_network_id": 64511,
 			"transport_stream_id": 6300,
