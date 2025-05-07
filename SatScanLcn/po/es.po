@@ -25,7 +25,7 @@ msgstr "%s región"
 
 #: ../src/satscanlcn.py:1346
 msgid "About"
-msgstr "Sobre"
+msgstr "Acerca de"
 
 #: ../src/satscanlcn.py:1345 ../src/satscanlcn.py:1431
 msgid "Advanced options"
