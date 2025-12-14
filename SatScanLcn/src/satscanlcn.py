@@ -874,10 +874,16 @@ class SatScanLcn(Screen):  # the downloader
 			self.manager()
 			return
 
+		# This namespace can be wrong, it is getting the namespace of the current tuned transponder, but maybe the service is on a different transponder. This will show especially when namespace subnet is on because each transponder has a different subnet.
 		namespace = self.SDTscanList[self.index - self.actionsListOrigLength]["namespace"]  # this is corrected namespace after any resync from satellites.xml, (with subnet applied if so coonfigured or applicable)
 		for i in range(len(sdt_current_content)):
 			service = sdt_current_content[i]
 
+			if self.sdt_only_scan_home:
+				namespace = next(iter([x["namespace"] for x in self.SDTscanList[self.index - self.actionsListOrigLength:] if x["transport_stream_id"] == service["transport_stream_id"] and x["original_network_id"] == service["original_network_id"]]), 0)
+				if not namespace:
+					continue
+			
 			if service["service_type"] not in self.VIDEO_ALLOWED_TYPES and service["service_type"] not in self.AUDIO_ALLOWED_TYPES:
 				continue
 
