@@ -283,7 +283,7 @@ PROVIDERS = {
 			"sdt_only_scan_home": True,
 		},
 	},
-	"French_TNT_0130": {
+	"French_TNT_0192": {
 		"name": _("French_TNT"),
 		"transponder": {
 			"frequency": 11856000,
