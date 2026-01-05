@@ -448,7 +448,7 @@ PROVIDERS = {
 	"Movistar_plus_esp_0192": {
 		"name": _("Movistar+"),
 		"transponder": {
-			"frequency": 10729000,
+			"frequency": 10758500,
 			"symbol_rate": 22000000,
 			"polarization": eDVBFrontendParametersSatellite.Polarisation_Vertical,
 			"fec_inner": eDVBFrontendParametersSatellite.FEC_2_3,
@@ -457,7 +457,7 @@ PROVIDERS = {
 			"modulation": eDVBFrontendParametersSatellite.Modulation_8PSK,
 			"roll_off": eDVBFrontendParametersSatellite.RollOff_auto,
 			"original_network_id": 1,
-			"transport_stream_id": 1050,
+			"transport_stream_id": 1052,
 		},
 		"nit": {
 			"nit_other_table_id": 0x00,
