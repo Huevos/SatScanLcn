@@ -10,11 +10,11 @@ class LamedbReader():
 		transponders = {}
 
 		try:
-			lamedb = open(path + "/lamedb", "r")
+			lamedb = open(path + "/lamedb", "rb")
 		except Exception:
 			return transponders
 
-		content = lamedb.read()
+		content = lamedb.read().decode(encoding="utf-8", errors="ignore")
 		lamedb.close()
 
 		lamedb_ver = 4
