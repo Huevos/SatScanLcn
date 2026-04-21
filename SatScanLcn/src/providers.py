@@ -541,7 +541,7 @@ PROVIDERS = {
 			"frequency": 10719000,
 			"symbol_rate": 27500000,
 			"polarization": eDVBFrontendParametersSatellite.Polarisation_Vertical,
-			"fec_inner": eDVBFrontendParametersSatellite.FEC_3_4,
+			"fec_inner": eDVBFrontendParametersSatellite.FEC_5_6,
 			"orbital_position": 130,
 			"system": eDVBFrontendParametersSatellite.System_DVB_S2,
 			"modulation": eDVBFrontendParametersSatellite.Modulation_8PSK,
