@@ -28,6 +28,31 @@ M7_3592_transponder = {
 	"transport_stream_id": 701,
 }
 
+
+def tkgs_beacon(frequency, polarization, symbol_rate, system):
+	return {
+		"frequency": frequency * 1000,
+		"symbol_rate": symbol_rate * 1000,
+		"polarization": polarization,
+		"fec_inner": eDVBFrontendParametersSatellite.FEC_3_4,
+		"orbital_position": 420,
+		"system": system,
+		"modulation": eDVBFrontendParametersSatellite.Modulation_QPSK,
+		"roll_off": eDVBFrontendParametersSatellite.RollOff_alpha_0_35,
+		"original_network_id": 0,  # not known, only used to check a motorised dish and that is not done for TKGS
+		"transport_stream_id": 0,
+	}
+
+
+# The transponders that broadcast the TKGS table (PID 0x1FF5). They are tried in this order, each as DVB-S then DVB-S2.
+TKGS_BEACONS = [tkgs_beacon(frequency, polarization, symbol_rate, system)
+	for frequency, polarization, symbol_rate in (
+		(12380, eDVBFrontendParametersSatellite.Polarisation_Vertical, 27500),
+		(12423, eDVBFrontendParametersSatellite.Polarisation_Vertical, 27500),
+		(12423, eDVBFrontendParametersSatellite.Polarisation_Horizontal, 30000),
+		(12458, eDVBFrontendParametersSatellite.Polarisation_Vertical, 30000))
+	for system in (eDVBFrontendParametersSatellite.System_DVB_S, eDVBFrontendParametersSatellite.System_DVB_S2)]
+
 PROVIDERS = {
 	"Antiksat_0160": {
 		"name": _("Antiksat"),
@@ -851,5 +876,15 @@ PROVIDERS = {
 		"sdt": {
 			"sdt_only_scan_home": True,
 		},
+	},
+	"Turksat_TKGS_HD_0420": {
+		"name": _("Turksat TKGS (HD list)"),
+		"transponder": TKGS_BEACONS[0],
+		"tkgs": {"beacons": TKGS_BEACONS, "order": "HD"},
+	},
+	"Turksat_TKGS_SD_0420": {
+		"name": _("Turksat TKGS (SD list)"),
+		"transponder": TKGS_BEACONS[0],
+		"tkgs": {"beacons": TKGS_BEACONS, "order": "SD"},
 	},
 }

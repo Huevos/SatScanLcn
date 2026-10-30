@@ -21,6 +21,10 @@ from .downloadbar import downloadBar
 from .lamedbreader import LamedbReader
 from .lamedbwriter import LamedbWriter
 from .providers import PROVIDERS
+try:
+	from .tkgs import Job as TkgsJob
+except ImportError:  # the TKGS reader needs Python 3
+	TkgsJob = None
 
 from enigma import eTimer, eDVBDB, eDVBFrontendParametersSatellite, eDVBFrontendParameters, eDVBResourceManager
 
@@ -109,6 +113,12 @@ class SatScanLcn(Screen):  # the downloader
 		self.actionsList = ["read NIT",]  # "read BAT", "read SDTs"]
 		if self.bat is not None:
 			self.actionsList.append("read BAT")
+		self.bouquet_slots = 1000  # number of positions written to the bouquet (TKGS raises this)
+		self.tkgs = PROVIDERS[self.config.provider.value].get("tkgs")  # Turksat TKGS: one private table instead of NIT, BAT and SDTs
+		self.tkgs_job = None
+		if self.tkgs:
+			self.actionsList = ["read TKGS"]
+			self.tkgs_job = TkgsJob(self, self.tkgs) if TkgsJob else None
 		self.actionsListOrigLength = len(self.actionsList)
 
 		self.adapter = 0  # fix me
@@ -217,7 +227,7 @@ class SatScanLcn(Screen):  # the downloader
 			self["progress_text"].value = self.progresscurrent
 			self["progress"].setValue(self.progresscurrent)
 
-		if len(self.actionsList) > self.index and self.actionsList[self.index] == "read NIT":
+		if len(self.actionsList) > self.index and self.actionsList[self.index] in ("read NIT", "read TKGS"):
 			if not inStandby:
 				self["status"].setText(_("Searching for transponders..."))
 			self.transpondercurrent = self.homeTransponder
@@ -418,6 +428,8 @@ class SatScanLcn(Screen):  # the downloader
 			return
 		elif self.dict["tuner_state"] in ("LOSTLOCK", "FAILED"):
 			print("[%s][checkTunerLock] TUNING FAILED" % self.debugName)
+			if self.tkgs_job and self.tkgs_job.nextBeacon():  # TKGS: try the next beacon transponder
+				return
 			if self.actionsList[self.index] == "read SDTs":  # if we can't tune a transponder just skip it (like enigma does)
 				self.manager()
 			else:
@@ -426,6 +438,8 @@ class SatScanLcn(Screen):  # the downloader
 
 		self.lockcounter += 1
 		if self.lockcounter > self.LOCK_TIMEOUT:
+			if self.tkgs_job and self.tkgs_job.nextBeacon():  # TKGS: try the next beacon transponder
+				return
 			if self.actionsList[self.index] == "read SDTs":  # if we can't tune a transponder just skip it (like enigma does)
 				self.manager()
 			else:
@@ -447,6 +461,8 @@ class SatScanLcn(Screen):  # the downloader
 			self.readNIT()
 		elif self.actionsList[self.index] in ("read SDTs",):
 			self.readSDT()
+		elif self.actionsList[self.index] in ("read TKGS",):
+			self.readTKGS()
 		else:  # readBAT does not follow this code path
 			print("[%s][readTransponder] Something went terribly wrong" % self.debugName)
 			self.showError(_("Something went terribly wrong"))
@@ -642,6 +658,13 @@ class SatScanLcn(Screen):  # the downloader
 		print("[%s] Reading NIT completed." % self.debugName)
 
 		self.manager()
+
+	def readTKGS(self):
+		print("[%s] Reading TKGS..." % self.debugName)
+		if not self.tkgs_job:
+			self.showError(_("TKGS needs Python 3"))
+			return
+		self.tkgs_job.start()  # calls self.manager() when the table has been read
 
 	def readBAT(self):
 		print("[%s] Reading BAT..." % self.debugName)
@@ -1169,7 +1192,7 @@ class SatScanLcn(Screen):  # the downloader
 		bouquet_list = []
 		bouquet_list.append("#NAME %s\n" % self.bouquetName)
 
-		numbers = list(range(1, 1001))
+		numbers = list(range(1, self.bouquet_slots + 1))
 		for number in numbers:
 			if number in active_sections:
 				bouquet_list.append("#SERVICE 1:64:0:0:0:0:0:0:0:0:\n#DESCRIPTION %s\n" % self.sections[number])
@@ -1331,6 +1354,8 @@ class SatScanLcn(Screen):  # the downloader
 		self.close()
 
 	def releaseFrontend(self):
+		if getattr(self, "tkgs_job", None):
+			self.tkgs_job.stop()
 		if hasattr(self, 'frontend'):
 			del self.frontend
 		if hasattr(self, 'rawchannel'):
