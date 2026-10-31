@@ -25,6 +25,7 @@ try:
 	from .tkgs import Job as TkgsJob
 except ImportError:  # the TKGS reader needs Python 3
 	TkgsJob = None
+from . import skyq
 
 from enigma import eTimer, eDVBDB, eDVBFrontendParametersSatellite, eDVBFrontendParameters, eDVBResourceManager
 
@@ -119,6 +120,10 @@ class SatScanLcn(Screen):  # the downloader
 		if self.tkgs:
 			self.actionsList = ["read TKGS"]
 			self.tkgs_job = TkgsJob(self, self.tkgs) if TkgsJob else None
+		self.type_map = PROVIDERS[self.config.provider.value].get("type_map", {})  # service types to change as they are read, so they match what other tools have in the lamedb
+		self.skyq = PROVIDERS[self.config.provider.value].get("skyq")  # Sky Deutschland: the channel numbers come from a carousel instead of the BAT
+		if self.skyq:
+			self.actionsList.append("read SKYQ")
 		self.actionsListOrigLength = len(self.actionsList)
 
 		self.adapter = 0  # fix me
@@ -245,6 +250,14 @@ class SatScanLcn(Screen):  # the downloader
 			self.timer.start(100, 1)
 			return
 
+		elif len(self.actionsList) > self.index and self.actionsList[self.index] == "read SKYQ":
+			if not inStandby:
+				self["status"].setText(_("Reading the channel list..."))
+			self.timer = eTimer()
+			self.timer.callback.append(lambda: skyq.read(self))  # we are already tuned so go direct to read
+			self.timer.start(100, 1)
+			return
+
 		elif len(self.actionsList) > self.index and self.actionsList[self.index] == "read SDTs":
 			if not inStandby:
 				self["status"].setText(_("Services: %d video - %d radio") % (self.video_services, self.radio_services))
@@ -265,7 +278,7 @@ class SatScanLcn(Screen):  # the downloader
 				self["action"].setText(_('Bouquets generation...'))
 				self["status"].setText(_("Services: %d video - %d radio") % (self.video_services, self.radio_services))
 			self.correctTsidErrors()  # correct errors due to "broken" NIT on home transponder
-			if self.bat is not None:
+			if self.bat is not None or self.skyq:
 				self.processBAT()
 			self.addTransponders()
 			self.fixServiceNames()
@@ -907,6 +920,8 @@ class SatScanLcn(Screen):  # the downloader
 				if not namespace:
 					continue
 			
+			service["service_type"] = self.type_map.get(service["service_type"], service["service_type"])
+
 			if service["service_type"] not in self.VIDEO_ALLOWED_TYPES and service["service_type"] not in self.AUDIO_ALLOWED_TYPES:
 				continue
 

@@ -624,6 +624,45 @@ PROVIDERS = {
 			"BouquetID": 0x3700,
 		},
 	},
+	"Sky_Deutschland_0192": {
+		"name": _("Sky Deutschland"),
+		"transponder": {
+			"frequency": 12032000,  # really 12031.5. SatScanLcn rounds NIT frequencies to the MHz and the home transponder is only recognised, and read first without a retune, if the frequency is the same
+			"symbol_rate": 27500000,
+			"polarization": eDVBFrontendParametersSatellite.Polarisation_Horizontal,
+			"fec_inner": eDVBFrontendParametersSatellite.FEC_9_10,
+			"orbital_position": 192,
+			"system": eDVBFrontendParametersSatellite.System_DVB_S2,
+			"modulation": eDVBFrontendParametersSatellite.Modulation_QPSK,
+			"roll_off": eDVBFrontendParametersSatellite.RollOff_alpha_0_35,
+			"original_network_id": 133,
+			"transport_stream_id": 4,
+		},
+		"nit": {
+			"nit_other_table_id": 0x00,  # the NIT actual has all the transponders. Without this it waits for a NIT other that is never sent.
+		},
+		"sdt": {
+			"sdt_only_scan_home": True,  # read SDT actual and SDT other on the home transponder only, no tuning to the others. If a transponder is reported as "Cannot fetch SDT" in the log, the home transponder does not carry its SDT other.
+		},
+		"type_map": {22: 1},  # Sky broadcasts SD as advanced codec SD (22). Other tools store it as 1, which would give duplicates in the lamedb.
+		"skyq": {  # the channel numbers are in a carousel on the home transponder, not in a BAT
+			"pid": 0x08ae,
+			"table_id": 0x9e,
+			"variable_id": 0x0055,
+			"bouquet_file": "Q-skyHDTVchannels-4.txt",
+			"overrides": {(0x85, 0x0b, 0x8e): 100, (0x85, 0x0b, 0x71): 122},  # (onid, tsid, sid): lcn. Broadcast but not in the carousel (Sky Showcase HD, HISTORY Channel HD). Remove when Sky lists them.
+		},
+		"sections": {
+			100: _("Entertainment"),
+			200: _("Sport"),
+			300: _("Film"),
+			500: _("Kids"),
+			600: _("Musik"),
+			700: _("News and International"),
+			800: _("Regional"),
+			900: _("Marktplatz"),
+		},
+	},
 	"Sky_Italia_0130": {
 		"name": _("Sky Italia"),
 		"transponder": {
