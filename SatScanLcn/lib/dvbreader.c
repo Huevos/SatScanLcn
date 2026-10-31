@@ -60,10 +60,11 @@ PyObject *ss_open(PyObject *self, PyObject *args) {
 	int fd, pid;
 	const char *demuxer;
 	char filter, mask, frontend;
+	int crc = 1; // optional, 0 lets sections with a wrong or missing CRC through
 	struct dmx_sct_filter_params sfilter;
 	dmx_source_t ssource = DMX_SOURCE_FRONT0;
 
-	if (!PyArg_ParseTuple(args, "sibbb", &demuxer, &pid, &filter, &mask, &frontend))
+	if (!PyArg_ParseTuple(args, "sibbb|i", &demuxer, &pid, &filter, &mask, &frontend, &crc))
 		return Py_BuildValue("i", -1);
 
 	memset(&sfilter, 0, sizeof(sfilter));
@@ -71,7 +72,7 @@ PyObject *ss_open(PyObject *self, PyObject *args) {
 	sfilter.filter.filter[0] = filter & 0xff;
 	sfilter.filter.mask[0] = mask & 0xff;
 	sfilter.timeout = 0;
-	sfilter.flags = DMX_IMMEDIATE_START | DMX_CHECK_CRC;
+	sfilter.flags = crc ? (DMX_IMMEDIATE_START | DMX_CHECK_CRC) : DMX_IMMEDIATE_START;
 
 	ssource = DMX_SOURCE_FRONT0 + frontend;
 
@@ -1411,6 +1412,23 @@ PyObject *ss_read_skyq(PyObject *self, PyObject *args) {
 	return ret;
 }
 
+PyObject *ss_read_tkgs(PyObject *self, PyObject *args) { // the raw section, the decoding is done in python
+	unsigned char buffer[4096], table_id;
+	int fd;
+
+	if (!PyArg_ParseTuple(args, "ib", &fd, &table_id))
+		return Py_None;
+
+	int size = read(fd, buffer, sizeof(buffer));
+	if (size < 12)
+		return Py_None;
+
+	if (buffer[0] != table_id)
+		return Py_None;
+
+	return PyBytes_FromStringAndSize((const char *)buffer, size);
+}
+
 PyObject *ss_read_nit(PyObject *self, PyObject *args) {
 	PyObject *content = NULL, *header = NULL;
 	unsigned char buffer[4096], table_id_current, table_id_other;
@@ -1451,6 +1469,7 @@ static PyMethodDef dvbreaderMethods[] = {
 	{ "read_sdt", ss_read_sdt, METH_VARARGS },
 	{ "read_fastscan", ss_read_fastscan, METH_VARARGS },
 	{ "read_skyq", ss_read_skyq, METH_VARARGS },
+	{ "read_tkgs", ss_read_tkgs, METH_VARARGS },
 	{ "read_ts", ss_read_ts, METH_VARARGS },
 	{ NULL, NULL }
 };
