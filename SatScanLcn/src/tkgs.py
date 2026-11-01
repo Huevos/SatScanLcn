@@ -415,6 +415,7 @@ class Job:
 
 	def stop(self):
 		self.timer.stop()
+		self.retuner.stop()
 		if self.demux:
 			self.demux.close()
 		self.demux = self.sections = None
