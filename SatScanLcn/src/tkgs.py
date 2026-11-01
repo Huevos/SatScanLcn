@@ -2,6 +2,11 @@
 # Turksat TKGS support for SatScanLcn. Reads the TKGS table (private table 0xA7 on PID 0x1FF5, broadcast on 42.0E) and
 # turns it into the same data SatScanLcn builds from the NIT, BAT and SDT of other providers.
 # The TKGS table decoding is based on MSTKGS by Murat SEVER.
+import errno
+import fcntl
+import os
+import platform
+import struct
 import time
 from types import SimpleNamespace
 
@@ -9,11 +14,11 @@ from enigma import eDVBFrontendParametersSatellite as Sat, eTimer
 
 from Components.NimManager import nimmanager
 
-from . import _, dvbreader
+from . import _
 
 PID, TABLE = 0x1FF5, 0xA7
 DUMP = "/tmp/tkgs_table.bin"  # the raw sections of the last read, saved when extra debug is on
-NO_DATA, GIVE_UP = 20, 60  # seconds without any section, before a stalled read is abandoned
+NO_DATA, TO_TS, GIVE_UP = 20, 12, 60  # seconds without any section, before the TS tap is tried, before a stalled read is abandoned
 
 
 def log(*args):
@@ -256,25 +261,125 @@ class Sections:
 		return b"".join(p[2][i][8:-4] for _, p in sorted(self.parts.items()) for i in sorted(p[2]))
 
 
-class Reader:
-	"""The TKGS sections from the dvbreader section filter. The CRC is checked by Sections, not by the driver."""
+class TsSections:
+	"""Cuts sections out of the TS packets of the TKGS PID."""
 
-	def __init__(self, path, nim):
-		self.fd = dvbreader.open(path, PID, TABLE, 0xff, nim, 0)
-		if self.fd < 0:
-			raise OSError("cannot open the demuxer")
+	def __init__(self):
+		self.raw, self.part, self.cc = bytearray(), None, None
+
+	def push(self, chunk):
+		out, buf, pos = [], self.raw, 0
+		buf += chunk
+		while len(buf) - pos >= 188:
+			if buf[pos] != 0x47:
+				pos += 1
+				continue
+			self.packet(buf[pos:pos + 188], out)
+			pos += 188
+		del buf[:pos]
+		return out
+
+	def packet(self, p, out):
+		if (p[1] & 0x1F) << 8 | p[2] != PID:
+			return
+		if p[1] & 0x80:
+			self.part = None
+			return
+		control, cc = p[3] >> 4 & 3, p[3] & 15
+		if control in (0, 2):
+			return
+		start = 5 + p[4] if control == 3 else 4
+		if start >= 188:
+			return
+		if self.cc is not None:
+			if cc == self.cc:
+				return  # repeated packet
+			if cc != (self.cc + 1) % 16:
+				self.part = None  # a packet was lost
+		self.cc = cc
+		body = p[start:]
+		if p[1] & 0x40:
+			pointer, body = body[0], body[1:]
+			if self.part is not None:
+				self.part += body[:pointer]
+				self.harvest(out)
+			self.part = bytearray(body[pointer:])
+		elif self.part is None:
+			return
+		else:
+			self.part += body
+		self.harvest(out)
+
+	def harvest(self, out):
+		part = self.part
+		while part is not None and len(part) >= 3:
+			if part[0] == 0xFF:
+				part = None
+				break
+			size = 3 + ((part[1] & 15) << 8 | part[2])
+			if len(part) < size:
+				break
+			if part[0] == TABLE:
+				out.append(bytes(part[:size]))
+			part = part[size:]
+		self.part = part or None
+
+
+class Demux:
+	"""A raw demux filter on the TKGS PID: a section filter first, a TS tap if the driver does not deliver sections."""
+	FILTER = struct.Struct("=H16s16s16s2xII")
+	PES = struct.Struct("=H2xIIII")
+
+	def __init__(self, path):
+		try:
+			self.fd = os.open(path, os.O_RDWR | os.O_NONBLOCK)
+		except OSError:
+			self.fd = os.open(path, os.O_RDONLY | os.O_NONBLOCK)
+		legacy = platform.machine().lower().startswith(("mips", "ppc", "powerpc", "sparc", "parisc", "alpha"))
+		self.bits, self.none, self.write = (13, 1, 4) if legacy else (14, 0, 1)
+		self.ts = None
+		self.ioctl(42)
+		for size in (1 << 20, 1 << 19, 1 << 18, 1 << 17):
+			if self.ioctl(45, size) is not None:
+				break
+		if self.ioctl(43, self.FILTER.pack(PID, bytes([TABLE]), b"\xff", b"", 0, 4), self.FILTER.size) is None:  # 4 = start immediately
+			log("section filter failed")
+
+	def ioctl(self, nr, arg=0, size=0):
+		request = ((self.write if size else self.none) << (16 + self.bits)) | size << 16 | ord("o") << 8 | nr
+		try:
+			try:
+				return fcntl.ioctl(self.fd, request, arg)
+			except OverflowError:
+				return fcntl.ioctl(self.fd, request - (1 << 32), arg)
+		except OSError:
+			return None
+
+	def tap(self):
+		self.ioctl(42)
+		self.ioctl(44, self.PES.pack(PID, 0, 3, 20, 4), self.PES.size)  # DMX_OUT_TSDEMUX_TAP, DMX_PES_OTHER
+		self.ts = TsSections()
 
 	def read(self):
 		out = []
 		for _ in range(32):
-			section = dvbreader.read_tkgs(self.fd, TABLE)
-			if section is None:
+			try:
+				data = os.read(self.fd, 188 * 256 if self.ts else 8192)
+			except OSError as e:
+				if e.errno == errno.EOVERFLOW:
+					continue
 				break
-			out.append(section)
+			if not data:
+				break
+			out += self.ts.push(data) if self.ts else [data]
 		return out
 
 	def close(self):
-		dvbreader.close(self.fd)
+		self.ioctl(42)
+		try:
+			os.close(self.fd)
+		except OSError:
+			pass
 
 
 # ---- the download -------------------------------------------------------------------------------------------
@@ -297,7 +402,7 @@ class Job:
 		self.stop()
 		self.screen.setDemuxer()
 		try:
-			self.demux, self.sections = Reader(self.screen.demuxer_device, self.screen.selectedNIM), Sections()
+			self.demux, self.sections = Demux(self.screen.demuxer_device), Sections()
 		except OSError as e:
 			log("cannot open the demux", e)
 			return self.screen.showError(_('Cannot open the demuxer'))
@@ -321,6 +426,9 @@ class Job:
 				self.finish()
 			elif not self.sections.parts and now > NO_DATA:
 				self.retry()
+			elif now > TO_TS and not self.demux.ts and not self.sections.done():
+				log("switching to the TS tap", have, total)
+				self.demux.tap()
 			elif now > GIVE_UP and (now > 2 * GIVE_UP or time.monotonic() - self.sections.grew > 15):
 				self.dump()
 				self.stop()
