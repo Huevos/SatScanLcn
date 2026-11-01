@@ -28,6 +28,19 @@ M7_3592_transponder = {
 	"transport_stream_id": 701,
 }
 
+M7_0235_transponder = {
+	"frequency": 12070000,
+	"symbol_rate": 27500000,
+	"polarization": eDVBFrontendParametersSatellite.Polarisation_Horizontal,
+	"fec_inner": eDVBFrontendParametersSatellite.FEC_3_4,
+	"orbital_position": 235,
+	"system": eDVBFrontendParametersSatellite.System_DVB_S,
+	"modulation": eDVBFrontendParametersSatellite.Modulation_QPSK,
+	"roll_off": eDVBFrontendParametersSatellite.RollOff_alpha_0_35,
+	"original_network_id": 3,
+	"transport_stream_id": 3219,
+}
+
 
 def tkgs_beacon(frequency, polarization, symbol_rate, system):
 	return {
@@ -842,6 +855,24 @@ PROVIDERS = {
 			950: _("Regional"),
 			970: _("Red button"),
 			993: _("Sky Info"),
+		},
+	},
+	"Skylink_CZ_0235": {
+		"name": _("Skylink Czech Republic"),
+		"transponder": M7_0235_transponder,
+		"nit": {
+			"nit_pid": 0x1e,
+			"nit_current_table_id": 0xbc,
+			"nit_other_table_id": 0x00,
+		},
+	},
+	"Skylink_SK_0235": {
+		"name": _("Skylink Slovak Republic"),
+		"transponder": M7_0235_transponder,
+		"nit": {
+			"nit_pid": 0x1f,
+			"nit_current_table_id": 0xbc,
+			"nit_other_table_id": 0x00,
 		},
 	},
 	"Telekom_Romania_0390": {
