@@ -1371,6 +1371,9 @@ class SatScanLcn(Screen):  # the downloader
 		self.close()
 
 	def releaseFrontend(self):
+		for name in ("timer", "locktimer", "readTranspondertimer"):  # a pending timer must not fire once the frontend is gone
+			if hasattr(self, name):
+				getattr(self, name).stop()
 		if getattr(self, "tkgs_job", None):
 			self.tkgs_job.stop()
 		if hasattr(self, 'frontend'):
