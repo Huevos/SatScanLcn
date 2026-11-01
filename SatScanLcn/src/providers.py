@@ -54,6 +54,25 @@ TKGS_BEACONS = [tkgs_beacon(frequency, polarization, symbol_rate, system)
 	for system in (eDVBFrontendParametersSatellite.System_DVB_S, eDVBFrontendParametersSatellite.System_DVB_S2)]
 
 PROVIDERS = {
+	"A1_0390": {
+		"name": _("A1"),
+		"transponder": {
+			"frequency": 12117000,
+			"symbol_rate": 30000000,
+			"polarization": eDVBFrontendParametersSatellite.Polarisation_Horizontal,
+			"fec_inner": eDVBFrontendParametersSatellite.FEC_7_8,
+			"orbital_position": 390,
+			"system": eDVBFrontendParametersSatellite.System_DVB_S2,
+			"modulation": eDVBFrontendParametersSatellite.Modulation_8PSK,
+			"roll_off": eDVBFrontendParametersSatellite.RollOff_alpha_0_35,
+			"original_network_id": 926,
+			"transport_stream_id": 177,
+		},
+		"bat": {
+			"bat_lcn_descriptor": 0x83,
+			"BouquetID": 0x01,
+		},
+	},
 	"Antiksat_0160": {
 		"name": _("Antiksat"),
 		"transponder": {
