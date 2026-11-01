@@ -72,6 +72,28 @@ PROVIDERS = {
 			"BouquetID": 0x1,
 		},
 	},
+	"Astra_TV_Spain_0192": {
+		"name": _("Astra TV Spain"),
+		"transponder": {
+			"frequency": 11009000,
+			"symbol_rate": 23500000,
+			"polarization": eDVBFrontendParametersSatellite.Polarisation_Vertical,
+			"fec_inner": eDVBFrontendParametersSatellite.FEC_3_4,
+			"orbital_position": 192,
+			"system": eDVBFrontendParametersSatellite.System_DVB_S2,
+			"modulation": eDVBFrontendParametersSatellite.Modulation_8PSK,
+			"roll_off": eDVBFrontendParametersSatellite.RollOff_auto,
+			"original_network_id": 1,
+			"transport_stream_id": 1036,
+		},
+		"bat": {
+			"bat_lcn_descriptor": 0x83,
+			"BouquetID": 0x5012,
+		},
+		"sdt": {
+			"sdt_only_scan_home": True,
+		},
+	},
 	"Austriasat": {
 		"name": _("Austriasat"),
 		"transponder": M7_0192_transponder,
