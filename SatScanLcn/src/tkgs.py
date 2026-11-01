@@ -18,7 +18,8 @@ from . import _
 
 PID, TABLE = 0x1FF5, 0xA7
 DUMP = "/tmp/tkgs_table.bin"  # the raw sections of the last read, saved when extra debug is on
-NO_DATA, TO_TS, GIVE_UP = 20, 12, 60  # seconds without any section, before the TS tap is tried, before a stalled read is abandoned
+TAP_BUFFER = 1 << 16  # bytes, the TS tap buffer. Enough for the whole table a few times over
+NO_DATA, GIVE_UP = 45, 60  # seconds without any section (the tap of some drivers only hands over its data after about 30 s), before a stalled read is abandoned
 
 
 def log(*args):
@@ -326,7 +327,7 @@ class TsSections:
 
 
 class Demux:
-	"""A raw demux filter on the TKGS PID: a section filter first, a TS tap if the driver does not deliver sections."""
+	"""A raw demux tap on the TKGS PID, or a section filter if the driver refuses the tap."""
 	FILTER = struct.Struct("=H16s16s16s2xII")
 	PES = struct.Struct("=H2xIIII")
 
@@ -339,11 +340,13 @@ class Demux:
 		self.bits, self.none, self.write = (13, 1, 4) if legacy else (14, 0, 1)
 		self.ts = None
 		self.ioctl(42)
-		for size in (1 << 20, 1 << 19, 1 << 18, 1 << 17):
-			if self.ioctl(45, size) is not None:
-				break
-		if self.ioctl(43, self.FILTER.pack(PID, bytes([TABLE]), b"\xff", b"", 0, 4), self.FILTER.size) is None:  # 4 = start immediately
-			log("section filter failed")
+		self.ioctl(45, TAP_BUFFER)
+		if not self.tap():  # the section filter drops the large sections on some drivers, so it is only the fallback
+			for size in (1 << 20, 1 << 19, 1 << 18, 1 << 17):
+				if self.ioctl(45, size) is not None:
+					break
+			if self.ioctl(43, self.FILTER.pack(PID, bytes([TABLE]), b"\xff", b"", 0, 4), self.FILTER.size) is None:  # 4 = start immediately
+				log("neither the TS tap nor the section filter could be started")
 
 	def ioctl(self, nr, arg=0, size=0):
 		request = ((self.write if size else self.none) << (16 + self.bits)) | size << 16 | ord("o") << 8 | nr
@@ -356,9 +359,10 @@ class Demux:
 			return None
 
 	def tap(self):
-		self.ioctl(42)
-		self.ioctl(44, self.PES.pack(PID, 0, 3, 20, 4), self.PES.size)  # DMX_OUT_TSDEMUX_TAP, DMX_PES_OTHER
+		if self.ioctl(44, self.PES.pack(PID, 0, 3, 20, 4), self.PES.size) is None:  # DMX_OUT_TSDEMUX_TAP, DMX_PES_OTHER
+			return False
 		self.ts = TsSections()
+		return True
 
 	def read(self):
 		out = []
@@ -421,14 +425,11 @@ class Job:
 				self.sections.offer(raw)
 			now = time.monotonic() - self.since
 			have, total = self.sections.progress()
-			self.status(have, total)
+			self.status(now)
 			if self.sections.done() and time.monotonic() - self.sections.fresh >= 2:
 				self.finish()
 			elif not self.sections.parts and now > NO_DATA:
 				self.retry()
-			elif now > TO_TS and not self.demux.ts and not self.sections.done():
-				log("switching to the TS tap", have, total)
-				self.demux.tap()
 			elif now > GIVE_UP and (now > 2 * GIVE_UP or time.monotonic() - self.sections.grew > 15):
 				self.dump()
 				self.stop()
@@ -438,10 +439,10 @@ class Job:
 			self.stop()
 			self.screen.showError("TKGS: %s" % e)
 
-	def status(self, have, total):
+	def status(self, now):  # the driver hands over the data in one go, so a count of sections would not move
 		from Screens.Standby import inStandby
 		if not inStandby:
-			self.screen["status"].setText("TKGS: %d / %d" % (have, total))
+			self.screen["status"].setText(_("TKGS: waiting for data") + " %d" % now)
 
 	def retry(self):
 		self.stop()
