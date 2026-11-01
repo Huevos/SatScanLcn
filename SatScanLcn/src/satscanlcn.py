@@ -118,6 +118,8 @@ class SatScanLcn(Screen):  # the downloader
 		self.tkgs = PROVIDERS[self.config.provider.value].get("tkgs")  # Turksat TKGS: one private table instead of NIT, BAT and SDTs
 		self.tkgs_job = None
 		if self.tkgs:
+			region = getattr(self.config, "bat-regions-" + self.config.provider.value, None)  # the HD or SD list
+			self.tkgs = dict(self.tkgs, order=self.tkgs["regions"].get(region.value if region else None, "HD"))
 			self.actionsList = ["read TKGS"]
 			self.tkgs_job = TkgsJob(self, self.tkgs) if TkgsJob else None
 		self.type_map = PROVIDERS[self.config.provider.value].get("type_map", {})  # service types to change as they are read, so they match what other tools have in the lamedb

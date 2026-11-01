@@ -916,14 +916,9 @@ PROVIDERS = {
 			"sdt_only_scan_home": True,
 		},
 	},
-	"Turksat_TKGS_HD_0420": {
-		"name": _("Turksat TKGS (HD list)"),
+	"Turksat_TKGS_0420": {
+		"name": _("Turksat TKGS"),
 		"transponder": TKGS_BEACONS[0],
-		"tkgs": {"beacons": TKGS_BEACONS, "order": "HD"},
-	},
-	"Turksat_TKGS_SD_0420": {
-		"name": _("Turksat TKGS (SD list)"),
-		"transponder": TKGS_BEACONS[0],
-		"tkgs": {"beacons": TKGS_BEACONS, "order": "SD"},
+		"tkgs": {"beacons": TKGS_BEACONS, "regions": {_("HD list"): "HD", _("SD list"): "SD"}},  # the list to use, selected like a region
 	},
 }
