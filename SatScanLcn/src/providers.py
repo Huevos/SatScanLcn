@@ -606,6 +606,21 @@ PROVIDERS = {
 			"ignore_visible_service_flag": True,
 		},
 	},
+	"Saorsat_0092": {  # a Ka-band LNB is needed, set it up in the tuner settings
+		"name": _("Saorsat"),
+		"transponder": {
+			"frequency": 20192500,
+			"symbol_rate": 12500000,
+			"polarization": eDVBFrontendParametersSatellite.Polarisation_CircularLeft,
+			"fec_inner": eDVBFrontendParametersSatellite.FEC_5_6,
+			"orbital_position": 92,
+			"system": eDVBFrontendParametersSatellite.System_DVB_S2,
+			"modulation": eDVBFrontendParametersSatellite.Modulation_QPSK,
+			"roll_off": eDVBFrontendParametersSatellite.RollOff_alpha_0_35,
+			"original_network_id": 1005,
+			"transport_stream_id": 8564,
+		},
+	},
 	"simpliTV_0192": {
 		"name": _("simpliTV"),
 		"transponder": {
