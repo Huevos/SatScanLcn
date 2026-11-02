@@ -464,8 +464,13 @@ class SatScanLcn(Screen):  # the downloader
 		self.locktimer.start(100, 1)
 
 	def readTransponder(self):
-		# if setup is motorized and we are about to read the NIT, first let's make sure the dish is receiving from the correct satellite.
-		if self.motorised and self.actionsList[self.index] in ("read NIT",) and not self.tsidOnidTest(self.transpondercurrent["original_network_id"], self.transpondercurrent["transport_stream_id"]):
+		# if setup is motorized and we are about to read the NIT (or the TKGS table), first let's make sure the dish is receiving from the correct satellite.
+		onid, tsid = self.transpondercurrent["original_network_id"], self.transpondercurrent["transport_stream_id"]
+		if self.tkgs_job:
+			onid, tsid = onid or None, tsid or None  # 0 means not known for a beacon
+		if self.motorised and self.actionsList[self.index] in ("read NIT", "read TKGS") and not self.tsidOnidTest(onid, tsid):
+			if self.tkgs_job and self.tkgs_job.nextBeacon():  # TKGS: try the next beacon transponder
+				return
 			print("[%s][readTransponder] Could not acquire the correct tsid/onid on the home transponder." % self.debugName)
 			self.showError(_("Could not acquire the correct tsid/onid on the home transponder."))
 			return
