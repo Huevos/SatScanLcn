@@ -42,15 +42,15 @@ M7_0235_transponder = {
 }
 
 
-def tkgs_beacon(frequency, polarization, symbol_rate, system):
+def tkgs_beacon(frequency, polarization, symbol_rate, system, fec_inner, modulation):
 	return {
 		"frequency": frequency * 1000,
 		"symbol_rate": symbol_rate * 1000,
 		"polarization": polarization,
-		"fec_inner": eDVBFrontendParametersSatellite.FEC_3_4,
+		"fec_inner": fec_inner,
 		"orbital_position": 420,
 		"system": system,
-		"modulation": eDVBFrontendParametersSatellite.Modulation_QPSK,
+		"modulation": modulation,
 		"roll_off": eDVBFrontendParametersSatellite.RollOff_alpha_0_35,
 		"original_network_id": 0,  # not known, only used to check a motorised dish and that is not done for TKGS
 		"transport_stream_id": 0,
@@ -58,13 +58,16 @@ def tkgs_beacon(frequency, polarization, symbol_rate, system):
 
 
 # The transponders that broadcast the TKGS table (PID 0x1FF5). They are tried in this order, each as DVB-S then DVB-S2.
-TKGS_BEACONS = [tkgs_beacon(frequency, polarization, symbol_rate, system)
-	for frequency, polarization, symbol_rate in (
-		(12380, eDVBFrontendParametersSatellite.Polarisation_Vertical, 27500),
-		(12423, eDVBFrontendParametersSatellite.Polarisation_Vertical, 27500),
-		(12423, eDVBFrontendParametersSatellite.Polarisation_Horizontal, 30000),
-		(12458, eDVBFrontendParametersSatellite.Polarisation_Vertical, 30000))
-	for system in (eDVBFrontendParametersSatellite.System_DVB_S, eDVBFrontendParametersSatellite.System_DVB_S2)]
+_S, _S2 = eDVBFrontendParametersSatellite.System_DVB_S, eDVBFrontendParametersSatellite.System_DVB_S2
+_V, _H = eDVBFrontendParametersSatellite.Polarisation_Vertical, eDVBFrontendParametersSatellite.Polarisation_Horizontal
+_QPSK, _8PSK = eDVBFrontendParametersSatellite.Modulation_QPSK, eDVBFrontendParametersSatellite.Modulation_8PSK
+_3_4, _2_3 = eDVBFrontendParametersSatellite.FEC_3_4, eDVBFrontendParametersSatellite.FEC_2_3
+TKGS_BEACONS = [  # the transponders the table is broadcast on, as in satellites.xml
+	tkgs_beacon(12380, _V, 27500, _S, _3_4, _QPSK),
+	tkgs_beacon(12423, _V, 27500, _S2, _2_3, _8PSK),
+	tkgs_beacon(12423, _H, 30000, _S, _3_4, _QPSK),
+	tkgs_beacon(12458, _V, 30000, _S2, _2_3, _8PSK),
+]
 
 PROVIDERS = {
 	"A1_0390": {
